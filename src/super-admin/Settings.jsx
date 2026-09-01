@@ -8,7 +8,7 @@ export default function SuperAdminSettings() {
         name:       "Super Admin",
         email:      MOCK_CREDENTIALS.email,
         role:       "Super Administrator",
-        scope:      "Batangas City — All Clusters",
+        scope:      "Batangas City",
         scopeLabel: "Jurisdiction",
       }}
       logoutKey="bs_auth"

@@ -15,7 +15,7 @@ export default function CAMapCollection() {
   const [formError, setFormError] = useState("");
 
   const route = CA_INCOMING_ROUTE;
-  const clusterBins = BINS.filter((b) => b.cluster === "c1");
+  const clusterBins = BINS;
   const sentAt = new Date(route.sentAt).toLocaleString("en-PH", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
   const optimizedAt = new Date(route.optimizedAt).toLocaleTimeString("en-PH", { hour: "2-digit", minute: "2-digit" });
 

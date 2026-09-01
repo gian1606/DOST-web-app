@@ -4,24 +4,17 @@ import {
   Download, BarChart2, AlertTriangle, ChevronDown,
 } from "lucide-react";
 import {
-  CLUSTERS,
-  CLUSTER_BARANGAY_MAP,
+  BARANGAY_FILTER_OPTIONS,
   REPORT_KPI,
-  REPORT_KPI_BY_CLUSTER,
   REPORT_KPI_BY_BARANGAY,
   MONTHLY_COLLECTIONS,
-  MONTHLY_COLLECTIONS_BY_CLUSTER,
   MONTHLY_COLLECTIONS_BY_BARANGAY,
   WEEKLY_COLLECTIONS,
-  CLUSTER_COLLECTION_RATES,
   FULL_BIN_TREND,
   WASTE_BY_TYPE,
-  WASTE_BY_TYPE_BY_CLUSTER,
   WASTE_BY_TYPE_BY_BARANGAY,
   ECO_TOKEN_MONTHLY,
-  CLUSTER_PERFORMANCE,
   MISSED_REASONS,
-  MISSED_REASONS_BY_CLUSTER,
   MISSED_REASONS_BY_BARANGAY,
   RESIDENT_ENGAGEMENT,
   REPORT_EXPORTS,
@@ -29,7 +22,7 @@ import {
 
 // -- Helpers -------------------------------------------------------------------
 function fmt(n) {
-  if (typeof n !== "number") return "ó";
+  if (typeof n !== "number") return "‚Äî";
   return n >= 1000 ? (n / 1000).toFixed(1) + "k" : n.toString();
 }
 
@@ -124,7 +117,6 @@ function Section({ title, children, action }) {
   );
 }
 
-// -- Styled select -------------------------------------------------------------
 function FilterSelect({ value, onChange, disabled, children }) {
   return (
     <div className="relative flex items-center">
@@ -139,7 +131,7 @@ function FilterSelect({ value, onChange, disabled, children }) {
           background: disabled ? "#F9FAFB" : "#fff",
           color: disabled ? "#9CA3AF" : "#1A1A1A",
           cursor: disabled ? "not-allowed" : "pointer",
-          minWidth: 180,
+          minWidth: 200,
         }}
       >
         {children}
@@ -152,64 +144,41 @@ function FilterSelect({ value, onChange, disabled, children }) {
 
 // -- Main Component ------------------------------------------------------------
 export default function Reports() {
-  const [period, setPeriod] = useState("monthly");
-  const [selectedCluster, setSelectedCluster] = useState("all");
+  const [period, setPeriod]                 = useState("monthly");
   const [selectedBarangay, setSelectedBarangay] = useState("all");
 
-  // When cluster changes, reset barangay
-  function handleClusterChange(val) {
-    setSelectedCluster(val);
-    setSelectedBarangay("all");
-  }
-
-  // Barangay options for the active cluster
-  const barangayOptions = selectedCluster !== "all"
-    ? (CLUSTER_BARANGAY_MAP[selectedCluster] ?? [])
-    : [];
-
-  // -- Derive scope label for subtitle ----------------------------------------
   const scopeLabel = useMemo(() => {
     if (selectedBarangay !== "all") {
-      const br = barangayOptions.find((b) => b.id === selectedBarangay);
+      const br = BARANGAY_FILTER_OPTIONS.find((b) => b.id === selectedBarangay);
       return br ? br.name : "Barangay";
     }
-    if (selectedCluster !== "all") {
-      const cl = CLUSTERS.find((c) => c.id === selectedCluster);
-      return cl ? cl.label : "Cluster";
-    }
-    return "City-wide ó Batangas City";
-  }, [selectedCluster, selectedBarangay, barangayOptions]);
+    return "City-wide ‚Äî Batangas City";
+  }, [selectedBarangay]);
 
-  // -- Resolve scoped data -----------------------------------------------------
-  const kpi = useMemo(() => {
-    if (selectedBarangay !== "all") return REPORT_KPI_BY_BARANGAY[selectedBarangay] ?? REPORT_KPI;
-    if (selectedCluster !== "all") return REPORT_KPI_BY_CLUSTER[selectedCluster] ?? REPORT_KPI;
-    return REPORT_KPI;
-  }, [selectedCluster, selectedBarangay]);
+  const kpi = useMemo(() =>
+    selectedBarangay !== "all" ? (REPORT_KPI_BY_BARANGAY[selectedBarangay] ?? REPORT_KPI) : REPORT_KPI,
+    [selectedBarangay]
+  );
 
-  const monthlyData = useMemo(() => {
-    if (selectedBarangay !== "all") return MONTHLY_COLLECTIONS_BY_BARANGAY[selectedBarangay] ?? MONTHLY_COLLECTIONS;
-    if (selectedCluster !== "all") return MONTHLY_COLLECTIONS_BY_CLUSTER[selectedCluster] ?? MONTHLY_COLLECTIONS;
-    return MONTHLY_COLLECTIONS;
-  }, [selectedCluster, selectedBarangay]);
+  const monthlyData = useMemo(() =>
+    selectedBarangay !== "all" ? (MONTHLY_COLLECTIONS_BY_BARANGAY[selectedBarangay] ?? MONTHLY_COLLECTIONS) : MONTHLY_COLLECTIONS,
+    [selectedBarangay]
+  );
 
-  const wasteData = useMemo(() => {
-    if (selectedBarangay !== "all") return WASTE_BY_TYPE_BY_BARANGAY[selectedBarangay] ?? WASTE_BY_TYPE;
-    if (selectedCluster !== "all") return WASTE_BY_TYPE_BY_CLUSTER[selectedCluster] ?? WASTE_BY_TYPE;
-    return WASTE_BY_TYPE;
-  }, [selectedCluster, selectedBarangay]);
+  const wasteData = useMemo(() =>
+    selectedBarangay !== "all" ? (WASTE_BY_TYPE_BY_BARANGAY[selectedBarangay] ?? WASTE_BY_TYPE) : WASTE_BY_TYPE,
+    [selectedBarangay]
+  );
 
-  const missedData = useMemo(() => {
-    if (selectedBarangay !== "all") return MISSED_REASONS_BY_BARANGAY[selectedBarangay] ?? MISSED_REASONS;
-    if (selectedCluster !== "all") return MISSED_REASONS_BY_CLUSTER[selectedCluster] ?? MISSED_REASONS;
-    return MISSED_REASONS;
-  }, [selectedCluster, selectedBarangay]);
+  const missedData = useMemo(() =>
+    selectedBarangay !== "all" ? (MISSED_REASONS_BY_BARANGAY[selectedBarangay] ?? MISSED_REASONS) : MISSED_REASONS,
+    [selectedBarangay]
+  );
 
-  const collectionData = period === "monthly" ? monthlyData : WEEKLY_COLLECTIONS;
+  const collectionData   = period === "monthly" ? monthlyData : WEEKLY_COLLECTIONS;
   const collectionLabelKey = period === "monthly" ? "month" : "week";
-
-  const totalWaste = wasteData.reduce((s, w) => s + w.kg, 0);
-  const totalMissed = missedData.reduce((s, r) => s + r.count, 0);
+  const totalWaste       = wasteData.reduce((s, w) => s + w.kg, 0);
+  const totalMissed      = missedData.reduce((s, r) => s + r.count, 0);
 
   function formatExportDate(ts) {
     return new Date(ts).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
@@ -221,44 +190,26 @@ export default function Reports() {
       {/* Page header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>
-            Reports &amp; Analytics
-          </h1>
-          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-            {scopeLabel} ∑ May 2025
-          </p>
+          <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Reports &amp; Analytics</h1>
+          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>{scopeLabel} ‚Äî May 2025</p>
         </div>
 
-        {/* Filter + Export row */}
         <div className="flex items-center gap-2 flex-wrap justify-end">
-          {/* Cluster dropdown */}
-          <FilterSelect value={selectedCluster} onChange={handleClusterChange}>
-            <option value="all">?? City-wide (All)</option>
-            {CLUSTERS.map((c) => (
-              <option key={c.id} value={c.id}>{c.label}</option>
-            ))}
-          </FilterSelect>
-
-          {/* Barangay dropdown */}
-          <FilterSelect
-            value={selectedBarangay}
-            onChange={setSelectedBarangay}
-            disabled={selectedCluster === "all"}
-          >
-            <option value="all">All Barangays</option>
-            {barangayOptions.map((b) => (
+          {/* Barangay filter */}
+          <FilterSelect value={selectedBarangay} onChange={setSelectedBarangay}>
+            <option value="all">üåê City-wide (All Barangays)</option>
+            {BARANGAY_FILTER_OPTIONS.map((b) => (
               <option key={b.id} value={b.id}>{b.name}</option>
             ))}
           </FilterSelect>
 
-          {/* Active scope badge */}
-          {(selectedCluster !== "all" || selectedBarangay !== "all") && (
+          {selectedBarangay !== "all" && (
             <button
-              onClick={() => { setSelectedCluster("all"); setSelectedBarangay("all"); }}
+              onClick={() => setSelectedBarangay("all")}
               className="flex items-center gap-1.5 rounded-lg px-3 py-2 font-medium transition-colors hover:bg-red-50"
               style={{ fontSize: 12, border: "1.5px solid #FECACA", color: "#DC2626", background: "#FFF5F5" }}
             >
-              ? Clear filter
+              ‚úï Clear filter
             </button>
           )}
 
@@ -273,23 +224,14 @@ export default function Reports() {
       </div>
 
       {/* Scope indicator strip */}
-      {selectedCluster !== "all" && (
-        <div
-          className="flex items-center gap-2 rounded-lg px-4 py-2.5"
-          style={{ background: "#E8F5E9", border: "1px solid #C8E6C9" }}
-        >
+      {selectedBarangay !== "all" && (
+        <div className="flex items-center gap-2 rounded-lg px-4 py-2.5"
+          style={{ background: "#E8F5E9", border: "1px solid #C8E6C9" }}>
           <span className="rounded-full font-semibold text-white px-2 py-0.5"
-            style={{ fontSize: 11, background: "#2E7D32" }}>
-            Filtered
-          </span>
+            style={{ fontSize: 11, background: "#2E7D32" }}>Filtered</span>
           <span className="text-text-secondary font-medium" style={{ fontSize: 13 }}>
             Showing data for: <strong style={{ color: "#1B5E20" }}>{scopeLabel}</strong>
           </span>
-          {selectedBarangay === "all" && (
-            <span className="text-text-muted" style={{ fontSize: 12 }}>
-              ó select a barangay below to drill down further
-            </span>
-          )}
         </div>
       )}
 
@@ -309,9 +251,8 @@ export default function Reports() {
           value={`${(kpi.totalWasteKg / 1000).toFixed(1)}t`} growth={kpi.wasteGrowth} sub="metric tons this period" />
       </div>
 
-      {/* Collections chart + Cluster rates */}
+      {/* Collections chart + Collection rate */}
       <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 340px" }}>
-
         <Section
           title="Collections Overview"
           action={
@@ -339,71 +280,49 @@ export default function Reports() {
             {collectionData.map((d, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
                 <span className="rounded-full font-semibold text-white flex items-center justify-center"
-                  style={{ width: 20, height: 20, fontSize: 9, background: "#DC2626" }}>
-                  {d.missed}
-                </span>
+                  style={{ width: 20, height: 20, fontSize: 9, background: "#DC2626" }}>{d.missed}</span>
                 <span className="text-text-muted" style={{ fontSize: 9 }}>missed</span>
               </div>
             ))}
           </div>
         </Section>
 
-        {/* Cluster rates ó only show at city-wide scope */}
-        {selectedCluster === "all" ? (
-          <Section title="Collection Rate by Cluster">
-            <div className="flex flex-col gap-3">
-              {CLUSTER_COLLECTION_RATES.map((c) => (
-                <HBar key={c.cluster} label={c.label.replace(" (North Zone)", "")} value={c.rate} max={100}
-                  color={c.rate >= 80 ? "#2E7D32" : c.rate >= 70 ? "#D97706" : "#DC2626"} />
-              ))}
+        {/* Collection rate card */}
+        <Section title={selectedBarangay !== "all" ? "Barangay Collection Rate" : "City Collection Rate"}>
+          <div className="flex flex-col items-center justify-center flex-1 gap-3 py-4">
+            <div className="relative flex items-center justify-center" style={{ width: 120, height: 120 }}>
+              <svg viewBox="0 0 36 36" style={{ width: 120, height: 120, transform: "rotate(-90deg)" }}>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F3F4F6" strokeWidth="3.2" />
+                <circle cx="18" cy="18" r="15.9" fill="none"
+                  stroke={kpi.avgCollectionRate >= 80 ? "#2E7D32" : kpi.avgCollectionRate >= 70 ? "#D97706" : "#DC2626"}
+                  strokeWidth="3.2"
+                  strokeDasharray={`${kpi.avgCollectionRate} ${100 - kpi.avgCollectionRate}`}
+                  strokeLinecap="round" />
+              </svg>
+              <div className="absolute flex flex-col items-center">
+                <span className="font-bold text-text-primary" style={{ fontSize: 22 }}>{kpi.avgCollectionRate}%</span>
+                <span className="text-text-muted" style={{ fontSize: 10 }}>rate</span>
+              </div>
             </div>
-            <div className="rounded-lg px-3 py-2 mt-1" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-              <p className="text-text-muted" style={{ fontSize: 11 }}>
-                City average: <strong style={{ color: "#2E7D32" }}>{REPORT_KPI.avgCollectionRate}%</strong>
-                &nbsp;∑&nbsp;Target: <strong>85%</strong>
+            <div className="text-center">
+              <p className="font-semibold text-text-primary" style={{ fontSize: 14 }}>{scopeLabel}</p>
+              <p className="text-text-muted mt-0.5" style={{ fontSize: 12 }}>
+                {kpi.totalCollections} collected ‚Äî {kpi.missedCollections} missed
               </p>
             </div>
-          </Section>
-        ) : (
-          /* Scoped: show a single rate card */
-          <Section title={selectedBarangay !== "all" ? "Barangay Collection Rate" : "Cluster Collection Rate"}>
-            <div className="flex flex-col items-center justify-center flex-1 gap-3 py-4">
-              <div className="relative flex items-center justify-center"
-                style={{ width: 120, height: 120 }}>
-                <svg viewBox="0 0 36 36" style={{ width: 120, height: 120, transform: "rotate(-90deg)" }}>
-                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F3F4F6" strokeWidth="3.2" />
-                  <circle cx="18" cy="18" r="15.9" fill="none"
-                    stroke={kpi.avgCollectionRate >= 80 ? "#2E7D32" : kpi.avgCollectionRate >= 70 ? "#D97706" : "#DC2626"}
-                    strokeWidth="3.2"
-                    strokeDasharray={`${kpi.avgCollectionRate} ${100 - kpi.avgCollectionRate}`}
-                    strokeLinecap="round" />
-                </svg>
-                <div className="absolute flex flex-col items-center">
-                  <span className="font-bold text-text-primary" style={{ fontSize: 22 }}>{kpi.avgCollectionRate}%</span>
-                  <span className="text-text-muted" style={{ fontSize: 10 }}>rate</span>
-                </div>
-              </div>
-              <div className="text-center">
-                <p className="font-semibold text-text-primary" style={{ fontSize: 14 }}>{scopeLabel}</p>
-                <p className="text-text-muted mt-0.5" style={{ fontSize: 12 }}>
-                  {kpi.totalCollections} collected ∑ {kpi.missedCollections} missed
-                </p>
-              </div>
-              <GrowthBadge value={kpi.collectionRateChange} />
-            </div>
-            <div className="rounded-lg px-3 py-2" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-              <p className="text-text-muted" style={{ fontSize: 11 }}>
-                City average: <strong style={{ color: "#2E7D32" }}>{REPORT_KPI.avgCollectionRate}%</strong>
-                &nbsp;∑&nbsp;Target: <strong>85%</strong>
-              </p>
-            </div>
-          </Section>
-        )}
+            <GrowthBadge value={kpi.collectionRateChange} />
+          </div>
+          <div className="rounded-lg px-3 py-2" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            <p className="text-text-muted" style={{ fontSize: 11 }}>
+              Target: <strong>85%</strong>
+            </p>
+          </div>
+        </Section>
       </div>
 
       {/* Full bin trend + Waste by type */}
       <div className="grid grid-cols-2 gap-4">
-        <Section title="Full Bin Reports ó Last 14 Days">
+        <Section title="Full Bin Reports ‚Äî Last 14 Days">
           <div className="flex items-end justify-between mb-1">
             <div>
               <span className="font-bold text-text-primary" style={{ fontSize: 24 }}>
@@ -444,16 +363,16 @@ export default function Reports() {
           <div className="rounded-lg px-3 py-2 mt-1" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
             <p className="text-text-muted" style={{ fontSize: 11 }}>
               Total: <strong style={{ color: "#1A1A1A" }}>{totalWaste.toLocaleString()} kg</strong>
-              &nbsp;∑&nbsp;{(totalWaste / 1000).toFixed(1)} metric tons
+              &nbsp;‚Äî&nbsp;{(totalWaste / 1000).toFixed(1)} metric tons
             </p>
           </div>
         </Section>
       </div>
 
-      {/* Eco tokens + Resident engagement ó city-wide only */}
-      {selectedCluster === "all" && (
+      {/* Eco tokens + Resident engagement ‚Äî city-wide only */}
+      {selectedBarangay === "all" && (
         <div className="grid grid-cols-2 gap-4">
-          <Section title="Eco Token Issuance ó Monthly">
+          <Section title="Eco Token Issuance ‚Äî Monthly">
             <BarChart data={ECO_TOKEN_MONTHLY} valueKey="tokens" labelKey="month" height={140} />
             <div className="flex items-center justify-between mt-1">
               <span className="text-text-muted" style={{ fontSize: 12 }}>
@@ -462,7 +381,7 @@ export default function Reports() {
               <GrowthBadge value={REPORT_KPI.tokenGrowth} />
             </div>
           </Section>
-          <Section title="Resident Engagement ó Monthly">
+          <Section title="Resident Engagement ‚Äî Monthly">
             <BarChart data={RESIDENT_ENGAGEMENT} valueKey="activeReporters" labelKey="month" height={140} />
             <div className="flex items-center justify-between mt-1">
               <span className="text-text-muted" style={{ fontSize: 12 }}>
@@ -474,67 +393,26 @@ export default function Reports() {
         </div>
       )}
 
-      {/* Cluster performance table + Missed reasons */}
+      {/* Performance summary + Missed reasons */}
       <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 300px" }}>
+        <Section title="Performance Summary">
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: "Collection Rate",     value: `${kpi.avgCollectionRate}%`,              color: kpi.avgCollectionRate >= 80 ? "#2E7D32" : kpi.avgCollectionRate >= 70 ? "#D97706" : "#DC2626" },
+              { label: "Resident Engagement", value: `${kpi.activeResidents.toLocaleString()}`, color: "#D97706" },
+              { label: "Eco Tokens Issued",   value: fmt(kpi.ecoTokensIssued),                 color: "#2E7D32" },
+              { label: "Waste Collected",     value: `${(kpi.totalWasteKg / 1000).toFixed(1)}t`, color: "#6B7280" },
+            ].map((item) => (
+              <div key={item.label} className="rounded-lg p-3 flex flex-col gap-1"
+                style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                <span className="text-text-muted" style={{ fontSize: 11 }}>{item.label}</span>
+                <span className="font-bold" style={{ fontSize: 20, color: item.color }}>{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </Section>
 
-        {/* Cluster scorecard ó city-wide only; scoped shows a summary card */}
-        {selectedCluster === "all" ? (
-          <Section title="Cluster Performance Scorecard">
-            <div className="overflow-x-auto">
-              <table className="w-full" style={{ borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1.5px solid #F3F4F6" }}>
-                    {["Cluster", "Collection Rate", "Resident Engagement", "Avg Response", "Score"].map((h) => (
-                      <th key={h} className="text-left pb-2 font-semibold text-text-muted"
-                        style={{ fontSize: 12, paddingRight: 16 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {CLUSTER_PERFORMANCE.map((c, i) => (
-                    <tr key={c.cluster}
-                      style={{ borderBottom: i < CLUSTER_PERFORMANCE.length - 1 ? "1px solid #F9FAFB" : "none" }}>
-                      <td className="py-2.5 font-medium text-text-primary" style={{ fontSize: 13, paddingRight: 16 }}>{c.label}</td>
-                      <td className="py-2.5" style={{ fontSize: 13, paddingRight: 16 }}>
-                        <span style={{ color: c.collectionRate >= 80 ? "#2E7D32" : c.collectionRate >= 70 ? "#D97706" : "#DC2626", fontWeight: 600 }}>
-                          {c.collectionRate}%
-                        </span>
-                      </td>
-                      <td className="py-2.5 text-text-secondary" style={{ fontSize: 13, paddingRight: 16 }}>{c.residentEngagement}%</td>
-                      <td className="py-2.5 text-text-secondary" style={{ fontSize: 13, paddingRight: 16 }}>{c.avgResponseMin} min</td>
-                      <td className="py-2.5" style={{ fontSize: 13 }}>
-                        <span className="rounded-full px-2.5 py-0.5 font-semibold"
-                          style={{ background: c.score >= 85 ? "#E8F5E9" : c.score >= 75 ? "#FFF3E0" : "#FFEBEE", color: c.score >= 85 ? "#2E7D32" : c.score >= 75 ? "#D97706" : "#DC2626" }}>
-                          {c.score}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Section>
-        ) : (
-          <Section title="Scoped Performance Summary">
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: "Collection Rate",    value: `${kpi.avgCollectionRate}%`,              color: kpi.avgCollectionRate >= 80 ? "#2E7D32" : kpi.avgCollectionRate >= 70 ? "#D97706" : "#DC2626" },
-                { label: "Resident Engagement",value: `${kpi.activeResidents.toLocaleString()}`, color: "#D97706" },
-                { label: "Eco Tokens Issued",  value: fmt(kpi.ecoTokensIssued),                 color: "#2E7D32" },
-                { label: "Waste Collected",    value: `${(kpi.totalWasteKg / 1000).toFixed(1)}t`, color: "#6B7280" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-lg p-3 flex flex-col gap-1"
-                  style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-                  <span className="text-text-muted" style={{ fontSize: 11 }}>{item.label}</span>
-                  <span className="font-bold" style={{ fontSize: 20, color: item.color }}>{item.value}</span>
-                </div>
-              ))}
-            </div>
-          </Section>
-        )}
-
-        {/* Missed reasons ó always scoped */}
-        <Section title="Missed ó Top Reasons">
+        <Section title="Missed ‚Äî Top Reasons">
           <div className="flex flex-col gap-3">
             {missedData.filter((r) => r.count > 0).map((r) => (
               <div key={r.reason} className="flex items-center gap-3">
@@ -573,7 +451,9 @@ export default function Reports() {
                 </div>
                 <div>
                   <div className="font-medium text-text-primary" style={{ fontSize: 13 }}>{r.name}</div>
-                  <div className="text-text-muted" style={{ fontSize: 11 }}>{formatExportDate(r.generatedAt)} ∑ {r.generatedBy}</div>
+                  <div className="text-text-muted" style={{ fontSize: 11 }}>
+                    {new Date(r.generatedAt).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })} ‚Äî {r.generatedBy}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -594,5 +474,3 @@ export default function Reports() {
     </div>
   );
 }
-
-

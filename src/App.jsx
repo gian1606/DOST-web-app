@@ -16,16 +16,6 @@ import SANotifications          from "./super-admin/Notifications";
 import SALeaderboard            from "./super-admin/Leaderboard";
 import SASettings               from "./super-admin/Settings";
 
-// ── Cluster Admin ──────────────────────────────────────────────────────────────
-import ClusterAdminShell  from "./cluster-admin/layout/AppShell";
-import CADashboard        from "./cluster-admin/pages/Dashboard";
-import CAMapCollection    from "./cluster-admin/pages/MapCollection";
-import CAUserManagement   from "./cluster-admin/pages/UserManagement";
-import CAReports          from "./cluster-admin/pages/Reports";
-import CANotifications    from "./cluster-admin/pages/Notifications";
-import CALeaderboard      from "./cluster-admin/pages/Leaderboard";
-import CASettings         from "./cluster-admin/pages/Settings";
-
 // ── Collector Admin ────────────────────────────────────────────────────────────
 import CollectorAdminShell    from "./collector-admin/components/layout/AppShell";
 import CollectorDashboard     from "./collector-admin/pages/Dashboard";
@@ -45,8 +35,6 @@ import Leaderboard     from "./punong-barangay/Leaderboard";
 import MRFPersonnel    from "./punong-barangay/MRFPersonnel";
 import BinQRCodes      from "./punong-barangay/BinQRCodes";
 import PBSettings      from "./punong-barangay/PBSettings";
-
-// ── Shared ─────────────────────────────────────────────────────────────────────
 
 export default function App() {
   return (
@@ -70,18 +58,6 @@ export default function App() {
           <Route path="notifications" element={<SANotifications />} />
           <Route path="leaderboard"   element={<SALeaderboard />} />
           <Route path="settings"      element={<SASettings />} />
-        </Route>
-
-        {/* ── Cluster Admin ─────────────────────────────────────────────────── */}
-        <Route path="/cluster-admin" element={<ClusterAdminShell />}>
-          <Route index element={<Navigate to="/cluster-admin/dashboard" replace />} />
-          <Route path="dashboard"     element={<CADashboard />} />
-          <Route path="map"           element={<CAMapCollection />} />
-          <Route path="users"         element={<CAUserManagement />} />
-          <Route path="reports"       element={<CAReports />} />
-          <Route path="notifications" element={<CANotifications />} />
-          <Route path="leaderboard"   element={<CALeaderboard />} />
-          <Route path="settings"      element={<CASettings />} />
         </Route>
 
         {/* ── Collector Admin ───────────────────────────────────────────────── */}
@@ -114,4 +90,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-

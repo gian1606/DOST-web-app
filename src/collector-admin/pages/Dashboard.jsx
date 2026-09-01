@@ -8,7 +8,7 @@ import { CA_DASHBOARD_STATS, BINS, COLLECTOR_UNITS, CA_INCOMING_ROUTE, CA_RECENT
 
 export default function CADashboard() {
   const navigate = useNavigate();
-  const clusterBins = BINS.filter((b) => b.cluster === "c1");
+  const clusterBins = BINS;
   const fullBins = clusterBins.filter((b) => b.status === "full");
   const unitTrucks = COLLECTOR_UNITS.map((u) => ({ id: u.id, label: u.name, status: u.status, posX: u.posX, posY: u.posY }));
   const today = new Date().toLocaleDateString("en-PH", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
@@ -32,13 +32,13 @@ export default function CADashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Dashboard</h1>
-          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>{today} · Cluster 1 (North Zone)</p>
+          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>{today} · Batangas City</p>
         </div>
         <button className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors" style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#fff", color: "#6B7280" }}><RefreshCw size={14} />Refresh</button>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <StatCard icon={<Trash2 size={18} color="#6B7280" />} value={CA_DASHBOARD_STATS.totalBins} label="Total Bins" subLabel="Cluster 1" />
+        <StatCard icon={<Trash2 size={18} color="#6B7280" />} value={CA_DASHBOARD_STATS.totalBins} label="Total Bins" subLabel="Batangas City" />
         <StatCard icon={<Trash2 size={18} color="#DC2626" />} value={CA_DASHBOARD_STATS.fullBins} label="Full Bins" subLabel="Needs collection" subLabelColor="#DC2626" />
         <StatCard icon={<CheckCircle size={18} color="#2E7D32" />} value={CA_DASHBOARD_STATS.collectedToday} label="Collected Today" subLabel={`${Math.round((CA_DASHBOARD_STATS.collectedToday / CA_DASHBOARD_STATS.totalBins) * 100)}% of target`} subLabelColor="#2E7D32" />
         <StatCard icon={<Truck size={18} color="#1976D2" />} value={CA_DASHBOARD_STATS.activeUnits} label="Collector Units" subLabel="1 en route" subLabelColor="#1976D2" />
@@ -47,7 +47,7 @@ export default function CADashboard() {
       <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 420px" }}>
         <div className="bg-white rounded-xl p-4 flex flex-col gap-3" style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Live Map — Cluster 1</h2>
+            <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Live Map</h2>
             <span className="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium" style={{ fontSize: 11, background: "#E8F5E9", color: "#2E7D32" }}>
               <span className="rounded-full" style={{ width: 6, height: 6, background: "#2E7D32", display: "inline-block" }} />Live
             </span>

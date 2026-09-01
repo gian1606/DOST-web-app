@@ -110,7 +110,7 @@ function KpiCard({ icon, label, value, growth, sub, bg = "#F9FAFB" }) {
 export default function CAReports() {
   const [period, setPeriod] = useState("monthly");
 
-  const clusterBins   = BINS.filter((b) => b.cluster === "c1");
+  const clusterBins   = BINS;
   const collectedBins = clusterBins.filter((b) => b.status === "collected").length;
   const fullBins      = clusterBins.filter((b) => b.status === "full").length;
   const missedBins    = clusterBins.filter((b) => b.status === "missed").length;
@@ -128,7 +128,7 @@ export default function CAReports() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Reports &amp; Analytics</h1>
-          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>Solid East — Cluster 1 · May 2026</p>
+          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>Batangas City · May 2026</p>
         </div>
         <button className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
           style={{ fontSize: 13, background: "#2E7D32" }}>

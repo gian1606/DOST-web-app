@@ -1,30 +1,19 @@
-import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 import MapView from "../components/ui/MapView";
-import ClusterFilter from "../components/ui/ClusterFilter";
 import { BINS, TRUCKS, MRF_LOCATIONS } from "../mock/data";
 
 export default function MapCollection() {
-  const [cluster, setCluster] = useState("all");
-
-  const filteredBins = cluster === "all" ? BINS : BINS.filter((b) => b.cluster === cluster);
-  const filteredMRFs = cluster === "all" ? MRF_LOCATIONS : MRF_LOCATIONS.filter((m) => m.cluster === cluster);
-
-  const fullCount      = filteredBins.filter((b) => b.status === "full").length;
-  const collectedCount = filteredBins.filter((b) => b.status === "collected").length;
-  const missedCount    = filteredBins.filter((b) => b.status === "missed").length;
+  const fullCount      = BINS.filter((b) => b.status === "full").length;
+  const collectedCount = BINS.filter((b) => b.status === "collected").length;
+  const missedCount    = BINS.filter((b) => b.status === "missed").length;
 
   return (
     <div className="flex flex-col gap-5">
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>
-            Map &amp; Collection
-          </h1>
-          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-            Real-time bin status and truck tracking
-          </p>
+          <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Map &amp; Collection</h1>
+          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>Real-time bin status and truck tracking</p>
         </div>
         <button
           className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors"
@@ -34,9 +23,6 @@ export default function MapCollection() {
           Refresh
         </button>
       </div>
-
-      {/* Cluster filter */}
-      <ClusterFilter value={cluster} onChange={setCluster} />
 
       {/* Bin status summary */}
       <div className="grid grid-cols-3 gap-4">
@@ -50,13 +36,8 @@ export default function MapCollection() {
             className="rounded-xl px-5 py-4 flex items-center gap-3"
             style={{ background: s.bg, border: `1px solid ${s.color}22` }}
           >
-            <span
-              className="rounded-full"
-              style={{ width: 12, height: 12, background: s.color, display: "inline-block", flexShrink: 0 }}
-            />
-            <span className="font-bold" style={{ fontSize: 22, color: s.color, fontVariantNumeric: "tabular-nums" }}>
-              {s.count}
-            </span>
+            <span className="rounded-full" style={{ width: 12, height: 12, background: s.color, display: "inline-block", flexShrink: 0 }} />
+            <span className="font-bold" style={{ fontSize: 22, color: s.color, fontVariantNumeric: "tabular-nums" }}>{s.count}</span>
             <span className="font-medium text-text-secondary" style={{ fontSize: 14 }}>{s.label}</span>
           </div>
         ))}
@@ -67,14 +48,8 @@ export default function MapCollection() {
         className="bg-white rounded-xl p-4"
         style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
       >
-        <MapView
-          bins={filteredBins}
-          trucks={TRUCKS}
-          mrfs={filteredMRFs}
-          height={520}
-        />
+        <MapView bins={BINS} trucks={TRUCKS} mrfs={MRF_LOCATIONS} height={520} />
       </div>
     </div>
   );
 }
-
