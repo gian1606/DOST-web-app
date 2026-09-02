@@ -3,7 +3,9 @@ import PBSidebar from "./PBSidebar";
 import PBTopHeader from "./PBTopHeader";
 
 export default function PBAppShell() {
-  const isAuth = sessionStorage.getItem("bs_pb_auth") === "true";
+  const isAuth =
+    sessionStorage.getItem("bs_token") !== null &&
+    sessionStorage.getItem("bs_role") === "punong_barangay";
   if (!isAuth) return <Navigate to="/login" replace />;
 
   return (
