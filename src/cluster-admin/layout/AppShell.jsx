@@ -4,7 +4,7 @@ import TopHeader from "./TopHeader";
 
 export default function ClusterAdminAppShell() {
   const isAuth =
-    sessionStorage.getItem("bs_auth") === "true" &&
+    sessionStorage.getItem("bs_token") !== null &&
     sessionStorage.getItem("bs_role") === "cluster_admin";
   if (!isAuth) return <Navigate to="/login" replace />;  // redirects to shared login
 
