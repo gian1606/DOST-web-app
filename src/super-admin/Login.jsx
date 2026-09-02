@@ -1,7 +1,16 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock } from "lucide-react";
-import { MOCK_CREDENTIALS, PB_CREDENTIALS, CA_CREDENTIALS } from "../mock/data";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+// Role → dashboard route mapping
+const ROLE_ROUTES = {
+  super_admin:     "/super-admin/dashboard",
+  cluster_admin:   "/cluster-admin/dashboard",
+  collector_admin: "/ca/dashboard",
+  punong_barangay: "/pb/dashboard",
+};
 
 /* ── Floating-label field ───────────────────────────────────────────────── */
 function FloatingField({ id, label, type = "text", value, onChange, error, rightSlot }) {
@@ -11,7 +20,6 @@ function FloatingField({ id, label, type = "text", value, onChange, error, right
   return (
     <div className="flex flex-col gap-1">
       <div style={{ position: "relative" }}>
-        {/* The label floats above when lifted */}
         <label
           htmlFor={id}
           style={{
@@ -107,28 +115,47 @@ export default function Login() {
     return e;
   }
 
-  function handleSubmit(ev) {
+  async function handleSubmit(ev) {
     ev.preventDefault();
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
 
     setLoading(true);
-    setTimeout(() => {
-      if (email === MOCK_CREDENTIALS.email && password === MOCK_CREDENTIALS.password) {
-        sessionStorage.setItem("bs_auth", "true");
-        sessionStorage.setItem("bs_role", "super_admin");
-        navigate("/super-admin/dashboard");
-      } else if (email === CA_CREDENTIALS.email && password === CA_CREDENTIALS.password) {
-        sessionStorage.setItem("bs_ca_auth", "true");
-        navigate("/ca/dashboard");
-      } else if (email === PB_CREDENTIALS.email && password === PB_CREDENTIALS.password) {
-        sessionStorage.setItem("bs_pb_auth", "true");
-        navigate("/pb/dashboard");
+    setErrors({});
+
+    try {
+      const res = await fetch(`${API_URL}/auth/login`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ email: email.trim().toLowerCase(), password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrors({ form: data.error || "Invalid email or password. Please try again." });
+        setLoading(false);
+        return;
+      }
+
+      // Store token and user info
+      sessionStorage.setItem("bs_token", data.token);
+      sessionStorage.setItem("bs_user",  JSON.stringify(data.user));
+      sessionStorage.setItem("bs_role",  data.user.role);
+
+      // Redirect based on role
+      const route = ROLE_ROUTES[data.user.role];
+      if (route) {
+        navigate(route);
       } else {
-        setErrors({ form: "Invalid email or password. Please try again." });
+        setErrors({ form: "Your account does not have access to this portal." });
+        sessionStorage.clear();
         setLoading(false);
       }
-    }, 600);
+    } catch {
+      setErrors({ form: "Unable to connect to the server. Please try again." });
+      setLoading(false);
+    }
   }
 
   return (
@@ -159,8 +186,7 @@ export default function Login() {
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           border: "1.5px solid rgba(255,255,255,0.22)",
-          boxShadow:
-            "0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15)",
+          boxShadow: "0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15)",
         }}
       >
         {/* Seal */}
@@ -179,11 +205,7 @@ export default function Login() {
         {/* Wordmark */}
         <div
           className="font-bold text-center"
-          style={{
-            fontSize: 28,
-            color: "#fff",
-            textShadow: "0 2px 8px rgba(0,0,0,0.35)",
-          }}
+          style={{ fontSize: 28, color: "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
         >
           BE-SMART
         </div>
@@ -269,14 +291,13 @@ export default function Login() {
               transition: "box-shadow 0.2s",
             }}
             onMouseEnter={(e) => {
-              if (!loading)
-                e.currentTarget.style.boxShadow = "0 6px 22px rgba(46,125,50,0.55)";
+              if (!loading) e.currentTarget.style.boxShadow = "0 6px 22px rgba(46,125,50,0.55)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.boxShadow = "0 4px 15px rgba(46,125,50,0.35)";
             }}
           >
-            {loading ? "Signing in..." : "Sign In to Dashboard"}
+            {loading ? "Signing in…" : "Sign In to Dashboard"}
           </button>
         </form>
 
@@ -294,7 +315,7 @@ export default function Login() {
       <style>{`
         input:-webkit-autofill,
         input:-webkit-autofill:focus {
-          -webkit-box-shadow: 0 0 0 1000px rgba(30,45,30,0.92) inset !important;
+          -webkit-box-shadow: 0 0 0 1000px rgba(10,30,15,0.92) inset !important;
           -webkit-text-fill-color: #fff !important;
           caret-color: #fff;
         }
