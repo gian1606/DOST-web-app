@@ -3,8 +3,10 @@ import Sidebar from "./Sidebar";
 import TopHeader from "./TopHeader";
 
 export default function CAAppShell() {
-  const isAuth = sessionStorage.getItem("bs_ca_auth") === "true";
-  if (!isAuth) return <Navigate to="/ca/login" replace />;
+  const isAuth =
+    sessionStorage.getItem("bs_token") !== null &&
+    sessionStorage.getItem("bs_role") === "collector_admin";
+  if (!isAuth) return <Navigate to="/login" replace />;
 
   return (
     <div className="min-h-screen" style={{ background: "#F4F6F9" }}>

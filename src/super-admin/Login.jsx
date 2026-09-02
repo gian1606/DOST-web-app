@@ -11,6 +11,7 @@ const ROLE_ROUTES = {
   collector_admin: "/ca/dashboard",
   punong_barangay: "/pb/dashboard",
 };
+<<<<<<< HEAD
 
 /* ── Floating-label field ───────────────────────────────────────────────── */
 function FloatingField({ id, label, type = "text", value, onChange, error, rightSlot }) {
@@ -97,6 +98,8 @@ function FloatingField({ id, label, type = "text", value, onChange, error, right
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
+=======
+>>>>>>> origin/main
 
 export default function Login() {
   const navigate = useNavigate();
@@ -152,7 +155,12 @@ export default function Login() {
         sessionStorage.clear();
         setLoading(false);
       }
+<<<<<<< HEAD
     } catch {
+=======
+
+    } catch (err) {
+>>>>>>> origin/main
       setErrors({ form: "Unable to connect to the server. Please try again." });
       setLoading(false);
     }
@@ -177,6 +185,7 @@ export default function Login() {
 
       {/* ── Glassmorphism card ── */}
       <div
+<<<<<<< HEAD
         className="relative z-10 w-full flex flex-col items-center"
         style={{
           maxWidth: 480,
@@ -187,6 +196,14 @@ export default function Login() {
           WebkitBackdropFilter: "blur(20px)",
           border: "1.5px solid rgba(255,255,255,0.22)",
           boxShadow: "0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15)",
+=======
+        className="relative z-10 w-full bg-white flex flex-col items-center"
+        style={{
+          maxWidth: 480,
+          borderRadius: 16,
+          padding: 40,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+>>>>>>> origin/main
         }}
       >
         {/* Seal */}
@@ -194,6 +211,7 @@ export default function Login() {
           src="/Batangas_logo.png"
           alt="Batangas City Seal"
           className="mb-4"
+<<<<<<< HEAD
           style={{
             width: 80,
             height: 80,
@@ -216,6 +234,21 @@ export default function Login() {
           Batangas Environmental Segregation, Monitoring,
           <br />
           Analytics &amp; Rewards Technology
+=======
+          style={{ width: 80, height: 80, objectFit: "contain" }}
+        />
+
+        {/* Wordmark */}
+        <div className="font-bold text-text-primary text-center" style={{ fontSize: 28 }}>
+          BE-SMART
+        </div>
+        <div
+          className="text-center mt-1 mb-5"
+          style={{ fontSize: 12, color: "#388E3C", maxWidth: 320, lineHeight: 1.5 }}
+        >
+          Batangas Environmental Segregation, Monitoring,
+          <br />Analytics &amp; Rewards Technology
+>>>>>>> origin/main
         </div>
 
         {/* Form */}
@@ -223,17 +256,22 @@ export default function Login() {
           {errors.form && (
             <div
               className="rounded-lg px-4 py-3 text-center font-medium"
+<<<<<<< HEAD
               style={{
                 background: "rgba(220,38,38,0.18)",
                 color: "#FCA5A5",
                 fontSize: 13,
                 border: "1px solid rgba(220,38,38,0.35)",
               }}
+=======
+              style={{ background: "#FFEBEE", color: "#DC2626", fontSize: 13 }}
+>>>>>>> origin/main
             >
               {errors.form}
             </div>
           )}
 
+<<<<<<< HEAD
           <FloatingField
             id="login-email"
             label="Email Address"
@@ -257,6 +295,58 @@ export default function Login() {
               setErrors((p) => ({ ...p, password: undefined, form: undefined }));
             }}
             rightSlot={
+=======
+          {/* Email */}
+          <div className="flex flex-col gap-1">
+            <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrors((p) => ({ ...p, email: undefined, form: undefined }));
+              }}
+              placeholder="superadmin@besmart.gov.ph"
+              className="w-full rounded-lg px-4 py-2.5 outline-none transition-colors"
+              style={{
+                fontSize: 14,
+                border: errors.email ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB",
+                background: "#F9FAFB",
+              }}
+              onFocus={(e) => (e.target.style.borderColor = "#2E7D32")}
+              onBlur={(e)  => (e.target.style.borderColor = errors.email ? "#DC2626" : "#E5E7EB")}
+            />
+            {errors.email && (
+              <span style={{ fontSize: 12, color: "#DC2626" }}>{errors.email}</span>
+            )}
+          </div>
+
+          {/* Password */}
+          <div className="flex flex-col gap-1">
+            <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPw ? "text" : "password"}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrors((p) => ({ ...p, password: undefined, form: undefined }));
+                }}
+                placeholder="••••••••"
+                className="w-full rounded-lg px-4 py-2.5 pr-11 outline-none transition-colors"
+                style={{
+                  fontSize: 14,
+                  border: errors.password ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB",
+                  background: "#F9FAFB",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#2E7D32")}
+                onBlur={(e)  => (e.target.style.borderColor = errors.password ? "#DC2626" : "#E5E7EB")}
+              />
+>>>>>>> origin/main
               <button
                 type="button"
                 onClick={() => setShowPw((v) => !v)}
@@ -272,13 +362,22 @@ export default function Login() {
               >
                 {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
+<<<<<<< HEAD
             }
           />
+=======
+            </div>
+            {errors.password && (
+              <span style={{ fontSize: 12, color: "#DC2626" }}>{errors.password}</span>
+            )}
+          </div>
+>>>>>>> origin/main
 
           {/* Submit */}
           <button
             type="submit"
             disabled={loading}
+<<<<<<< HEAD
             className="w-full rounded-xl py-3 font-semibold text-white mt-1"
             style={{
               background: loading
@@ -295,6 +394,13 @@ export default function Login() {
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.boxShadow = "0 4px 15px rgba(46,125,50,0.35)";
+=======
+            className="w-full rounded-lg py-3 font-semibold text-white transition-opacity mt-1"
+            style={{
+              background: "#2E7D32",
+              fontSize: 15,
+              opacity: loading ? 0.7 : 1,
+>>>>>>> origin/main
             }}
           >
             {loading ? "Signing in…" : "Sign In to Dashboard"}
@@ -304,7 +410,11 @@ export default function Login() {
         {/* Security note */}
         <div
           className="flex items-center gap-1.5 mt-5"
+<<<<<<< HEAD
           style={{ fontSize: 12, color: "rgba(255,255,255,0.40)" }}
+=======
+          style={{ fontSize: 12, color: "#9CA3AF" }}
+>>>>>>> origin/main
         >
           <Lock size={12} />
           <span>Secured access · Batangas City Government</span>

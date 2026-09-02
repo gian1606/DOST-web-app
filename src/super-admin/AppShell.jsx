@@ -4,7 +4,7 @@ import TopHeader from "./TopHeader";
 
 export default function AppShell() {
   const isAuth =
-    sessionStorage.getItem("bs_auth") === "true" &&
+    sessionStorage.getItem("bs_token") !== null &&
     sessionStorage.getItem("bs_role") === "super_admin";
   if (!isAuth) return <Navigate to="/login" replace />;
 
