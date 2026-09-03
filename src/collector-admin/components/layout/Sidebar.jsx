@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import { LayoutGrid, Map, BarChart2, Truck, Users, Settings } from "lucide-react";
-import { CA_CREDENTIALS } from "../../../mock/data";
 
 const NAV_ITEMS = [
   { to: "/ca/dashboard", icon: LayoutGrid, label: "Dashboard" },
@@ -12,6 +11,8 @@ const NAV_ITEMS = [
 ];
 
 export default function CASidebar() {
+  const user = JSON.parse(sessionStorage.getItem("bs_user") || "{}");
+
   return (
     <aside className="fixed left-0 top-0 h-screen flex flex-col z-30" style={{ width: 240, background: "#1C2B1E" }}>
       <div className="px-4 pt-6 pb-4 border-b border-white/10">
@@ -24,7 +25,7 @@ export default function CASidebar() {
         </div>
         <div className="rounded-lg px-3 py-2 flex flex-col gap-0.5" style={{ background: "rgba(255,255,255,0.08)" }}>
           <div className="text-white/50 uppercase tracking-widest" style={{ fontSize: 9 }}>Logged in as</div>
-          <div className="text-white font-semibold leading-tight" style={{ fontSize: 12 }}>{CA_CREDENTIALS.name}</div>
+          <div className="text-white font-semibold leading-tight" style={{ fontSize: 12 }}>{user.name || "Collector Admin"}</div>
           <div className="text-white/50 leading-tight" style={{ fontSize: 11 }}>Collector Admin · Cluster 1</div>
         </div>
       </div>
