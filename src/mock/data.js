@@ -146,23 +146,8 @@ export const STATUS_COLORS = {
 };
 
 // -- Credentials ---------------------------------------------------------------
-export const MOCK_CREDENTIALS = {
-  email:    "superadmin@besmart.gov.ph",
-  password: "admin123",
-};
-
-export const PB_CREDENTIALS = {
-  name:     "Hon. Juan dela Cruz",
-  barangay: "Brgy. Alangilan",
-  email:    "punongbarangay@besmart.gov.ph",
-  password: "pb123",
-};
-
-export const CA_CREDENTIALS = {
-  email:    "collector.admin@besmart.gov.ph",
-  password: "collector123",
-  name:     "Juan dela Cruz",
-};
+// Mock credentials removed — authentication is handled by /api/auth/login.
+// See DOST-api for the real login endpoint.
 
 // -- Collectors (field workers) -------------------------------------------------
 export const COLLECTORS = [
