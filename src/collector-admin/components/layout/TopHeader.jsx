@@ -4,7 +4,7 @@ import {
   ChevronDown, UserCircle, Settings, LogOut,
   Bell, AlertTriangle, Megaphone, CheckCircle,
 } from "lucide-react";
-import { CA_CREDENTIALS, CA_INCOMING_ROUTE } from "../../../mock/data";
+import { CA_INCOMING_ROUTE } from "../../../mock/data";
 
 const ROUTE_LABELS = {
   "/ca/dashboard": "Dashboard",
@@ -41,6 +41,7 @@ export default function CATopHeader() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const pageLabel = ROUTE_LABELS[pathname] ?? "Dashboard";
+  const user = JSON.parse(sessionStorage.getItem("bs_user") || "{}");
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -61,8 +62,10 @@ export default function CATopHeader() {
   }, []);
 
   function handleLogout() {
-    sessionStorage.removeItem("bs_ca_auth");
-    navigate("/ca/login");
+    sessionStorage.removeItem("bs_token");
+    sessionStorage.removeItem("bs_user");
+    sessionStorage.removeItem("bs_role");
+    navigate("/login");
   }
 
   function markAllRead() {
@@ -159,7 +162,7 @@ export default function CATopHeader() {
               <UserCircle size={20} color="#2E7D32" />
             </div>
             <div>
-              <div className="font-semibold text-text-primary leading-tight" style={{ fontSize: 13 }}>{CA_CREDENTIALS.name}</div>
+              <div className="font-semibold text-text-primary leading-tight" style={{ fontSize: 13 }}>{user.name || "Collector Admin"}</div>
               <div className="text-text-muted leading-tight" style={{ fontSize: 11 }}>Collector Admin</div>
             </div>
             <ChevronDown size={14} className="text-text-muted ml-1 transition-transform" style={{ transform: profileOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
