@@ -1,17 +1,18 @@
 import SettingsPage from "../components/ui/Settings";
-import { PB_CREDENTIALS } from "../mock/data";
 
 export default function PBSettings() {
+  const user = JSON.parse(sessionStorage.getItem("bs_user") || "{}");
+
   return (
     <SettingsPage
       profile={{
-        name:       PB_CREDENTIALS.name,
-        email:      PB_CREDENTIALS.email,
+        name:       user.name     || "Punong Barangay",
+        email:      user.email    || "",
         role:       "Punong Barangay",
-        scope:      PB_CREDENTIALS.barangay,
+        scope:      user.barangay || "",
         scopeLabel: "Barangay",
       }}
-      logoutKey="bs_pb_auth"
+      logoutKey="bs_token"
       logoutPath="/login"
     />
   );
