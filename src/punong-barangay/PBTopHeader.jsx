@@ -28,6 +28,7 @@ export default function PBTopHeader() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const pageLabel = ROUTE_LABELS[pathname] ?? "Dashboard";
+  const user = JSON.parse(sessionStorage.getItem("bs_user") || "{}");
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -48,8 +49,10 @@ export default function PBTopHeader() {
   }, []);
 
   function handleLogout() {
-    sessionStorage.removeItem("bs_pb_auth");
-    navigate("/pb/login");
+    sessionStorage.removeItem("bs_token");
+    sessionStorage.removeItem("bs_user");
+    sessionStorage.removeItem("bs_role");
+    navigate("/login");
   }
 
   function markAllRead() {
