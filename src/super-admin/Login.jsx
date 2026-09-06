@@ -319,6 +319,13 @@ export default function Login() {
           -webkit-text-fill-color: #fff !important;
           caret-color: #fff;
         }
+        input::-ms-reveal,
+        input::-ms-clear,
+        input::-webkit-credentials-auto-fill-button,
+        input::-webkit-contacts-auto-fill-button {
+          display: none !important;
+          visibility: hidden !important;
+        }
       `}</style>
     </div>
   );
