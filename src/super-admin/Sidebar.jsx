@@ -12,13 +12,13 @@ import {
 
 const NAV_ITEMS = [
   { to: "/super-admin/dashboard",     icon: LayoutGrid, label: "Dashboard" },
-  { to: "/super-admin/map",           icon: Map,        label: "Map & Collection" },
-  { to: "/super-admin/routes",        icon: Route,      label: "Route Management" },
-  { to: "/super-admin/users",         icon: Users,      label: "User Management" },
-  { to: "/super-admin/organizations", icon: Building2,  label: "Organization Management" },
-  { to: "/super-admin/reports",       icon: BarChart2,  label: "Reports & Analytics" },
-  { to: "/super-admin/leaderboard",   icon: Trophy,     label: "Leaderboard" },
-  { to: "/super-admin/settings",      icon: Settings,   label: "Settings" },
+  { to: "/super-admin/map",           icon: Map,        label: "Mapa at Koleksyon" },
+  { to: "/super-admin/routes",        icon: Route,      label: "Pamamahala ng Ruta" },
+  { to: "/super-admin/users",         icon: Users,      label: "Pamamahala ng Gumagamit" },
+  { to: "/super-admin/organizations", icon: Building2,  label: "Pamamahala ng Organisasyon" },
+  { to: "/super-admin/reports",       icon: BarChart2,  label: "Mga Ulat at Pagsusuri" },
+  { to: "/super-admin/leaderboard",   icon: Trophy,     label: "Ranggo ng mga Barangay" },
+  { to: "/super-admin/settings",      icon: Settings,   label: "Mga Setting" },
 ];
 
 export default function Sidebar() {
@@ -48,7 +48,7 @@ export default function Sidebar() {
         >
           <div>
             <div className="text-white/50 uppercase tracking-widest" style={{ fontSize: 9 }}>
-              Logged in as
+              Naka-login bilang
             </div>
             <div className="text-white font-semibold" style={{ fontSize: 12 }}>
               Super Admin

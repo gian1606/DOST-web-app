@@ -4,7 +4,6 @@ import { Eye, EyeOff, Lock } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Role → dashboard route mapping
 const ROLE_ROUTES = {
   super_admin:     "/super-admin/dashboard",
   cluster_admin:   "/cluster-admin/dashboard",
@@ -12,7 +11,6 @@ const ROLE_ROUTES = {
   punong_barangay: "/pb/dashboard",
 };
 
-/* ── Floating-label field ───────────────────────────────────────────────── */
 function FloatingField({ id, label, type = "text", value, onChange, error, rightSlot }) {
   const [focused, setFocused] = useState(false);
   const lifted = focused || value.length > 0;
@@ -29,11 +27,7 @@ function FloatingField({ id, label, type = "text", value, onChange, error, right
             transform: lifted ? "none" : "translateY(-50%)",
             fontSize: lifted ? 10 : 14,
             fontWeight: lifted ? 600 : 400,
-            color: focused
-              ? "#86EFAC"
-              : error
-              ? "#FCA5A5"
-              : "rgba(255,255,255,0.50)",
+            color: focused ? "#86EFAC" : error ? "#FCA5A5" : "rgba(255,255,255,0.50)",
             pointerEvents: "none",
             transition: "top 0.16s ease, font-size 0.16s ease, color 0.16s ease",
             letterSpacing: lifted ? 0.3 : 0,
@@ -60,13 +54,7 @@ function FloatingField({ id, label, type = "text", value, onChange, error, right
             fontSize: 14,
             color: "#fff",
             background: "rgba(255,255,255,0.10)",
-            border: `1.5px solid ${
-              error
-                ? "rgba(220,38,38,0.8)"
-                : focused
-                ? "#2E7D32"
-                : "rgba(255,255,255,0.20)"
-            }`,
+            border: `1.5px solid ${error ? "rgba(220,38,38,0.8)" : focused ? "#2E7D32" : "rgba(255,255,255,0.20)"}`,
             borderRadius: 10,
             outline: "none",
             boxSizing: "border-box",
@@ -76,27 +64,15 @@ function FloatingField({ id, label, type = "text", value, onChange, error, right
         />
 
         {rightSlot && (
-          <div
-            style={{
-              position: "absolute",
-              right: 12,
-              top: "50%",
-              transform: "translateY(-50%)",
-            }}
-          >
+          <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}>
             {rightSlot}
           </div>
         )}
       </div>
-
-      {error && (
-        <span style={{ fontSize: 12, color: "#FCA5A5", paddingLeft: 2 }}>{error}</span>
-      )}
+      {error && <span style={{ fontSize: 12, color: "#FCA5A5", paddingLeft: 2 }}>{error}</span>}
     </div>
   );
 }
-
-/* ═══════════════════════════════════════════════════════════════════════════ */
 
 export default function Login() {
   const navigate = useNavigate();
@@ -108,10 +84,9 @@ export default function Login() {
 
   function validate() {
     const e = {};
-    if (!email.trim()) e.email = "Email address is required.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      e.email = "Enter a valid email address.";
-    if (!password) e.password = "Password is required.";
+    if (!email.trim()) e.email = "Kinakailangan ang email address.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Maglagay ng wastong email address.";
+    if (!password) e.password = "Kinakailangan ang password.";
     return e;
   }
 
@@ -133,27 +108,25 @@ export default function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        setErrors({ form: data.error || "Invalid email or password. Please try again." });
+        setErrors({ form: data.error || "Mali ang email o password. Subukan muli." });
         setLoading(false);
         return;
       }
 
-      // Store token and user info
       sessionStorage.setItem("bs_token", data.token);
       sessionStorage.setItem("bs_user",  JSON.stringify(data.user));
       sessionStorage.setItem("bs_role",  data.user.role);
 
-      // Redirect based on role
       const route = ROLE_ROUTES[data.user.role];
       if (route) {
         navigate(route);
       } else {
-        setErrors({ form: "Your account does not have access to this portal." });
+        setErrors({ form: "Ang iyong account ay walang access sa portal na ito." });
         sessionStorage.clear();
         setLoading(false);
       }
     } catch {
-      setErrors({ form: "Unable to connect to the server. Please try again." });
+      setErrors({ form: "Hindi makakonekta sa server. Subukan muli." });
       setLoading(false);
     }
   }
@@ -163,19 +136,12 @@ export default function Login() {
       className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden"
       style={{ background: "#111827" }}
     >
-      {/* Blurred background image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/login-bg.png')",
-          filter: "blur(6px)",
-          transform: "scale(1.05)",
-        }}
+        style={{ backgroundImage: "url('/login-bg.png')", filter: "blur(6px)", transform: "scale(1.05)" }}
       />
-      {/* Dark scrim */}
       <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.55)" }} />
 
-      {/* ── Glassmorphism card ── */}
       <div
         className="relative z-10 w-full flex flex-col items-center"
         style={{
@@ -189,20 +155,13 @@ export default function Login() {
           boxShadow: "0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15)",
         }}
       >
-        {/* Seal */}
         <img
           src="/Batangas_logo.png"
-          alt="Batangas City Seal"
+          alt="Selyo ng Lungsod ng Batangas"
           className="mb-4"
-          style={{
-            width: 80,
-            height: 80,
-            objectFit: "contain",
-            filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))",
-          }}
+          style={{ width: 80, height: 80, objectFit: "contain", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))" }}
         />
 
-        {/* Wordmark */}
         <div
           className="font-bold text-center"
           style={{ fontSize: 28, color: "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
@@ -218,17 +177,11 @@ export default function Login() {
           Analytics &amp; Rewards Technology
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4" noValidate>
           {errors.form && (
             <div
               className="rounded-lg px-4 py-3 text-center font-medium"
-              style={{
-                background: "rgba(220,38,38,0.18)",
-                color: "#FCA5A5",
-                fontSize: 13,
-                border: "1px solid rgba(220,38,38,0.35)",
-              }}
+              style={{ background: "rgba(220,38,38,0.18)", color: "#FCA5A5", fontSize: 13, border: "1px solid rgba(220,38,38,0.35)" }}
             >
               {errors.form}
             </div>
@@ -240,10 +193,7 @@ export default function Login() {
             type="email"
             value={email}
             error={errors.email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setErrors((p) => ({ ...p, email: undefined, form: undefined }));
-            }}
+            onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: undefined, form: undefined })); }}
           />
 
           <FloatingField
@@ -252,66 +202,43 @@ export default function Login() {
             type={showPw ? "text" : "password"}
             value={password}
             error={errors.password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setErrors((p) => ({ ...p, password: undefined, form: undefined }));
-            }}
+            onChange={(e) => { setPassword(e.target.value); setErrors((p) => ({ ...p, password: undefined, form: undefined })); }}
             rightSlot={
               <button
                 type="button"
                 onClick={() => setShowPw((v) => !v)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  color: "rgba(255,255,255,0.50)",
-                  display: "flex",
-                  alignItems: "center",
-                }}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "rgba(255,255,255,0.50)", display: "flex", alignItems: "center" }}
               >
                 {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             }
           />
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
             className="w-full rounded-xl py-3 font-semibold text-white mt-1"
             style={{
-              background: loading
-                ? "rgba(46,125,50,0.6)"
-                : "linear-gradient(135deg, #2E7D32 0%, #388E3C 100%)",
+              background: loading ? "rgba(46,125,50,0.6)" : "linear-gradient(135deg, #2E7D32 0%, #388E3C 100%)",
               fontSize: 15,
               border: "1px solid rgba(46,125,50,0.5)",
               cursor: loading ? "not-allowed" : "pointer",
               boxShadow: "0 4px 15px rgba(46,125,50,0.35)",
               transition: "box-shadow 0.2s",
             }}
-            onMouseEnter={(e) => {
-              if (!loading) e.currentTarget.style.boxShadow = "0 6px 22px rgba(46,125,50,0.55)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = "0 4px 15px rgba(46,125,50,0.35)";
-            }}
+            onMouseEnter={(e) => { if (!loading) e.currentTarget.style.boxShadow = "0 6px 22px rgba(46,125,50,0.55)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 4px 15px rgba(46,125,50,0.35)"; }}
           >
-            {loading ? "Signing in…" : "Sign In to Dashboard"}
+            {loading ? "Nagse-sign in…" : "Mag-sign In sa Dashboard"}
           </button>
         </form>
 
-        {/* Security note */}
-        <div
-          className="flex items-center gap-1.5 mt-5"
-          style={{ fontSize: 12, color: "rgba(255,255,255,0.40)" }}
-        >
+        <div className="flex items-center gap-1.5 mt-5" style={{ fontSize: 12, color: "rgba(255,255,255,0.40)" }}>
           <Lock size={12} />
-          <span>Secured access · Batangas City Government</span>
+          <span>Ligtas na access · Pamahalaan ng Lungsod ng Batangas</span>
         </div>
       </div>
 
-      {/* Autofill override */}
       <style>{`
         input:-webkit-autofill,
         input:-webkit-autofill:focus {

@@ -12,13 +12,177 @@
  *  • Preview modal with encoded-data inspector
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import {
   QrCode, Download, Printer, Search, Plus, X,
   MapPin, Trash2, Settings, RefreshCw, ChevronDown,
 } from "lucide-react";
 import { BINS } from "../mock/data";
+
+// ── Default center: Brgy. Alangilan, Batangas City ────────────────────────────
+const DEFAULT_LAT = 13.7565;
+const DEFAULT_LNG = 121.0583;
+
+// ── LocationPicker — iframe OpenStreetMap with two-way coordinate sync ─────────
+function LocationPicker({ lat, lng, onChange }) {
+  const hasPin  = lat !== "" && lng !== "" && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng));
+  const pinLat  = hasPin ? parseFloat(lat) : DEFAULT_LAT;
+  const pinLng  = hasPin ? parseFloat(lng) : DEFAULT_LNG;
+  const zoom    = 16;
+
+  // Build the iframe URL — uses OpenStreetMap tile + optional marker
+  const iframeSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${pinLng - 0.005},${pinLat - 0.005},${pinLng + 0.005},${pinLat + 0.005}&layer=mapnik${hasPin ? `&marker=${pinLat},${pinLng}` : ""}`;
+
+  // When user clicks "Pick from map" we open OSM in a new tab and ask them to
+  // copy the coordinates — or they can just type them directly.
+  // For a true in-page click-to-pin we use a hidden Leaflet via CDN script.
+  const mapContainerId = "bin-location-map";
+
+  useEffect(() => {
+    // Inject Leaflet CSS + JS from CDN once
+    if (document.getElementById("leaflet-css-cdn")) return;
+
+    const css  = document.createElement("link");
+    css.id     = "leaflet-css-cdn";
+    css.rel    = "stylesheet";
+    css.href   = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    document.head.appendChild(css);
+
+    const js   = document.createElement("script");
+    js.id      = "leaflet-js-cdn";
+    js.src     = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    js.onload  = () => initMap(pinLat, pinLng, hasPin);
+    document.head.appendChild(js);
+  }, []);
+
+  // Init / reinit Leaflet map inside the div
+  useEffect(() => {
+    const L = window.L;
+    if (!L) return;
+    initMap(pinLat, pinLng, hasPin);
+  }, []);
+
+  function initMap(centerLat, centerLng, showMarker) {
+    const L = window.L;
+    if (!L) return;
+
+    const container = document.getElementById(mapContainerId);
+    if (!container) return;
+
+    // Destroy existing map instance if any
+    if (container._leaflet_id) {
+      container._leaflet_id = null;
+      container.innerHTML   = "";
+    }
+
+    // Fix default icon paths
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconUrl:       "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+      shadowUrl:     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    });
+
+    const map = L.map(container).setView([centerLat, centerLng], 16);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map);
+
+    let marker = null;
+    if (showMarker) {
+      marker = L.marker([centerLat, centerLng], { draggable: true }).addTo(map);
+      marker.on("dragend", (e) => {
+        const p = e.target.getLatLng();
+        onChange(p.lat.toFixed(6), p.lng.toFixed(6));
+      });
+    }
+
+    map.on("click", (e) => {
+      const { lat: la, lng: lo } = e.latlng;
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([la, lo], { draggable: true }).addTo(map);
+      marker.on("dragend", (ev) => {
+        const p = ev.target.getLatLng();
+        onChange(p.lat.toFixed(6), p.lng.toFixed(6));
+      });
+      onChange(la.toFixed(6), lo.toFixed(6));
+    });
+
+    container._leafletMapInstance = map;
+  }
+
+  // Move map + update marker when lat/lng inputs change
+  useEffect(() => {
+    const L   = window.L;
+    const container = document.getElementById(mapContainerId);
+    if (!L || !container || !container._leafletMapInstance) return;
+    const la = parseFloat(lat);
+    const lo = parseFloat(lng);
+    if (!isNaN(la) && !isNaN(lo)) {
+      container._leafletMapInstance.setView([la, lo], 16);
+    }
+  }, [lat, lng]);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>
+        Pin Location
+        <span className="ml-1 font-normal text-text-muted" style={{ fontSize: 12 }}>
+          — click the map to place a pin, or type coordinates below
+        </span>
+      </label>
+
+      {/* Leaflet map div */}
+      <div
+        id={mapContainerId}
+        className="rounded-xl overflow-hidden"
+        style={{ height: 240, border: "1.5px solid #E5E7EB", background: "#F3F4F6", zIndex: 0 }}
+      />
+
+      {/* Coordinate inputs */}
+      <div className="flex gap-2 items-end">
+        <div className="flex flex-col gap-1 flex-1">
+          <label className="text-text-muted" style={{ fontSize: 11 }}>Latitude</label>
+          <input
+            type="number"
+            value={lat}
+            onChange={(e) => onChange(e.target.value, lng)}
+            placeholder="13.7565"
+            className="rounded-lg px-3 py-2 outline-none"
+            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#F9FAFB" }}
+            step="any"
+          />
+        </div>
+        <div className="flex flex-col gap-1 flex-1">
+          <label className="text-text-muted" style={{ fontSize: 11 }}>Longitude</label>
+          <input
+            type="number"
+            value={lng}
+            onChange={(e) => onChange(lat, e.target.value)}
+            placeholder="121.0583"
+            className="rounded-lg px-3 py-2 outline-none"
+            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#F9FAFB" }}
+            step="any"
+          />
+        </div>
+        {hasPin && (
+          <button
+            type="button"
+            onClick={() => onChange("", "")}
+            className="rounded-lg px-3 py-2 font-medium hover:bg-red-50"
+            style={{ fontSize: 12, border: "1.5px solid #FECACA", color: "#DC2626", background: "#FFF5F5" }}
+          >
+            ✕ Clear
+          </button>
+        )}
+      </div>
+      <p className="text-text-muted" style={{ fontSize: 11 }}>
+        Click anywhere on the map to drop a pin. Drag the pin to fine-tune. Coordinates update automatically.
+      </p>
+    </div>
+  );
+}
 
 const PB_BARANGAY = "Alangilan";
 const PB_CLUSTER  = "c1";
@@ -683,7 +847,7 @@ export default function BinQRCodes() {
           style={{ background: "rgba(0,0,0,0.45)" }}
           onClick={handleAddClose}>
           <div className="bg-white rounded-2xl p-6 flex flex-col gap-5 relative"
-            style={{ width: 420, boxShadow: "0 24px 64px rgba(0,0,0,0.18)", maxHeight: "90vh", overflowY: "auto" }}
+            style={{ width: 620, boxShadow: "0 24px 64px rgba(0,0,0,0.18)", maxHeight: "92vh", overflowY: "auto" }}
             onClick={(e) => e.stopPropagation()}>
 
             <button onClick={handleAddClose}
@@ -777,32 +941,20 @@ export default function BinQRCodes() {
                     {formErrors.tier_id && <span style={{ fontSize: 12, color: "#DC2626" }}>{formErrors.tier_id}</span>}
                   </div>
 
-                  {/* Optional lat/lng */}
-                  <div className="flex gap-3">
-                    <Field label="Latitude" value={form.lat} type="number"
-                      onChange={(v) => { setForm((p) => ({ ...p, lat: v })); setFormErrors((p) => ({ ...p, lat: undefined })); }}
-                      error={formErrors.lat} placeholder="13.7565" />
-                    <Field label="Longitude" value={form.lng} type="number"
-                      onChange={(v) => { setForm((p) => ({ ...p, lng: v })); setFormErrors((p) => ({ ...p, lng: undefined })); }}
-                      error={formErrors.lng} placeholder="121.0583" />
-                  </div>
-
-                  {/* Barangay — locked */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>Barangay</label>
-                    <input value={`Brgy. ${PB_BARANGAY}`} disabled
-                      className="rounded-lg px-3 py-2.5"
-                      style={{ fontSize: 14, border: "1.5px solid #E5E7EB", background: "#F3F4F6", color: "#9CA3AF" }} />
-                  </div>
-
-                  {/* Map hint */}
-                  <div className="rounded-xl px-4 py-3 flex items-start gap-3"
-                    style={{ background: "#F0F9FF", border: "1px solid #BAE6FD" }}>
-                    <MapPin size={15} color="#0284C7" className="flex-shrink-0 mt-0.5" />
-                    <p style={{ fontSize: 12, color: "#0369A1" }}>
-                      Leave Latitude/Longitude blank to auto-assign. You can adjust the map pin later from the Live Map view.
-                    </p>
-                  </div>
+                  {/* Location picker — embedded map */}
+                  <LocationPicker
+                    lat={form.lat}
+                    lng={form.lng}
+                    onChange={(la, lo) => {
+                      setForm((p) => ({ ...p, lat: la, lng: lo }));
+                      setFormErrors((p) => ({ ...p, lat: undefined, lng: undefined }));
+                    }}
+                  />
+                  {(formErrors.lat || formErrors.lng) && (
+                    <span style={{ fontSize: 12, color: "#DC2626" }}>
+                      {formErrors.lat || formErrors.lng}
+                    </span>
+                  )}
 
                   {addError && (
                     <div className="rounded-lg px-4 py-3 text-center font-medium"

@@ -8,15 +8,15 @@ import { NOTIFICATIONS } from "../mock/data";
 
 const ROUTE_LABELS = {
   "/super-admin/dashboard":     "Dashboard",
-  "/super-admin/map":           "Map & Collection",
-  "/super-admin/routes":        "Route Management",
-  "/super-admin/users":         "User Management",
-  "/super-admin/organizations": "Organization Management",
-  "/super-admin/reports":       "Reports & Analytics",
-  "/super-admin/mrf":           "MRF Management",
-  "/super-admin/notifications": "Notifications",
-  "/super-admin/leaderboard":   "Leaderboard",
-  "/super-admin/settings":      "Settings",
+  "/super-admin/map":           "Mapa at Koleksyon",
+  "/super-admin/routes":        "Pamamahala ng Ruta",
+  "/super-admin/users":         "Pamamahala ng Gumagamit",
+  "/super-admin/organizations": "Pamamahala ng Organisasyon",
+  "/super-admin/reports":       "Mga Ulat at Pagsusuri",
+  "/super-admin/mrf":           "Pamamahala ng MRF",
+  "/super-admin/notifications": "Mga Abiso",
+  "/super-admin/leaderboard":   "Ranggo ng mga Barangay",
+  "/super-admin/settings":      "Mga Setting",
 };
 
 const NOTIF_TYPE_CONFIG = {
@@ -129,7 +129,7 @@ export default function TopHeader() {
               >
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-text-primary" style={{ fontSize: 14 }}>
-                    Notifications
+                    Mga Abiso
                   </span>
                   {unread > 0 && (
                     <span
@@ -146,7 +146,7 @@ export default function TopHeader() {
                     className="text-text-muted hover:text-green-700 transition-colors"
                     style={{ fontSize: 12 }}
                   >
-                    Mark all read
+                    Markahan lahat bilang nabasa
                   </button>
                 )}
               </div>
@@ -155,7 +155,7 @@ export default function TopHeader() {
               <div className="overflow-y-auto flex-1">
                 {notifications.length === 0 ? (
                   <p className="text-center text-text-muted py-8" style={{ fontSize: 13 }}>
-                    No notifications.
+                    Walang mga abiso.
                   </p>
                 ) : (
                   notifications.map((n) => {
@@ -198,7 +198,7 @@ export default function TopHeader() {
                                 style={{ fontSize: 10, background: "#FFEBEE", color: "#DC2626" }}
                               >
                                 <AlertTriangle size={9} />
-                                Urgent
+                                Apurahan
                               </span>
                             )}
                           </div>
@@ -235,7 +235,7 @@ export default function TopHeader() {
                 Super Admin
               </div>
               <div className="text-text-muted leading-tight" style={{ fontSize: 11 }}>
-                Administrator
+                Tagapamahala
               </div>
             </div>
             <ChevronDown
@@ -264,7 +264,7 @@ export default function TopHeader() {
                 style={{ fontSize: 14, color: "#374151" }}
               >
                 <Settings size={15} color="#6B7280" />
-                Settings
+                Mga Setting
               </button>
               <div style={{ height: 1, background: "#F3F4F6" }} />
               <button
@@ -273,7 +273,7 @@ export default function TopHeader() {
                 style={{ fontSize: 14, color: "#DC2626" }}
               >
                 <LogOut size={15} color="#DC2626" />
-                Logout
+                Mag-logout
               </button>
             </div>
           )}

@@ -81,11 +81,11 @@ export const MRF_LOCATIONS = [
 // -- Collection Routes ----------------------------------------------------------
 // status: 'delivered' | 'in_progress' | 'completed'
 export const ROUTES = [
-  { id: "r1", routeId: "RT-2025-001", date: "2025-05-18", bins: ["b1", "b3", "b4"],          distanceKm: 4.2, estimatedMinutes: 35, sentTo: "Juan dela Cruz", status: "completed",   optimizedAt: "2025-05-18T05:00:00Z", sentAt: "2025-05-18T05:05:00Z" },
-  { id: "r2", routeId: "RT-2025-002", date: "2025-05-18", bins: ["b5", "b7", "b8"],          distanceKm: 5.8, estimatedMinutes: 48, sentTo: "Maria Santos",   status: "in_progress", optimizedAt: "2025-05-18T06:00:00Z", sentAt: "2025-05-18T06:10:00Z" },
-  { id: "r3", routeId: "RT-2025-003", date: "2025-05-17", bins: ["b9", "b10", "b11", "b12"], distanceKm: 6.1, estimatedMinutes: 52, sentTo: "Pedro Reyes",    status: "completed",   optimizedAt: "2025-05-17T05:30:00Z", sentAt: "2025-05-17T05:35:00Z" },
-  { id: "r4", routeId: "RT-2025-004", date: "2025-05-17", bins: ["b13", "b14"],              distanceKm: 3.0, estimatedMinutes: 25, sentTo: "Ana Lim",        status: "delivered",   optimizedAt: "2025-05-17T06:00:00Z", sentAt: "2025-05-17T06:05:00Z" },
-  { id: "r5", routeId: "RT-2025-005", date: "2025-05-16", bins: ["b15", "b16"],              distanceKm: 2.5, estimatedMinutes: 20, sentTo: "Carlos Mendoza", status: "completed",   optimizedAt: "2025-05-16T05:00:00Z", sentAt: "2025-05-16T05:08:00Z" },
+  { id: "r1", routeId: "RT-2025-001", date: "2025-05-18", bins: ["b1", "b3", "b4"],          distanceKm: 4.2, estimatedMinutes: 35, sentTo: "Juan dela Cruz", truckNo: "Truck #01", status: "completed",   optimizedAt: "2025-05-18T05:00:00Z", sentAt: "2025-05-18T05:05:00Z" },
+  { id: "r2", routeId: "RT-2025-002", date: "2025-05-18", bins: ["b5", "b7", "b8"],          distanceKm: 5.8, estimatedMinutes: 48, sentTo: "Maria Santos",   truckNo: "Truck #02", status: "in_progress", optimizedAt: "2025-05-18T06:00:00Z", sentAt: "2025-05-18T06:10:00Z" },
+  { id: "r3", routeId: "RT-2025-003", date: "2025-05-17", bins: ["b9", "b10", "b11", "b12"], distanceKm: 6.1, estimatedMinutes: 52, sentTo: "Pedro Reyes",    truckNo: "Truck #03", status: "completed",   optimizedAt: "2025-05-17T05:30:00Z", sentAt: "2025-05-17T05:35:00Z" },
+  { id: "r4", routeId: "RT-2025-004", date: "2025-05-17", bins: ["b13", "b14"],              distanceKm: 3.0, estimatedMinutes: 25, sentTo: "Ana Lim",        truckNo: "Truck #04", status: "delivered",   optimizedAt: "2025-05-17T06:00:00Z", sentAt: "2025-05-17T06:05:00Z" },
+  { id: "r5", routeId: "RT-2025-005", date: "2025-05-16", bins: ["b15", "b16"],              distanceKm: 2.5, estimatedMinutes: 20, sentTo: "Carlos Mendoza", truckNo: "Truck #05", status: "completed",   optimizedAt: "2025-05-16T05:00:00Z", sentAt: "2025-05-16T05:08:00Z" },
 ];
 
 // -- Optimized Route (current session) -----------------------------------------

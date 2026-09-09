@@ -11,12 +11,12 @@ import {
 
 const NAV_ITEMS = [
   { to: "/pb/dashboard",   icon: LayoutGrid, label: "Dashboard" },
-  { to: "/pb/map",         icon: Map,        label: "Live Map" },
-  { to: "/pb/qrcodes",     icon: QrCode,     label: "Bin QR Codes" },
-  { to: "/pb/rewards",     icon: Gift,       label: "Rewards Management" },
-  { to: "/pb/leaderboard", icon: Trophy,     label: "Leaderboard" },
-  { to: "/pb/users",       icon: Users,      label: "MRF Personnel" },
-  { to: "/pb/settings",    icon: Settings,   label: "Settings" },
+  { to: "/pb/map",         icon: Map,        label: "Live na Mapa" },
+  { to: "/pb/qrcodes",     icon: QrCode,     label: "Mga QR Code ng Basurahan" },
+  { to: "/pb/rewards",     icon: Gift,       label: "Pamamahala ng Gantimpala" },
+  { to: "/pb/leaderboard", icon: Trophy,     label: "Ranggo ng mga Sambahayan" },
+  { to: "/pb/users",       icon: Users,      label: "Mga Tauhan ng MRF" },
+  { to: "/pb/settings",    icon: Settings,   label: "Mga Setting" },
 ];
 
 export default function PBSidebar() {
@@ -46,7 +46,7 @@ export default function PBSidebar() {
         >
           <div>
             <div className="text-white/50 uppercase tracking-widest" style={{ fontSize: 9 }}>
-              Logged in as
+              Naka-login bilang
             </div>
             <div className="text-white font-semibold" style={{ fontSize: 12 }}>
               Punong Barangay

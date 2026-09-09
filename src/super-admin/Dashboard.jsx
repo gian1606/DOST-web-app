@@ -20,7 +20,7 @@ export default function Dashboard() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>City-Wide Dashboard</h1>
+          <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Dashboard ng Buong Lungsod</h1>
           <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>{today}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -29,7 +29,7 @@ export default function Dashboard() {
             style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#fff", color: "#6B7280" }}
           >
             <RefreshCw size={14} />
-            Refresh
+            I-refresh
           </button>
           <button
             onClick={() => navigate("/super-admin/routes")}
@@ -37,7 +37,7 @@ export default function Dashboard() {
             style={{ fontSize: 13, background: "#2E7D32" }}
           >
             <Route size={14} />
-            Optimize Route
+            I-optimize ang Ruta
           </button>
         </div>
       </div>
@@ -47,28 +47,28 @@ export default function Dashboard() {
         <StatCard
           icon={<Trash2 size={18} color="#6B7280" />}
           value={DASHBOARD_STATS.totalBins}
-          label="Total Bins"
-          subLabel="City-wide"
+          label="Kabuuang Bilang ng Basurahan"
+          subLabel="Buong Lungsod"
         />
         <StatCard
           icon={<Trash2 size={18} color="#DC2626" />}
           value={DASHBOARD_STATS.fullBins}
-          label="Full Bins"
-          subLabel={DASHBOARD_STATS.fullBins > 5 ? `${Math.min(DASHBOARD_STATS.fullBins, 3)} critical` : "Needs collection"}
+          label="Mga Puno na Basurahan"
+          subLabel={DASHBOARD_STATS.fullBins > 5 ? `${Math.min(DASHBOARD_STATS.fullBins, 3)} kritikal` : "Kailangan nang kolektahin"}
           subLabelColor="#DC2626"
         />
         <StatCard
           icon={<CheckCircle size={18} color="#2E7D32" />}
           value={DASHBOARD_STATS.collectedToday}
-          label="Collected Today"
-          subLabel={`${Math.round((DASHBOARD_STATS.collectedToday / Math.max(DASHBOARD_STATS.totalBins, 1)) * 100)}% of target`}
+          label="Nakolekta Ngayon"
+          subLabel={`${Math.round((DASHBOARD_STATS.collectedToday / Math.max(DASHBOARD_STATS.totalBins, 1)) * 100)}% ng target`}
           subLabelColor="#2E7D32"
         />
         <StatCard
           icon={<Truck size={18} color="#1976D2" />}
           value={DASHBOARD_STATS.activeTrucks}
-          label="Active Trucks"
-          subLabel="2 on route"
+          label="Mga Aktibong Trak"
+          subLabel="2 nasa ruta"
           subLabelColor="#1976D2"
         />
       </div>
@@ -81,7 +81,7 @@ export default function Dashboard() {
           style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
         >
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Live Map</h2>
+            <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Live na Mapa</h2>
             <span
               className="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium"
               style={{ fontSize: 11, background: "#E8F5E9", color: "#2E7D32" }}
@@ -101,7 +101,7 @@ export default function Dashboard() {
             style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             <div className="flex items-center justify-between mb-1">
-              <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Full Bin Alerts</h2>
+              <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Mga Alerto sa Puno na Basurahan</h2>
               <span className="rounded-full px-2.5 py-0.5 font-semibold"
                 style={{ fontSize: 12, background: "#FFEBEE", color: "#DC2626" }}>
                 {fullBins.length}
@@ -109,13 +109,13 @@ export default function Dashboard() {
             </div>
             <div className="overflow-y-auto" style={{ maxHeight: 220 }}>
               {fullBins.length === 0 ? (
-                <p className="text-text-muted text-center py-6" style={{ fontSize: 13 }}>No full bins reported.</p>
+                <p className="text-text-muted text-center py-6" style={{ fontSize: 13 }}>Walang puno na basurahan.</p>
               ) : (
                 fullBins.map((b) => (
                   <AlertRow
                     key={b.id}
                     name={b.name}
-                    description={`${b.street}, ${b.barangay} — Reported full`}
+                    description={`${b.street}, ${b.barangay} — Iniulat na puno`}
                     timeReported={b.timeReported}
                   />
                 ))
@@ -130,7 +130,7 @@ export default function Dashboard() {
           >
             <div className="flex items-center gap-2 mb-1">
               <Activity size={16} color="#6B7280" />
-              <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Recent Activity</h2>
+              <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Mga Kamakailang Aktibidad</h2>
             </div>
             <div className="overflow-y-auto" style={{ maxHeight: 200 }}>
               {RECENT_ACTIVITY.map((a) => (
