@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { CheckCircle, Trash2, Truck, TrendingUp, TrendingDown, AlertTriangle, Download, BarChart2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { CheckCircle, Trash2, Truck, TrendingUp, TrendingDown, AlertTriangle, Download, BarChart2, FileWarning, CheckCheck, Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { COLLECTOR_UNITS, COLLECTORS, BINS, CA_DASHBOARD_STATS } from "../../mock/data";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 // ── Inline analytics mock data ────────────────────────────────────────────────
 const MONTHLY_COLLECTIONS = [
@@ -106,9 +108,225 @@ function KpiCard({ icon, label, value, growth, sub, bg = "#F9FAFB" }) {
   );
 }
 
+// ── Issue type badge colours ───────────────────────────────────────────────────
+const ISSUE_COLORS = {
+  "Vehicle Problem":   { bg: "#FFEBEE", color: "#DC2626" },
+  "Traffic Jam":       { bg: "#FFF3E0", color: "#D97706" },
+  "Road Closure":      { bg: "#EDE9FE", color: "#7C3AED" },
+  "Weather Condition": { bg: "#E3F2FD", color: "#1976D2" },
+  "Other":             { bg: "#F3F4F6", color: "#6B7280" },
+};
+
+function IssueBadge({ type }) {
+  const style = ISSUE_COLORS[type] ?? ISSUE_COLORS["Other"];
+  return (
+    <span className="rounded-full px-2.5 py-0.5 font-semibold"
+      style={{ fontSize: 11, background: style.bg, color: style.color }}>
+      {type}
+    </span>
+  );
+}
+
+function StatusBadge({ status }) {
+  const isPending = status === "pending";
+  return (
+    <span className="flex items-center gap-1 rounded-full px-2.5 py-0.5 font-semibold"
+      style={{ fontSize: 11, background: isPending ? "#FFF3E0" : "#E8F5E9", color: isPending ? "#D97706" : "#2E7D32" }}>
+      {isPending ? <Clock size={10} /> : <CheckCheck size={10} />}
+      {isPending ? "Pending" : "Resolved"}
+    </span>
+  );
+}
+
+// ── Incident Reports Tab ───────────────────────────────────────────────────────
+function IncidentReports() {
+  const [reports, setReports]         = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [fetchError, setFetchError]   = useState(null);
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [expandedId, setExpandedId]   = useState(null);
+  const [resolving, setResolving]     = useState(null);
+
+  const token = sessionStorage.getItem("bs_token");
+
+  async function fetchReports() {
+    setLoading(true); setFetchError(null);
+    try {
+      const params = filterStatus !== "all" ? `?status=${filterStatus}` : "";
+      const res    = await fetch(`${API_URL}/collector-reports${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch reports.");
+      setReports(data.reports ?? []);
+    } catch (err) {
+      setFetchError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { fetchReports(); }, [filterStatus]);
+
+  async function handleResolve(id) {
+    setResolving(id);
+    try {
+      const res  = await fetch(`${API_URL}/collector-reports/${id}`, {
+        method:  "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to resolve report.");
+      setReports((prev) => prev.map((r) => r.id === id ? { ...r, status: "resolved", resolved_at: data.report.resolved_at } : r));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setResolving(null);
+    }
+  }
+
+  const pending  = reports.filter((r) => r.status === "pending").length;
+  const resolved = reports.filter((r) => r.status === "resolved").length;
+
+  return (
+    <div className="flex flex-col gap-5">
+
+      {/* Summary pills */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2 rounded-xl px-4 py-3"
+          style={{ background: "#FFF3E0", border: "1px solid #FFE0B2" }}>
+          <Clock size={15} color="#D97706" />
+          <span className="font-semibold" style={{ fontSize: 14, color: "#D97706" }}>{pending} Pending</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-xl px-4 py-3"
+          style={{ background: "#E8F5E9", border: "1px solid #C8E6C9" }}>
+          <CheckCheck size={15} color="#2E7D32" />
+          <span className="font-semibold" style={{ fontSize: 14, color: "#2E7D32" }}>{resolved} Resolved</span>
+        </div>
+      </div>
+
+      {/* Filter + Refresh */}
+      <div className="flex items-center gap-3">
+        <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E7EB" }}>
+          {["all", "pending", "resolved"].map((s) => (
+            <button key={s} onClick={() => setFilterStatus(s)}
+              className="px-4 py-2 capitalize font-medium transition-colors"
+              style={{ fontSize: 13, background: filterStatus === s ? "#2E7D32" : "#fff", color: filterStatus === s ? "#fff" : "#6B7280" }}>
+              {s}
+            </button>
+          ))}
+        </div>
+        <button onClick={fetchReports}
+          className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium hover:bg-gray-100 transition-colors"
+          style={{ fontSize: 13, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>
+          Refresh
+        </button>
+      </div>
+
+      {/* Error */}
+      {fetchError && (
+        <div className="rounded-xl px-4 py-3"
+          style={{ background: "#FFEBEE", border: "1px solid #FFCDD2", color: "#DC2626", fontSize: 13 }}>
+          {fetchError}
+        </div>
+      )}
+
+      {/* Loading */}
+      {loading ? (
+        <div className="text-center py-16 text-text-muted" style={{ fontSize: 14 }}>Loading reports…</div>
+      ) : reports.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 py-16">
+          <FileWarning size={36} color="#D1D5DB" />
+          <p className="text-text-muted" style={{ fontSize: 14 }}>No incident reports found.</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {reports.map((r) => {
+            const isExpanded = expandedId === r.id;
+            const isPending  = r.status === "pending";
+            return (
+              <div key={r.id} className="bg-white rounded-xl overflow-hidden"
+                style={{ border: `1.5px solid ${isPending ? "#FFE0B2" : "#E5E7EB"}`, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+
+                {/* Row header */}
+                <div className="flex items-center gap-4 px-5 py-4 cursor-pointer"
+                  onClick={() => setExpandedId(isExpanded ? null : r.id)}>
+                  <div className="flex flex-col gap-1 flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-text-primary" style={{ fontSize: 14 }}>{r.collector_name}</span>
+                      <IssueBadge type={r.issue_type} />
+                      <StatusBadge status={r.status} />
+                    </div>
+                    <span className="text-text-muted" style={{ fontSize: 12 }}>
+                      {new Date(r.reported_at).toLocaleString()} · {r.stops_completed}/{r.stops_total} stops completed
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    {isPending && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleResolve(r.id); }}
+                        disabled={resolving === r.id}
+                        className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold hover:opacity-90 transition-opacity"
+                        style={{ fontSize: 12, background: "#2E7D32", color: "#fff", opacity: resolving === r.id ? 0.6 : 1 }}>
+                        <CheckCheck size={13} />
+                        {resolving === r.id ? "Resolving…" : "Mark Resolved"}
+                      </button>
+                    )}
+                    {isExpanded ? <ChevronUp size={16} color="#9CA3AF" /> : <ChevronDown size={16} color="#9CA3AF" />}
+                  </div>
+                </div>
+
+                {/* Expanded details */}
+                {isExpanded && (
+                  <div className="px-5 pb-4 flex flex-col gap-3 border-t" style={{ borderColor: "#F3F4F6" }}>
+                    <div className="grid grid-cols-3 gap-4 pt-3">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-text-muted uppercase tracking-wide" style={{ fontSize: 10, fontWeight: 600 }}>Collector</span>
+                        <span className="font-medium text-text-primary" style={{ fontSize: 13 }}>{r.collector_name}</span>
+                        <span className="text-text-muted" style={{ fontSize: 11 }}>{r.collector_email}</span>
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-text-muted uppercase tracking-wide" style={{ fontSize: 10, fontWeight: 600 }}>Progress at Report</span>
+                        <span className="font-medium text-text-primary" style={{ fontSize: 13 }}>
+                          {r.stops_completed} of {r.stops_total} stops
+                        </span>
+                        <span className="text-text-muted" style={{ fontSize: 11 }}>
+                          {r.stops_total > 0 ? Math.round((r.stops_completed / r.stops_total) * 100) : 0}% complete
+                        </span>
+                      </div>
+                      {r.resolved_at && (
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-text-muted uppercase tracking-wide" style={{ fontSize: 10, fontWeight: 600 }}>Resolved</span>
+                          <span className="font-medium text-text-primary" style={{ fontSize: 13 }}>
+                            {new Date(r.resolved_at).toLocaleString()}
+                          </span>
+                          {r.resolved_by_name && (
+                            <span className="text-text-muted" style={{ fontSize: 11 }}>by {r.resolved_by_name}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {r.notes && (
+                      <div className="rounded-lg px-4 py-3" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                        <p className="text-text-muted uppercase tracking-wide mb-1" style={{ fontSize: 10, fontWeight: 600 }}>Notes</p>
+                        <p className="text-text-primary" style={{ fontSize: 13, lineHeight: 1.6 }}>{r.notes}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function CAReports() {
-  const [period, setPeriod] = useState("monthly");
+  const [activeTab, setActiveTab] = useState("analytics");
+  const [period, setPeriod]       = useState("monthly");
 
   const clusterBins   = BINS;
   const collectedBins = clusterBins.filter((b) => b.status === "collected").length;
@@ -130,11 +348,30 @@ export default function CAReports() {
           <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Reports &amp; Analytics</h1>
           <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>Batangas City · May 2026</p>
         </div>
-        <button className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-          style={{ fontSize: 13, background: "#2E7D32" }}>
-          <Download size={14} /> Export Report
-        </button>
+        {activeTab === "analytics" && (
+          <button className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
+            style={{ fontSize: 13, background: "#2E7D32" }}>
+            <Download size={14} /> Export Report
+          </button>
+        )}
       </div>
+
+      {/* Tabs */}
+      <div className="flex rounded-xl overflow-hidden" style={{ border: "1.5px solid #E5E7EB", width: "fit-content" }}>
+        {[
+          { id: "analytics",       label: "Analytics",        icon: <BarChart2 size={14} /> },
+          { id: "incident-reports", label: "Incident Reports", icon: <FileWarning size={14} /> },
+        ].map((tab) => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+            className="flex items-center gap-2 px-5 py-2.5 font-semibold transition-colors"
+            style={{ fontSize: 13, background: activeTab === tab.id ? "#2E7D32" : "#fff", color: activeTab === tab.id ? "#fff" : "#6B7280" }}>
+            {tab.icon}{tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── Analytics Tab ── */}
+      {activeTab === "analytics" && (<>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4">
@@ -320,7 +557,11 @@ export default function CAReports() {
         </div>
       </Section>
 
+      </>)}
+
+      {/* ── Incident Reports Tab ── */}
+      {activeTab === "incident-reports" && <IncidentReports />}
+
     </div>
   );
 }
-
