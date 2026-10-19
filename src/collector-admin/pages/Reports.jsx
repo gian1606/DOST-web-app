@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import { CheckCircle, Trash2, Truck, TrendingUp, TrendingDown, AlertTriangle, Download, BarChart2, FileWarning, CheckCheck, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  CheckCircle, Trash2, Truck, TrendingUp, TrendingDown, AlertTriangle,
+  Download, BarChart2, FileWarning, CheckCheck, Clock, ChevronDown, ChevronUp, Fuel,
+} from "lucide-react";
 import { COLLECTOR_UNITS, COLLECTORS, BINS, CA_DASHBOARD_STATS } from "../../mock/data";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -14,8 +17,8 @@ const MONTHLY_COLLECTIONS = [
 ];
 
 const UNIT_PERFORMANCE = [
-  { unit: "Unit Alpha", plate: "BTC-1021", trips: 18, binsCollected: 42, missedBins: 3, rate: 93 },
-  { unit: "Unit Bravo", plate: "BTC-1034", trips: 14, binsCollected: 31, missedBins: 5, rate: 86 },
+  { unit: "Unit Alpha",   plate: "BTC-1021", trips: 18, binsCollected: 42, missedBins: 3, rate: 93 },
+  { unit: "Unit Bravo",   plate: "BTC-1034", trips: 14, binsCollected: 31, missedBins: 5, rate: 86 },
   { unit: "Unit Charlie", plate: "BTC-1047", trips: 10, binsCollected: 22, missedBins: 2, rate: 92 },
 ];
 
@@ -25,11 +28,11 @@ const DAILY_TREND = [
 ];
 
 const MISSED_REASONS = [
-  { reason: "Bin not accessible", count: 7, color: "#DC2626" },
-  { reason: "Route not dispatched", count: 4, color: "#D97706" },
-  { reason: "Truck breakdown", count: 3, color: "#1976D2" },
-  { reason: "Weather conditions", count: 2, color: "#9C27B0" },
-  { reason: "Other", count: 1, color: "#9CA3AF" },
+  { reason: "Bin not accessible",    count: 7, color: "#DC2626" },
+  { reason: "Route not dispatched",  count: 4, color: "#D97706" },
+  { reason: "Truck breakdown",       count: 3, color: "#1976D2" },
+  { reason: "Weather conditions",    count: 2, color: "#9C27B0" },
+  { reason: "Other",                 count: 1, color: "#9CA3AF" },
 ];
 
 // ── Reusable chart components ─────────────────────────────────────────────────
@@ -108,6 +111,93 @@ function KpiCard({ icon, label, value, growth, sub, bg = "#F9FAFB" }) {
   );
 }
 
+// ── Fuel Savings Gauge ────────────────────────────────────────────────────────
+function FuelSavingsGauge({ totalCollections, collectionRate }) {
+  const BASELINE_L   = 0.85;
+  const OPTIMIZED_L  = 0.62;
+  const savedLitres  = Math.round(totalCollections * (BASELINE_L - OPTIMIZED_L));
+  const maxLitres    = Math.round(totalCollections * BASELINE_L);
+  const pct          = Math.min(Math.round((savedLitres / maxLitres) * 100), 100);
+  const costPerLitre = 65;
+  const savedPHP     = (savedLitres * costPerLitre).toLocaleString();
+  const gaugeColor   = pct >= 60 ? "#2E7D32" : pct >= 35 ? "#D97706" : "#DC2626";
+
+  const SWEEP = 300; const START_DEG = -150;
+  const r = 52; const cx = 70; const cy = 70;
+  function polarToXY(deg, radius) {
+    const rad = ((deg - 90) * Math.PI) / 180;
+    return { x: cx + radius * Math.cos(rad), y: cy + radius * Math.sin(rad) };
+  }
+  function arcPath(fromDeg, toDeg, radius) {
+    const s = polarToXY(fromDeg, radius);
+    const e = polarToXY(toDeg, radius);
+    const large = toDeg - fromDeg > 180 ? 1 : 0;
+    return `M ${s.x} ${s.y} A ${radius} ${radius} 0 ${large} 1 ${e.x} ${e.y}`;
+  }
+  const activeDeg = START_DEG + (SWEEP * pct) / 100;
+
+  return (
+    <div className="bg-white rounded-xl p-5 flex flex-col gap-4"
+      style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+      <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center rounded-lg"
+          style={{ width: 32, height: 32, background: "#E8F5E9" }}>
+          <Fuel size={16} color="#2E7D32" />
+        </div>
+        <h2 className="font-semibold text-text-primary" style={{ fontSize: 16 }}>Fuel Savings Gauge</h2>
+        <span className="ml-auto rounded-full px-2.5 py-0.5 font-semibold"
+          style={{ fontSize: 11, background: "#E8F5E9", color: "#2E7D32" }}>
+          vs. unoptimized baseline
+        </span>
+      </div>
+
+      <div className="flex items-center gap-6">
+        <div className="flex-shrink-0 flex flex-col items-center">
+          <svg width={140} height={90} viewBox="0 0 140 90">
+            <path d={arcPath(START_DEG, START_DEG + SWEEP, r)} fill="none" stroke="#F3F4F6" strokeWidth={10} strokeLinecap="round" />
+            {pct > 0 && <path d={arcPath(START_DEG, activeDeg, r)} fill="none" stroke={gaugeColor} strokeWidth={10} strokeLinecap="round" />}
+            {(() => { const p = polarToXY(activeDeg, r); return <circle cx={p.x} cy={p.y} r={5} fill={gaugeColor} />; })()}
+            <text x={cx} y={cy - 4} textAnchor="middle" fill="#1A1A1A" fontWeight="800" fontSize={18}>{pct}%</text>
+            <text x={cx} y={cy + 12} textAnchor="middle" fill="#9CA3AF" fontSize={9}>saved</text>
+            <text x={18} y={84} textAnchor="middle" fill="#9CA3AF" fontSize={8}>0</text>
+            <text x={122} y={84} textAnchor="middle" fill="#9CA3AF" fontSize={8}>100%</text>
+          </svg>
+          <div className="flex items-center gap-3 mt-1">
+            {[["#DC2626", "Low"], ["#D97706", "Mid"], ["#2E7D32", "High"]].map(([c, l]) => (
+              <span key={l} className="flex items-center gap-1" style={{ fontSize: 10, color: "#9CA3AF" }}>
+                <span className="rounded-full inline-block" style={{ width: 7, height: 7, background: c }} />{l}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: "Litres Saved",    value: `${savedLitres.toLocaleString()} L`, color: "#2E7D32", bg: "#E8F5E9" },
+              { label: "Cost Saved",      value: `₱${savedPHP}`,                      color: "#1976D2", bg: "#E3F2FD" },
+              { label: "Baseline Usage",  value: `${maxLitres.toLocaleString()} L`,   color: "#6B7280", bg: "#F3F4F6" },
+              { label: "Optimized Usage", value: `${(maxLitres - savedLitres).toLocaleString()} L`, color: "#D97706", bg: "#FFF3E0" },
+            ].map((s) => (
+              <div key={s.label} className="rounded-lg px-3 py-2 flex flex-col gap-0.5" style={{ background: s.bg }}>
+                <span className="text-text-muted" style={{ fontSize: 10 }}>{s.label}</span>
+                <span className="font-bold" style={{ fontSize: 15, color: s.color }}>{s.value}</span>
+              </div>
+            ))}
+          </div>
+          <div className="rounded-lg px-3 py-2 flex items-center gap-2"
+            style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            <Fuel size={12} color="#9CA3AF" />
+            <p style={{ fontSize: 11, color: "#6B7280" }}>
+              {totalCollections} collections · ₱65/L · {collectionRate}% route efficiency
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Issue type badge colours ───────────────────────────────────────────────────
 const ISSUE_COLORS = {
   "Vehicle Problem":   { bg: "#FFEBEE", color: "#DC2626" },
@@ -140,12 +230,12 @@ function StatusBadge({ status }) {
 
 // ── Incident Reports Tab ───────────────────────────────────────────────────────
 function IncidentReports() {
-  const [reports, setReports]         = useState([]);
-  const [loading, setLoading]         = useState(true);
-  const [fetchError, setFetchError]   = useState(null);
+  const [reports, setReports]           = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [fetchError, setFetchError]     = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
-  const [expandedId, setExpandedId]   = useState(null);
-  const [resolving, setResolving]     = useState(null);
+  const [expandedId, setExpandedId]     = useState(null);
+  const [resolving, setResolving]       = useState(null);
 
   const token = sessionStorage.getItem("bs_token");
 
@@ -177,7 +267,8 @@ function IncidentReports() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to resolve report.");
-      setReports((prev) => prev.map((r) => r.id === id ? { ...r, status: "resolved", resolved_at: data.report.resolved_at } : r));
+      setReports((prev) => prev.map((r) => r.id === id
+        ? { ...r, status: "resolved", resolved_at: data.report.resolved_at } : r));
     } catch (err) {
       alert(err.message);
     } finally {
@@ -190,8 +281,6 @@ function IncidentReports() {
 
   return (
     <div className="flex flex-col gap-5">
-
-      {/* Summary pills */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-2 rounded-xl px-4 py-3"
           style={{ background: "#FFF3E0", border: "1px solid #FFE0B2" }}>
@@ -205,7 +294,6 @@ function IncidentReports() {
         </div>
       </div>
 
-      {/* Filter + Refresh */}
       <div className="flex items-center gap-3">
         <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E7EB" }}>
           {["all", "pending", "resolved"].map((s) => (
@@ -223,7 +311,6 @@ function IncidentReports() {
         </button>
       </div>
 
-      {/* Error */}
       {fetchError && (
         <div className="rounded-xl px-4 py-3"
           style={{ background: "#FFEBEE", border: "1px solid #FFCDD2", color: "#DC2626", fontSize: 13 }}>
@@ -231,7 +318,6 @@ function IncidentReports() {
         </div>
       )}
 
-      {/* Loading */}
       {loading ? (
         <div className="text-center py-16 text-text-muted" style={{ fontSize: 14 }}>Loading reports…</div>
       ) : reports.length === 0 ? (
@@ -247,8 +333,6 @@ function IncidentReports() {
             return (
               <div key={r.id} className="bg-white rounded-xl overflow-hidden"
                 style={{ border: `1.5px solid ${isPending ? "#FFE0B2" : "#E5E7EB"}`, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-
-                {/* Row header */}
                 <div className="flex items-center gap-4 px-5 py-4 cursor-pointer"
                   onClick={() => setExpandedId(isExpanded ? null : r.id)}>
                   <div className="flex flex-col gap-1 flex-1 min-w-0">
@@ -276,7 +360,6 @@ function IncidentReports() {
                   </div>
                 </div>
 
-                {/* Expanded details */}
                 {isExpanded && (
                   <div className="px-5 pb-4 flex flex-col gap-3 border-t" style={{ borderColor: "#F3F4F6" }}>
                     <div className="grid grid-cols-3 gap-4 pt-3">
@@ -328,16 +411,19 @@ export default function CAReports() {
   const [activeTab, setActiveTab] = useState("analytics");
   const [period, setPeriod]       = useState("monthly");
 
-  const clusterBins   = BINS;
-  const collectedBins = clusterBins.filter((b) => b.status === "collected").length;
-  const fullBins      = clusterBins.filter((b) => b.status === "full").length;
-  const missedBins    = clusterBins.filter((b) => b.status === "missed").length;
-  const totalBins     = clusterBins.length;
+  const clusterBins    = BINS;
+  const collectedBins  = clusterBins.filter((b) => b.status === "collected").length;
+  const fullBins       = clusterBins.filter((b) => b.status === "full").length;
+  const missedBins     = clusterBins.filter((b) => b.status === "missed").length;
+  const totalBins      = clusterBins.length;
   const collectionRate = totalBins > 0 ? Math.round((collectedBins / totalBins) * 100) : 0;
 
   const totalMissed = MISSED_REASONS.reduce((s, r) => s + r.count, 0);
   const chartData   = period === "monthly" ? MONTHLY_COLLECTIONS : DAILY_TREND;
   const labelKey    = period === "monthly" ? "month" : "day";
+
+  const totalBinsCollected = UNIT_PERFORMANCE.reduce((s, u) => s + u.binsCollected, 0);
+  const avgRate            = Math.round(UNIT_PERFORMANCE.reduce((s, u) => s + u.rate, 0) / UNIT_PERFORMANCE.length);
 
   return (
     <div className="flex flex-col gap-6">
@@ -359,7 +445,7 @@ export default function CAReports() {
       {/* Tabs */}
       <div className="flex rounded-xl overflow-hidden" style={{ border: "1.5px solid #E5E7EB", width: "fit-content" }}>
         {[
-          { id: "analytics",       label: "Analytics",        icon: <BarChart2 size={14} /> },
+          { id: "analytics",        label: "Analytics",        icon: <BarChart2 size={14} /> },
           { id: "incident-reports", label: "Incident Reports", icon: <FileWarning size={14} /> },
         ].map((tab) => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
@@ -373,189 +459,186 @@ export default function CAReports() {
       {/* ── Analytics Tab ── */}
       {activeTab === "analytics" && (<>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-4">
-        <KpiCard icon={<CheckCircle size={18} color="#2E7D32" />} label="Bins Collected" value={collectedBins} growth={12} sub="this period" bg="#E8F5E9" />
-        <KpiCard icon={<Trash2 size={18} color="#DC2626" />} label="Full Bins" value={fullBins} growth={-5} sub="awaiting collection" bg="#FFEBEE" />
-        <KpiCard icon={<AlertTriangle size={18} color="#D97706" />} label="Missed Collections" value={missedBins} growth={-8} sub="lower is better" bg="#FFF3E0" />
-        <KpiCard icon={<Truck size={18} color="#1976D2" />} label="Active Units" value={CA_DASHBOARD_STATS.activeUnits} growth={0} sub="collector units" bg="#E3F2FD" />
-      </div>
-
-      {/* Collection rate ring + Collections chart */}
-      <div className="grid gap-4" style={{ gridTemplateColumns: "260px 1fr" }}>
-
-        {/* Collection rate donut */}
-        <div className="bg-white rounded-xl p-5 flex flex-col items-center justify-center gap-3"
-          style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-          <h2 className="font-semibold text-text-primary self-start" style={{ fontSize: 16 }}>Collection Rate</h2>
-          <div className="relative flex items-center justify-center" style={{ width: 130, height: 130 }}>
-            <svg viewBox="0 0 36 36" style={{ width: 130, height: 130, transform: "rotate(-90deg)" }}>
-              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F3F4F6" strokeWidth="3.2" />
-              <circle cx="18" cy="18" r="15.9" fill="none"
-                stroke={collectionRate >= 80 ? "#2E7D32" : collectionRate >= 60 ? "#D97706" : "#DC2626"}
-                strokeWidth="3.2"
-                strokeDasharray={`${collectionRate} ${100 - collectionRate}`}
-                strokeLinecap="round" />
-            </svg>
-            <div className="absolute flex flex-col items-center">
-              <span className="font-bold text-text-primary" style={{ fontSize: 24 }}>{collectionRate}%</span>
-              <span className="text-text-muted" style={{ fontSize: 10 }}>rate</span>
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-1.5">
-            {[
-              { label: "Collected", value: collectedBins, color: "#2E7D32" },
-              { label: "Full",      value: fullBins,      color: "#DC2626" },
-              { label: "Missed",    value: missedBins,    color: "#D97706" },
-            ].map((s) => (
-              <div key={s.label} className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <span className="rounded-full" style={{ width: 8, height: 8, background: s.color, display: "inline-block" }} />
-                  <span className="text-text-secondary" style={{ fontSize: 12 }}>{s.label}</span>
-                </div>
-                <span className="font-semibold text-text-primary" style={{ fontSize: 12 }}>{s.value}</span>
-              </div>
-            ))}
-          </div>
+        {/* KPI Cards */}
+        <div className="grid grid-cols-4 gap-4">
+          <KpiCard icon={<CheckCircle size={18} color="#2E7D32" />} label="Bins Collected"     value={collectedBins}              growth={12}  sub="this period"       bg="#E8F5E9" />
+          <KpiCard icon={<Trash2 size={18} color="#DC2626" />}      label="Full Bins"           value={fullBins}                   growth={-5}  sub="awaiting collection" bg="#FFEBEE" />
+          <KpiCard icon={<AlertTriangle size={18} color="#D97706" />} label="Missed Collections" value={missedBins}               growth={-8}  sub="lower is better"   bg="#FFF3E0" />
+          <KpiCard icon={<Truck size={18} color="#1976D2" />}        label="Active Units"        value={CA_DASHBOARD_STATS.activeUnits} growth={0} sub="collector units" bg="#E3F2FD" />
         </div>
 
-        {/* Collections bar chart */}
-        <Section title="Collections Overview">
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-4">
-              {[["#2E7D32", "Collected"], ["#9CA3AF", "Target"]].map(([color, label]) => (
-                <span key={label} className="flex items-center gap-1.5 text-text-muted" style={{ fontSize: 12 }}>
-                  <span className="inline-block rounded-sm" style={{ width: 10, height: 10, background: color, opacity: label === "Target" ? 0.4 : 1 }} />
-                  {label}
-                </span>
-              ))}
+        {/* Collection rate ring + Collections chart */}
+        <div className="grid gap-4" style={{ gridTemplateColumns: "260px 1fr" }}>
+          <div className="bg-white rounded-xl p-5 flex flex-col items-center justify-center gap-3"
+            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+            <h2 className="font-semibold text-text-primary self-start" style={{ fontSize: 16 }}>Collection Rate</h2>
+            <div className="relative flex items-center justify-center" style={{ width: 130, height: 130 }}>
+              <svg viewBox="0 0 36 36" style={{ width: 130, height: 130, transform: "rotate(-90deg)" }}>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F3F4F6" strokeWidth="3.2" />
+                <circle cx="18" cy="18" r="15.9" fill="none"
+                  stroke={collectionRate >= 80 ? "#2E7D32" : collectionRate >= 60 ? "#D97706" : "#DC2626"}
+                  strokeWidth="3.2"
+                  strokeDasharray={`${collectionRate} ${100 - collectionRate}`}
+                  strokeLinecap="round" />
+              </svg>
+              <div className="absolute flex flex-col items-center">
+                <span className="font-bold text-text-primary" style={{ fontSize: 24 }}>{collectionRate}%</span>
+                <span className="text-text-muted" style={{ fontSize: 10 }}>rate</span>
+              </div>
             </div>
-            <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E7EB" }}>
-              {["monthly", "daily"].map((p) => (
-                <button key={p} onClick={() => setPeriod(p)}
-                  className="px-3 py-1.5 capitalize font-medium transition-colors"
-                  style={{ fontSize: 12, background: period === p ? "#2E7D32" : "#fff", color: period === p ? "#fff" : "#6B7280" }}>
-                  {p}
-                </button>
+            <div className="w-full flex flex-col gap-1.5">
+              {[
+                { label: "Collected", value: collectedBins, color: "#2E7D32" },
+                { label: "Full",      value: fullBins,      color: "#DC2626" },
+                { label: "Missed",    value: missedBins,    color: "#D97706" },
+              ].map((s) => (
+                <div key={s.label} className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded-full" style={{ width: 8, height: 8, background: s.color, display: "inline-block" }} />
+                    <span className="text-text-secondary" style={{ fontSize: 12 }}>{s.label}</span>
+                  </div>
+                  <span className="font-semibold text-text-primary" style={{ fontSize: 12 }}>{s.value}</span>
+                </div>
               ))}
             </div>
           </div>
-          <BarChart data={chartData} valueKey="collected" targetKey={period === "monthly" ? "target" : undefined} labelKey={labelKey} height={160} />
-          {period === "monthly" && (
-            <div className="flex gap-2 mt-1">
-              {MONTHLY_COLLECTIONS.map((d, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                  <span className="rounded-full font-semibold text-white flex items-center justify-center"
-                    style={{ width: 18, height: 18, fontSize: 9, background: "#DC2626" }}>
-                    {d.missed}
+
+          <Section title="Collections Overview">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-4">
+                {[["#2E7D32", "Collected"], ["#9CA3AF", "Target"]].map(([color, label]) => (
+                  <span key={label} className="flex items-center gap-1.5 text-text-muted" style={{ fontSize: 12 }}>
+                    <span className="inline-block rounded-sm" style={{ width: 10, height: 10, background: color, opacity: label === "Target" ? 0.4 : 1 }} />
+                    {label}
                   </span>
-                  <span className="text-text-muted" style={{ fontSize: 9 }}>missed</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </Section>
-      </div>
-
-      {/* Daily trend sparkline + Missed reasons */}
-      <div className="grid grid-cols-2 gap-4">
-        <Section title="Daily Collection Trend — This Week">
-          <div className="flex items-end justify-between mb-1">
-            <div>
-              <span className="font-bold text-text-primary" style={{ fontSize: 24 }}>
-                {DAILY_TREND[DAILY_TREND.length - 1].collected}
-              </span>
-              <span className="text-text-muted ml-1" style={{ fontSize: 13 }}>bins today</span>
-            </div>
-            <GrowthBadge value={-15} />
-          </div>
-          <Sparkline data={DAILY_TREND} valueKey="collected" color="#2E7D32" height={80} />
-          <div className="flex items-center justify-between mt-1">
-            {DAILY_TREND.map((d) => (
-              <span key={d.day} className="text-text-muted" style={{ fontSize: 10 }}>{d.day}</span>
-            ))}
-          </div>
-        </Section>
-
-        <Section title="Missed Collections — Top Reasons">
-          <div className="flex flex-col gap-3">
-            {MISSED_REASONS.map((r) => (
-              <div key={r.reason} className="flex items-center gap-3">
-                <div className="flex-shrink-0 rounded-full" style={{ width: 10, height: 10, background: r.color }} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-0.5">
-                    <span className="text-text-secondary font-medium truncate" style={{ fontSize: 12 }}>{r.reason}</span>
-                    <span className="font-semibold text-text-primary ml-2" style={{ fontSize: 12 }}>{r.count}</span>
-                  </div>
-                  <div className="rounded-full overflow-hidden" style={{ height: 5, background: "#F3F4F6" }}>
-                    <div className="h-full rounded-full transition-all"
-                      style={{ width: `${(r.count / totalMissed) * 100}%`, background: r.color }} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="rounded-lg px-3 py-2 mt-1" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-            <p className="text-text-muted" style={{ fontSize: 11 }}>
-              Total missed: <strong style={{ color: "#DC2626" }}>{totalMissed}</strong> this period
-            </p>
-          </div>
-        </Section>
-      </div>
-
-      {/* Unit performance table */}
-      <Section title="Collector Unit Performance">
-        <div className="overflow-hidden rounded-lg" style={{ border: "1px solid #F3F4F6" }}>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
-                {["Unit", "Plate No.", "Trips", "Bins Collected", "Missed", "Collection Rate"].map((h) => (
-                  <th key={h} className="text-left font-semibold uppercase tracking-wide px-4 py-3"
-                    style={{ fontSize: 11, color: "#6B7280" }}>{h}</th>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {UNIT_PERFORMANCE.map((u, i) => (
-                <tr key={u.unit} style={{ background: i % 2 === 0 ? "#fff" : "#FAFAFA", borderBottom: "1px solid #F3F4F6" }}>
-                  <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{u.unit}</td>
-                  <td className="px-4 py-3 text-text-secondary font-mono" style={{ fontSize: 12 }}>{u.plate}</td>
-                  <td className="px-4 py-3 text-text-primary" style={{ fontSize: 13 }}>{u.trips}</td>
-                  <td className="px-4 py-3 text-text-primary" style={{ fontSize: 13 }}>{u.binsCollected}</td>
-                  <td className="px-4 py-3" style={{ fontSize: 13 }}>
-                    <span className="rounded-full px-2 py-0.5 font-semibold"
-                      style={{ fontSize: 11, background: "#FFEBEE", color: "#DC2626" }}>{u.missedBins}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 rounded-full overflow-hidden" style={{ height: 6, background: "#F3F4F6", maxWidth: 80 }}>
-                        <div className="h-full rounded-full"
-                          style={{ width: `${u.rate}%`, background: u.rate >= 90 ? "#2E7D32" : u.rate >= 80 ? "#D97706" : "#DC2626" }} />
-                      </div>
-                      <span className="font-semibold" style={{ fontSize: 13, color: u.rate >= 90 ? "#2E7D32" : u.rate >= 80 ? "#D97706" : "#DC2626" }}>
-                        {u.rate}%
-                      </span>
-                    </div>
-                  </td>
-                </tr>
+              </div>
+              <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E7EB" }}>
+                {["monthly", "daily"].map((p) => (
+                  <button key={p} onClick={() => setPeriod(p)}
+                    className="px-3 py-1.5 capitalize font-medium transition-colors"
+                    style={{ fontSize: 12, background: period === p ? "#2E7D32" : "#fff", color: period === p ? "#fff" : "#6B7280" }}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <BarChart data={chartData} valueKey="collected" targetKey={period === "monthly" ? "target" : undefined} labelKey={labelKey} height={160} />
+            {period === "monthly" && (
+              <div className="flex gap-2 mt-1">
+                {MONTHLY_COLLECTIONS.map((d, i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                    <span className="rounded-full font-semibold text-white flex items-center justify-center"
+                      style={{ width: 18, height: 18, fontSize: 9, background: "#DC2626" }}>{d.missed}</span>
+                    <span className="text-text-muted" style={{ fontSize: 9 }}>missed</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Section>
+        </div>
+
+        {/* Daily trend + Missed reasons */}
+        <div className="grid grid-cols-2 gap-4">
+          <Section title="Daily Collection Trend — This Week">
+            <div className="flex items-end justify-between mb-1">
+              <div>
+                <span className="font-bold text-text-primary" style={{ fontSize: 24 }}>
+                  {DAILY_TREND[DAILY_TREND.length - 1].collected}
+                </span>
+                <span className="text-text-muted ml-1" style={{ fontSize: 13 }}>bins today</span>
+              </div>
+              <GrowthBadge value={-15} />
+            </div>
+            <Sparkline data={DAILY_TREND} valueKey="collected" color="#2E7D32" height={80} />
+            <div className="flex items-center justify-between mt-1">
+              {DAILY_TREND.map((d) => (
+                <span key={d.day} className="text-text-muted" style={{ fontSize: 10 }}>{d.day}</span>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </Section>
+
+          <Section title="Missed Collections — Top Reasons">
+            <div className="flex flex-col gap-3">
+              {MISSED_REASONS.map((r) => (
+                <div key={r.reason} className="flex items-center gap-3">
+                  <div className="flex-shrink-0 rounded-full" style={{ width: 10, height: 10, background: r.color }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-text-secondary font-medium truncate" style={{ fontSize: 12 }}>{r.reason}</span>
+                      <span className="font-semibold text-text-primary ml-2" style={{ fontSize: 12 }}>{r.count}</span>
+                    </div>
+                    <div className="rounded-full overflow-hidden" style={{ height: 5, background: "#F3F4F6" }}>
+                      <div className="h-full rounded-full transition-all"
+                        style={{ width: `${(r.count / totalMissed) * 100}%`, background: r.color }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-lg px-3 py-2 mt-1" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+              <p className="text-text-muted" style={{ fontSize: 11 }}>
+                Total missed: <strong style={{ color: "#DC2626" }}>{totalMissed}</strong> this period
+              </p>
+            </div>
+          </Section>
         </div>
-        <div className="rounded-lg px-4 py-3 flex items-center justify-between"
-          style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-          <span className="text-text-muted" style={{ fontSize: 12 }}>
-            Overall cluster rate: <strong style={{ color: "#2E7D32" }}>
-              {Math.round(UNIT_PERFORMANCE.reduce((s, u) => s + u.rate, 0) / UNIT_PERFORMANCE.length)}%
-            </strong>
-          </span>
-          <span className="text-text-muted" style={{ fontSize: 12 }}>
-            Total trips: <strong style={{ color: "#1A1A1A" }}>
-              {UNIT_PERFORMANCE.reduce((s, u) => s + u.trips, 0)}
-            </strong>
-          </span>
-        </div>
-      </Section>
+
+        {/* Fuel Savings Gauge */}
+        <FuelSavingsGauge totalCollections={totalBinsCollected} collectionRate={avgRate} />
+
+        {/* Unit performance table */}
+        <Section title="Collector Unit Performance">
+          <div className="overflow-hidden rounded-lg" style={{ border: "1px solid #F3F4F6" }}>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+                  {["Unit", "Plate No.", "Trips", "Bins Collected", "Missed", "Collection Rate"].map((h) => (
+                    <th key={h} className="text-left font-semibold uppercase tracking-wide px-4 py-3"
+                      style={{ fontSize: 11, color: "#6B7280" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {UNIT_PERFORMANCE.map((u, i) => (
+                  <tr key={u.unit} style={{ background: i % 2 === 0 ? "#fff" : "#FAFAFA", borderBottom: "1px solid #F3F4F6" }}>
+                    <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{u.unit}</td>
+                    <td className="px-4 py-3 text-text-secondary font-mono" style={{ fontSize: 12 }}>{u.plate}</td>
+                    <td className="px-4 py-3 text-text-primary" style={{ fontSize: 13 }}>{u.trips}</td>
+                    <td className="px-4 py-3 text-text-primary" style={{ fontSize: 13 }}>{u.binsCollected}</td>
+                    <td className="px-4 py-3" style={{ fontSize: 13 }}>
+                      <span className="rounded-full px-2 py-0.5 font-semibold"
+                        style={{ fontSize: 11, background: "#FFEBEE", color: "#DC2626" }}>{u.missedBins}</span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 rounded-full overflow-hidden" style={{ height: 6, background: "#F3F4F6", maxWidth: 80 }}>
+                          <div className="h-full rounded-full"
+                            style={{ width: `${u.rate}%`, background: u.rate >= 90 ? "#2E7D32" : u.rate >= 80 ? "#D97706" : "#DC2626" }} />
+                        </div>
+                        <span className="font-semibold"
+                          style={{ fontSize: 13, color: u.rate >= 90 ? "#2E7D32" : u.rate >= 80 ? "#D97706" : "#DC2626" }}>
+                          {u.rate}%
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="rounded-lg px-4 py-3 flex items-center justify-between"
+            style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            <span className="text-text-muted" style={{ fontSize: 12 }}>
+              Overall rate: <strong style={{ color: "#2E7D32" }}>{avgRate}%</strong>
+            </span>
+            <span className="text-text-muted" style={{ fontSize: 12 }}>
+              Total trips: <strong style={{ color: "#1A1A1A" }}>
+                {UNIT_PERFORMANCE.reduce((s, u) => s + u.trips, 0)}
+              </strong>
+            </span>
+          </div>
+        </Section>
 
       </>)}
 
