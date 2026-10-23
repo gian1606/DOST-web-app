@@ -78,9 +78,9 @@ export const MRF_LOCATIONS = [
   { id: "m5", name: "MRF Pallocan West",    barangay: "Pallocan West",    status: "full",      posX: 0.20, posY: 0.68 },
 ];
 
-// -- Collection Routes ----------------------------------------------------------
+// -- Collection Routes (mock delivery schedule array) --------------------------
 // status: 'delivered' | 'in_progress' | 'completed'
-export const ROUTES = [
+export const COLLECTION_ROUTES = [
   { id: "r1", routeId: "RT-2025-001", date: "2025-05-18", bins: ["b1", "b3", "b4"],          distanceKm: 4.2, estimatedMinutes: 35, sentTo: "Juan dela Cruz", truckNo: "Truck #01", status: "completed",   optimizedAt: "2025-05-18T05:00:00Z", sentAt: "2025-05-18T05:05:00Z" },
   { id: "r2", routeId: "RT-2025-002", date: "2025-05-18", bins: ["b5", "b7", "b8"],          distanceKm: 5.8, estimatedMinutes: 48, sentTo: "Maria Santos",   truckNo: "Truck #02", status: "in_progress", optimizedAt: "2025-05-18T06:00:00Z", sentAt: "2025-05-18T06:10:00Z" },
   { id: "r3", routeId: "RT-2025-003", date: "2025-05-17", bins: ["b9", "b10", "b11", "b12"], distanceKm: 6.1, estimatedMinutes: 52, sentTo: "Pedro Reyes",    truckNo: "Truck #03", status: "completed",   optimizedAt: "2025-05-17T05:30:00Z", sentAt: "2025-05-17T05:35:00Z" },
@@ -454,3 +454,29 @@ export const REPORT_EXPORTS = [
   { id: "re3", name: "Q1 2025 City Analytics",         generatedAt: "2025-04-02T10:00:00Z", generatedBy: "Super Admin", format: "PDF"  },
   { id: "re4", name: "March 2025 Eco Token Report",    generatedAt: "2025-04-01T09:15:00Z", generatedBy: "Super Admin", format: "XLSX" },
 ];
+
+// ── Barangay Accounts — full records for CRUD (super-admin) ─────────────────────
+// status: 'active' | 'inactive'
+export const BARANGAY_ACCOUNTS = [
+  { id: "ba1",  name: "Brgy. Alangilan",        captain: "Jose Reyes",        email: "alangilan@besmart.gov.ph",        totalBins: 18, activeResidents: 142, status: "active",   lastActivity: "2025-05-18" },
+  { id: "ba2",  name: "Brgy. Cuta",             captain: "Maria Lim",         email: "cuta@besmart.gov.ph",             totalBins: 22, activeResidents: 198, status: "active",   lastActivity: "2025-05-18" },
+  { id: "ba3",  name: "Brgy. Kumintang Ibaba",  captain: "Pedro Santos",      email: "kumintang.ibaba@besmart.gov.ph",  totalBins: 20, activeResidents: 175, status: "active",   lastActivity: "2025-05-16" },
+  { id: "ba4",  name: "Brgy. Kumintang Ilaya",  captain: "Rosa Dela Cruz",    email: "kumintang.ilaya@besmart.gov.ph",  totalBins: 16, activeResidents: 130, status: "active",   lastActivity: "2025-05-17" },
+  { id: "ba5",  name: "Brgy. Libjo",            captain: "Carlos Navarro",    email: "libjo@besmart.gov.ph",            totalBins: 14, activeResidents: 118, status: "active",   lastActivity: "2025-05-15" },
+  { id: "ba6",  name: "Brgy. Sta. Clara",       captain: "Lorna Bautista",    email: "sta.clara@besmart.gov.ph",        totalBins: 12, activeResidents: 102, status: "inactive", lastActivity: "2025-05-10" },
+  { id: "ba7",  name: "Brgy. Pallocan West",    captain: "Ana Cruz",          email: "pallocan.west@besmart.gov.ph",    totalBins: 24, activeResidents: 210, status: "active",   lastActivity: "2025-05-18" },
+  { id: "ba8",  name: "Brgy. Pallocan East",    captain: "Ramon Torres",      email: "pallocan.east@besmart.gov.ph",    totalBins: 19, activeResidents: 165, status: "active",   lastActivity: "2025-05-17" },
+  { id: "ba9",  name: "Brgy. Bolbok",           captain: "Nena Villanueva",   email: "bolbok@besmart.gov.ph",           totalBins: 11, activeResidents: 95,  status: "inactive", lastActivity: "2025-05-08" },
+  { id: "ba10", name: "Brgy. Sta. Rita Karsada",captain: "Ernesto Pascual",   email: "sta.rita@besmart.gov.ph",         totalBins: 15, activeResidents: 128, status: "active",   lastActivity: "2025-05-16" },
+  { id: "ba11", name: "Brgy. Gulod Labac",      captain: "Teresita Ramos",    email: "gulod.labac@besmart.gov.ph",      totalBins: 13, activeResidents: 110, status: "active",   lastActivity: "2025-05-14" },
+  { id: "ba12", name: "Brgy. Dumuclay",         captain: "Alfredo Mendoza",   email: "dumuclay@besmart.gov.ph",         totalBins: 10, activeResidents: 88,  status: "inactive", lastActivity: "2025-05-05" },
+  { id: "ba13", name: "Brgy. Balagtas",         captain: "Gloria Castillo",   email: "balagtas@besmart.gov.ph",         totalBins: 17, activeResidents: 145, status: "active",   lastActivity: "2025-05-18" },
+  { id: "ba14", name: "Brgy. Calicanto",        captain: "Rodrigo Aquino",    email: "calicanto@besmart.gov.ph",        totalBins: 15, activeResidents: 132, status: "active",   lastActivity: "2025-05-17" },
+  { id: "ba15", name: "Brgy. Tinga Labac",      captain: "Marites Fernandez", email: "tinga.labac@besmart.gov.ph",      totalBins: 12, activeResidents: 98,  status: "active",   lastActivity: "2025-05-15" },
+];
+
+// ── Mock Credentials (development only) ────────────────────────────────────────
+export const MOCK_CREDENTIALS = {
+  email:    "superadmin@besmart.gov.ph",
+  password: "admin123",
+};

@@ -4,6 +4,8 @@ import {
   UserCircle, Mail, Shield, KeyRound, LogOut,
   CheckCircle, Eye, EyeOff, AlertTriangle,
 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { ROUTES } from "../../constants/index.js";
 
 // ── Reusable field ────────────────────────────────────────────────────────────
 function Field({ label, value, hint }) {
@@ -64,12 +66,11 @@ function Section({ title, description, icon: Icon, children }) {
  * Shared Settings page used by all roles.
  *
  * Props:
- *   profile   – { name, email, role, scope }   (read-only display)
- *   logoutKey – sessionStorage key to clear on sign out
- *   logoutPath – redirect path after sign out (default "/login")
+ *   profile – { name, email, role, scope, scopeLabel }  (read-only display)
  */
-export default function SettingsPage({ profile, logoutKey, logoutPath = "/login" }) {
+export default function SettingsPage({ profile }) {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   // ── Change password state ─────────────────────────────────────────────────
   const [pw, setPw] = useState({ current: "", next: "", confirm: "" });
@@ -98,11 +99,8 @@ export default function SettingsPage({ profile, logoutKey, logoutPath = "/login"
   }
 
   function handleSignOut() {
-    if (logoutKey) sessionStorage.removeItem(logoutKey);
-    // Also clear common auth keys
-    sessionStorage.removeItem("bs_auth");
-    sessionStorage.removeItem("bs_role");
-    navigate(logoutPath);
+    logout();
+    navigate(ROUTES.LOGIN);
   }
 
   return (
