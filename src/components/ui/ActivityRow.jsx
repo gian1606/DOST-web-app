@@ -1,17 +1,19 @@
 /**
  * ActivityRow — recent activity event item
  */
+import { colors } from "../../theme/colors.js";
+
 const EVENT_COLORS = {
-  bin_reported:         "#DC2626",
-  collection_confirmed: "#2E7D32",
-  route_sent:           "#1976D2",
-  route_received:       "#1976D2",
-  route_completed:      "#2E7D32",
-  barangay_created:     "#6B7280",
+  bin_reported:         colors.error,
+  collection_confirmed: colors.primary,
+  route_sent:           colors.recyclable,
+  route_received:       colors.recyclable,
+  route_completed:      colors.primary,
+  barangay_created:     colors.gray500,
 };
 
 export default function ActivityRow({ event, description, timestamp }) {
-  const color = EVENT_COLORS[event] ?? "#6B7280";
+  const color = EVENT_COLORS[event] ?? colors.gray500;
   const time = new Date(timestamp).toLocaleTimeString("en-PH", {
     hour: "2-digit",
     minute: "2-digit",
@@ -38,4 +40,3 @@ export default function ActivityRow({ event, description, timestamp }) {
     </div>
   );
 }
-

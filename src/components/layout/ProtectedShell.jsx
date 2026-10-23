@@ -32,7 +32,7 @@ export default function ProtectedShell({ role, Sidebar, TopHeader }) {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: "#F4F6F9" }}>
+    <div className="min-h-screen bg-background">
       <Sidebar />
       <TopHeader />
       <main

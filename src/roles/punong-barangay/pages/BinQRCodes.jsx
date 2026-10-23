@@ -1,3 +1,4 @@
+import { colors } from "../../../theme/colors.js";
 /**
  * BinQRCodes.jsx — BE-SMART Punong Barangay · Bin QR Code Management
  *
@@ -137,7 +138,7 @@ function LocationPicker({ lat, lng, onChange }) {
       <div
         id={mapContainerId}
         className="rounded-xl overflow-hidden"
-        style={{ height: 240, border: "1.5px solid #E5E7EB", background: "#F3F4F6", zIndex: 0 }}
+        style={{ height: 240, border: "1.5px solid " + colors.gray200, background: colors.gray100, zIndex: 0 }}
       />
 
       {/* Coordinate inputs */}
@@ -150,7 +151,7 @@ function LocationPicker({ lat, lng, onChange }) {
             onChange={(e) => onChange(e.target.value, lng)}
             placeholder="13.7565"
             className="rounded-lg px-3 py-2 outline-none"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#F9FAFB" }}
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.gray50 }}
             step="any"
           />
         </div>
@@ -162,7 +163,7 @@ function LocationPicker({ lat, lng, onChange }) {
             onChange={(e) => onChange(lat, e.target.value)}
             placeholder="121.0583"
             className="rounded-lg px-3 py-2 outline-none"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#F9FAFB" }}
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.gray50 }}
             step="any"
           />
         </div>
@@ -171,7 +172,7 @@ function LocationPicker({ lat, lng, onChange }) {
             type="button"
             onClick={() => onChange("", "")}
             className="rounded-lg px-3 py-2 font-medium hover:bg-red-50"
-            style={{ fontSize: 12, border: "1.5px solid #FECACA", color: "#DC2626", background: "#FFF5F5" }}
+            style={{ fontSize: 12, border: "1.5px solid " + colors.inputErrorBorder, color: colors.error, background: colors.errorSoft }}
           >
             ✕ Clear
           </button>
@@ -202,11 +203,11 @@ function buildPayload(bin) {
 // ── Status badge ──────────────────────────────────────────────────────────────
 function statusColor(s) {
   const key = (s || "").toLowerCase();
-  if (key === "full")      return { bg: "#FFEBEE", color: "#DC2626" };
-  if (key === "missed")    return { bg: "#FFF3E0", color: "#D97706" };
-  if (key === "collected") return { bg: "#E8F5E9", color: "#2E7D32" };
-  if (key === "locked")    return { bg: "#EDE9FE", color: "#7C3AED" };
-  return { bg: "#F3F4F6", color: "#6B7280" };
+  if (key === "full")      return { bg: colors.errorSoft, color: colors.error };
+  if (key === "missed")    return { bg: colors.warningSoft, color: colors.warning };
+  if (key === "collected") return { bg: colors.accentSoft, color: colors.primary };
+  if (key === "locked")    return { bg: colors.lockedSoft, color: colors.lockedText };
+  return { bg: colors.gray100, color: colors.gray500 };
 }
 
 // ── QR card ───────────────────────────────────────────────────────────────────
@@ -218,7 +219,7 @@ function QRCard({ bin, size = 180 }) {
       size={size}
       level="M"
       includeMargin={true}
-      style={{ borderRadius: 4, border: "1px solid #E5E7EB" }}
+      style={{ borderRadius: 4, border: "1px solid " + colors.gray200 }}
     />
   );
 }
@@ -282,7 +283,7 @@ function Field({ label, value, onChange, error, placeholder, required, type = "t
   return (
     <div className="flex flex-col gap-1">
       <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>
-        {label}{required && <span style={{ color: "#DC2626" }}> *</span>}
+        {label}{required && <span style={{ color: colors.error }}> *</span>}
       </label>
       <input
         type={type}
@@ -290,9 +291,9 @@ function Field({ label, value, onChange, error, placeholder, required, type = "t
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="rounded-lg px-3 py-2.5 outline-none"
-        style={{ fontSize: 14, border: error ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB" }}
+        style={{ fontSize: 14, border: error ? "1.5px solid " + colors.error : "1.5px solid " + colors.gray200, background: colors.gray50 }}
       />
-      {error && <span style={{ fontSize: 12, color: "#DC2626" }}>{error}</span>}
+      {error && <span style={{ fontSize: 12, color: colors.error }}>{error}</span>}
     </div>
   );
 }
@@ -307,12 +308,12 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
         <div className="flex gap-3">
           <button onClick={onCancel}
             className="flex-1 rounded-lg py-2.5 font-semibold hover:bg-gray-100"
-            style={{ border: "1.5px solid #E5E7EB", fontSize: 14, color: "#374151" }}>
+            style={{ border: "1.5px solid " + colors.gray200, fontSize: 14, color: colors.gray700 }}>
             Cancel
           </button>
           <button onClick={onConfirm}
             className="flex-1 rounded-lg py-2.5 font-semibold text-white hover:opacity-90"
-            style={{ background: "#DC2626", fontSize: 14 }}>
+            style={{ background: colors.error, fontSize: 14 }}>
             Delete
           </button>
         </div>
@@ -387,41 +388,41 @@ function ManageTiersModal({ onClose, onTiersChanged }) {
 
         <div className="flex items-center justify-between">
           <h2 className="font-bold text-text-primary" style={{ fontSize: 18 }}>Manage Tiers</h2>
-          <button onClick={onClose}><X size={20} color="#6B7280" /></button>
+          <button onClick={onClose}><X size={20} color={colors.gray500} /></button>
         </div>
 
         {error && (
           <div className="rounded-lg px-3 py-2 text-center"
-            style={{ background: "#FFEBEE", color: "#DC2626", fontSize: 13 }}>{error}</div>
+            style={{ background: colors.errorSoft, color: colors.error, fontSize: 13 }}>{error}</div>
         )}
 
         {loading ? (
-          <div className="text-center py-4" style={{ color: "#9CA3AF", fontSize: 14 }}>Loading…</div>
+          <div className="text-center py-4" style={{ color: colors.textMuted, fontSize: 14 }}>Loading…</div>
         ) : (
           <div className="flex flex-col gap-2">
             {tiers.map((t) => (
               <div key={t.id} className="flex items-center gap-3 rounded-lg px-3 py-2"
-                style={{ border: "1.5px solid #E5E7EB", background: editId === t.id ? "#F9FAFB" : "#fff" }}>
+                style={{ border: "1.5px solid " + colors.gray200, background: editId === t.id ? colors.gray50 : colors.white }}>
                 {editId === t.id ? (
                   <>
                     <input value={editName} onChange={(e) => setEditName(e.target.value)}
                       className="flex-1 rounded-lg px-2 py-1 outline-none"
-                      style={{ fontSize: 13, border: "1px solid #E5E7EB" }} placeholder="Tier name" />
+                      style={{ fontSize: 13, border: "1px solid " + colors.gray200 }} placeholder="Tier name" />
                     <input value={editCap} onChange={(e) => setEditCap(e.target.value)}
                       className="rounded-lg px-2 py-1 outline-none w-20"
-                      style={{ fontSize: 13, border: "1px solid #E5E7EB" }} placeholder="Liters" type="number" />
+                      style={{ fontSize: 13, border: "1px solid " + colors.gray200 }} placeholder="Liters" type="number" />
                     <button onClick={() => handleUpdate(t.id)} disabled={saving}
                       className="rounded-lg px-3 py-1 text-white font-medium text-xs hover:opacity-90"
-                      style={{ background: "#2E7D32" }}>Save</button>
+                      style={{ background: colors.primary }}>Save</button>
                     <button onClick={() => setEditId(null)}
                       className="rounded-lg px-2 py-1 text-xs font-medium hover:bg-gray-100"
-                      style={{ color: "#6B7280" }}>Cancel</button>
+                      style={{ color: colors.gray500 }}>Cancel</button>
                   </>
                 ) : (
                   <>
                     <span className="flex-1 font-semibold text-text-primary" style={{ fontSize: 14 }}>{t.name}</span>
                     <span className="rounded-full px-2 py-0.5 font-medium"
-                      style={{ fontSize: 11, background: "#DBEAFE", color: "#1D4ED8" }}>
+                      style={{ fontSize: 11, background: colors.infoSoft, color: colors.infoClassic }}>
                       {t.capacityLiters ? `${t.capacityLiters}L` : "Bulk"}
                     </span>
                     <button onClick={() => { setEditId(t.id); setEditName(t.name); setEditCap(t.capacityLiters ?? ""); }}
@@ -445,13 +446,13 @@ function ManageTiersModal({ onClose, onTiersChanged }) {
           <div className="flex gap-2">
             <input value={newName} onChange={(e) => setNewName(e.target.value)}
               className="flex-1 rounded-lg px-3 py-2 outline-none"
-              style={{ fontSize: 13, border: "1.5px solid #E5E7EB" }} placeholder="Tier name (e.g. Tier 4)" />
+              style={{ fontSize: 13, border: "1.5px solid " + colors.gray200 }} placeholder="Tier name (e.g. Tier 4)" />
             <input value={newCap} onChange={(e) => setNewCap(e.target.value)} type="number"
               className="rounded-lg px-3 py-2 outline-none w-24"
-              style={{ fontSize: 13, border: "1.5px solid #E5E7EB" }} placeholder="Liters" />
+              style={{ fontSize: 13, border: "1.5px solid " + colors.gray200 }} placeholder="Liters" />
             <button onClick={handleAdd} disabled={saving}
               className="flex items-center gap-1.5 rounded-lg px-4 py-2 font-semibold text-white hover:opacity-90"
-              style={{ background: "#2E7D32", fontSize: 13 }}>
+              style={{ background: colors.primary, fontSize: 13 }}>
               <Plus size={13} /> Add
             </button>
           </div>
@@ -624,38 +625,38 @@ export default function BinQRCodes() {
           {selected.length > 0 && (
             <>
               <span className="rounded-full px-3 py-1 font-semibold text-white"
-                style={{ fontSize: 12, background: "#2E7D32" }}>
+                style={{ fontSize: 12, background: colors.primary }}>
                 {selected.length} selected
               </span>
               <button onClick={clearSelection}
                 className="rounded-lg px-3 py-2 font-medium hover:bg-gray-100 transition-colors"
-                style={{ fontSize: 13, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>
+                style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>
                 Clear
               </button>
               <button onClick={() => handlePrint(bins.filter((b) => selected.includes(b.id)))}
                 className="flex items-center gap-2 rounded-lg px-4 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-                style={{ fontSize: 13, background: "#1976D2" }}>
+                style={{ fontSize: 13, background: colors.recyclable }}>
                 <Printer size={14} /> Print Selected
               </button>
               <button onClick={() => setConfirmBulkDel(true)}
                 className="flex items-center gap-2 rounded-lg px-4 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-                style={{ fontSize: 13, background: "#DC2626" }}>
+                style={{ fontSize: 13, background: colors.error }}>
                 <Trash2 size={14} /> Delete Selected
               </button>
             </>
           )}
           <button onClick={selectAll}
             className="rounded-lg px-3 py-2 font-medium hover:bg-gray-100 transition-colors"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", color: "#374151" }}>
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, color: colors.gray700 }}>
             Select All
           </button>
           <button onClick={() => setTiersOpen(true)}
             className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium hover:bg-gray-100 transition-colors"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", color: "#374151" }}>
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, color: colors.gray700 }}>
             <Settings size={14} /> Manage Tiers
           </button>          <button onClick={openAdd}
             className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 13, background: "#2E7D32" }}>
+            style={{ fontSize: 13, background: colors.primary }}>
             <Plus size={14} /> Add Bin
           </button>
         </div>
@@ -663,9 +664,9 @@ export default function BinQRCodes() {
 
       {/* ── Info banner ── */}
       <div className="flex items-start gap-3 rounded-xl px-4 py-3"
-        style={{ background: "#E8F5E9", border: "1px solid #C8E6C9" }}>
-        <QrCode size={16} color="#2E7D32" className="flex-shrink-0 mt-0.5" />
-        <p style={{ fontSize: 13, color: "#1C2B1E" }}>
+        style={{ background: colors.accentSoft, border: "1px solid " + colors.accentBorder }}>
+        <QrCode size={16} color={colors.primary} className="flex-shrink-0 mt-0.5" />
+        <p style={{ fontSize: 13, color: colors.sidebarBg }}>
           Each QR code encodes the bin's ID, name, street, and barangay. Residents scan these
           with the BE-SMART mobile app to report bin status. Print and attach them to the physical bins.
           <strong className="ml-1">Total: {bins.length} bins</strong>
@@ -675,13 +676,13 @@ export default function BinQRCodes() {
       {/* ── Fetch error ── */}
       {fetchError && (
         <div className="flex items-center justify-between rounded-xl px-4 py-3"
-          style={{ background: "#FFF3E0", border: "1px solid #FFE0B2" }}>
-          <span style={{ fontSize: 13, color: "#D97706" }}>
+          style={{ background: colors.warningSoft, border: "1px solid " + colors.warningBorder }}>
+          <span style={{ fontSize: 13, color: colors.warning }}>
             Could not load bins from server — showing local data. ({fetchError})
           </span>
           <button onClick={fetchBins}
             className="flex items-center gap-1.5 font-semibold hover:opacity-80"
-            style={{ fontSize: 13, color: "#D97706" }}>
+            style={{ fontSize: 13, color: colors.warning }}>
             <RefreshCw size={13} /> Retry
           </button>
         </div>
@@ -690,16 +691,16 @@ export default function BinQRCodes() {
       {/* ── Search + Tier filter ── */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex items-center" style={{ maxWidth: 320, flex: 1 }}>
-          <Search size={14} className="absolute left-3 text-text-muted" color="#9CA3AF" />
+          <Search size={14} className="absolute left-3 text-text-muted" color={colors.textMuted} />
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by bin name or street…"
             className="w-full rounded-lg pl-9 pr-3 py-2 outline-none"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#F9FAFB" }} />
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.gray50 }} />
         </div>
         <div className="relative flex items-center">
           <select value={filterTier} onChange={(e) => setFilterTier(e.target.value)}
             className="rounded-lg pl-3 pr-8 py-2 outline-none appearance-none"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#F9FAFB", color: "#374151", minWidth: 160 }}>
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.gray50, color: colors.gray700, minWidth: 160 }}>
             <option value="">All Tiers</option>
             {tiers.map((t) => (
               <option key={t.id} value={t.id}>
@@ -707,7 +708,7 @@ export default function BinQRCodes() {
               </option>
             ))}
           </select>
-          <ChevronDown size={13} className="absolute right-2 pointer-events-none" color="#9CA3AF" />
+          <ChevronDown size={13} className="absolute right-2 pointer-events-none" color={colors.textMuted} />
         </div>
       </div>
 
@@ -725,7 +726,7 @@ export default function BinQRCodes() {
               <div key={bin.id}
                 className="bg-white rounded-xl p-4 flex flex-col gap-3 cursor-pointer transition-all"
                 style={{
-                  border:     isSelected ? "2px solid #2E7D32" : "1px solid #E5E7EB",
+                  border:     isSelected ? "2px solid #2E7D32" : "1px solid " + colors.gray200,
                   boxShadow:  isSelected ? "0 0 0 3px rgba(46,125,50,0.12)" : "0 2px 8px rgba(0,0,0,0.05)",
                 }}
                 onClick={() => toggleSelect(bin.id)}>
@@ -734,7 +735,7 @@ export default function BinQRCodes() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center justify-center rounded flex-shrink-0"
-                      style={{ width: 18, height: 18, background: isSelected ? "#2E7D32" : "#fff", border: isSelected ? "none" : "1.5px solid #D1D5DB" }}>
+                      style={{ width: 18, height: 18, background: isSelected ? colors.primary : colors.white, border: isSelected ? "none" : "1.5px solid #D1D5DB" }}>
                       {isSelected && (
                         <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                           <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -746,7 +747,7 @@ export default function BinQRCodes() {
                   <div className="flex items-center gap-1">
                     {isNew && (
                       <span className="rounded-full px-2 py-0.5 font-semibold"
-                        style={{ fontSize: 9, background: "#E3F2FD", color: "#1976D2" }}>NEW</span>
+                        style={{ fontSize: 9, background: colors.infoSoft, color: colors.recyclable }}>NEW</span>
                     )}
                     <span className="rounded-full px-2 py-0.5 font-semibold"
                       style={{ fontSize: 10, background: sc.bg, color: sc.color }}>{bin.status ?? "—"}</span>
@@ -768,17 +769,17 @@ export default function BinQRCodes() {
                 <div className="flex items-center gap-2 mt-auto" onClick={(e) => e.stopPropagation()}>
                   <button onClick={() => setPreviewBin(bin)}
                     className="flex-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 font-medium hover:bg-gray-100 transition-colors"
-                    style={{ fontSize: 12, color: "#6B7280", border: "1px solid #E5E7EB" }}>
+                    style={{ fontSize: 12, color: colors.gray500, border: "1px solid " + colors.gray200 }}>
                     <QrCode size={12} /> Preview
                   </button>
                   <button onClick={() => handleDownload(bin)}
                     className="flex-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 font-medium hover:bg-green-50 transition-colors"
-                    style={{ fontSize: 12, color: "#2E7D32", border: "1px solid #C8E6C9" }}>
+                    style={{ fontSize: 12, color: colors.primary, border: "1px solid " + colors.accentBorder }}>
                     <Download size={12} /> Download
                   </button>
                   <button onClick={() => setConfirmDel(bin.id)}
                     className="flex items-center justify-center rounded-lg py-1.5 px-2 hover:bg-red-50 transition-colors"
-                    style={{ border: "1px solid #FFCDD2", color: "#DC2626" }}
+                    style={{ border: "1px solid " + colors.errorBorder, color: colors.error }}
                     title="Delete bin">
                     <Trash2 size={12} />
                   </button>
@@ -806,15 +807,15 @@ export default function BinQRCodes() {
 
             <button onClick={handleAddClose}
               className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-              <X size={16} color="#6B7280" />
+              <X size={16} color={colors.gray500} />
             </button>
 
             {addedBin ? (
               /* ── Success state ── */
               <div className="flex flex-col items-center gap-4 py-2">
                 <div className="flex items-center justify-center rounded-full"
-                  style={{ width: 64, height: 64, background: "#E8F5E9" }}>
-                  <QrCode size={30} color="#2E7D32" />
+                  style={{ width: 64, height: 64, background: colors.accentSoft }}>
+                  <QrCode size={30} color={colors.primary} />
                 </div>
                 <div className="text-center">
                   <h2 className="font-bold text-text-primary" style={{ fontSize: 18 }}>Bin Added!</h2>
@@ -826,7 +827,7 @@ export default function BinQRCodes() {
                   <QRCard bin={addedBin} size={180} />
                 </div>
                 <div className="rounded-xl px-4 py-3 w-full flex flex-col gap-1"
-                  style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                  style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
                   <div className="flex justify-between">
                     <span className="text-text-muted" style={{ fontSize: 12 }}>Bin ID</span>
                     <span className="font-semibold text-text-primary" style={{ fontSize: 12 }}>{addedBin.id}</span>
@@ -843,18 +844,18 @@ export default function BinQRCodes() {
                 <div className="flex items-center gap-3 w-full">
                   <button onClick={() => handleDownload(addedBin)}
                     className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 font-semibold hover:opacity-90 transition-opacity"
-                    style={{ fontSize: 13, background: "#E8F5E9", color: "#2E7D32", border: "1px solid #C8E6C9" }}>
+                    style={{ fontSize: 13, background: colors.accentSoft, color: colors.primary, border: "1px solid " + colors.accentBorder }}>
                     <Download size={14} /> Download QR
                   </button>
                   <button onClick={() => handlePrint([addedBin])}
                     className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-                    style={{ fontSize: 13, background: "#1976D2" }}>
+                    style={{ fontSize: 13, background: colors.recyclable }}>
                     <Printer size={14} /> Print QR
                   </button>
                 </div>
                 <button onClick={handleAddClose}
                   className="w-full rounded-xl py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-                  style={{ fontSize: 14, background: "#2E7D32" }}>
+                  style={{ fontSize: 14, background: colors.primary }}>
                   Done
                 </button>
               </div>
@@ -878,13 +879,13 @@ export default function BinQRCodes() {
                   {/* Tier selector */}
                   <div className="flex flex-col gap-1">
                     <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>
-                      Bin Tier <span style={{ color: "#DC2626" }}>*</span>
+                      Bin Tier <span style={{ color: colors.error }}>*</span>
                     </label>
                     <select
                       value={form.tier_id}
                       onChange={(e) => { setForm((p) => ({ ...p, tier_id: e.target.value })); setFormErrors((p) => ({ ...p, tier_id: undefined })); }}
                       className="rounded-lg px-3 py-2.5 outline-none"
-                      style={{ fontSize: 14, border: formErrors.tier_id ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB" }}>
+                      style={{ fontSize: 14, border: formErrors.tier_id ? "1.5px solid " + colors.error : "1.5px solid " + colors.gray200, background: colors.gray50 }}>
                       <option value="">Select a tier…</option>
                       {tiers.map((t) => (
                         <option key={t.id} value={t.id}>
@@ -892,7 +893,7 @@ export default function BinQRCodes() {
                         </option>
                       ))}
                     </select>
-                    {formErrors.tier_id && <span style={{ fontSize: 12, color: "#DC2626" }}>{formErrors.tier_id}</span>}
+                    {formErrors.tier_id && <span style={{ fontSize: 12, color: colors.error }}>{formErrors.tier_id}</span>}
                   </div>
 
                   {/* Location picker — embedded map */}
@@ -905,14 +906,14 @@ export default function BinQRCodes() {
                     }}
                   />
                   {(formErrors.lat || formErrors.lng) && (
-                    <span style={{ fontSize: 12, color: "#DC2626" }}>
+                    <span style={{ fontSize: 12, color: colors.error }}>
                       {formErrors.lat || formErrors.lng}
                     </span>
                   )}
 
                   {addError && (
                     <div className="rounded-lg px-4 py-3 text-center font-medium"
-                      style={{ background: "#FFEBEE", color: "#DC2626", fontSize: 13, border: "1px solid #FFCDD2" }}>
+                      style={{ background: colors.errorSoft, color: colors.error, fontSize: 13, border: "1px solid " + colors.errorBorder }}>
                       {addError}
                     </div>
                   )}
@@ -921,12 +922,12 @@ export default function BinQRCodes() {
                 <div className="flex items-center gap-3">
                   <button onClick={handleAddClose}
                     className="flex-1 rounded-xl py-2.5 font-medium"
-                    style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>
+                    style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>
                     Cancel
                   </button>
                   <button onClick={handleAddBin} disabled={addLoading}
                     className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-                    style={{ fontSize: 14, background: "#2E7D32", opacity: addLoading ? 0.7 : 1 }}>
+                    style={{ fontSize: 14, background: colors.primary, opacity: addLoading ? 0.7 : 1 }}>
                     <Plus size={14} /> {addLoading ? "Creating…" : "Add & Generate QR"}
                   </button>
                 </div>
@@ -947,7 +948,7 @@ export default function BinQRCodes() {
 
             <button onClick={() => setPreviewBin(null)}
               className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-              <X size={16} color="#6B7280" />
+              <X size={16} color={colors.gray500} />
             </button>
 
             <div>
@@ -962,7 +963,7 @@ export default function BinQRCodes() {
             </div>
 
             <div className="rounded-xl p-3 flex flex-col gap-1.5"
-              style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+              style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
               <p className="font-semibold text-text-primary" style={{ fontSize: 12 }}>Encoded Data</p>
               <code className="text-text-muted break-all" style={{ fontSize: 10, lineHeight: 1.6 }}>
                 {buildPayload(previewBin)}
@@ -980,12 +981,12 @@ export default function BinQRCodes() {
             <div className="flex items-center gap-3">
               <button onClick={() => handleDownload(previewBin)}
                 className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 font-semibold hover:opacity-90 transition-opacity"
-                style={{ fontSize: 13, background: "#E8F5E9", color: "#2E7D32", border: "1px solid #C8E6C9" }}>
+                style={{ fontSize: 13, background: colors.accentSoft, color: colors.primary, border: "1px solid " + colors.accentBorder }}>
                 <Download size={14} /> Download PNG
               </button>
               <button onClick={() => { setPreviewBin(null); handlePrint([previewBin]); }}
                 className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-                style={{ fontSize: 13, background: "#1976D2" }}>
+                style={{ fontSize: 13, background: colors.recyclable }}>
                 <Printer size={14} /> Print
               </button>
             </div>

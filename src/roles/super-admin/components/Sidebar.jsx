@@ -11,11 +11,12 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { ROUTES } from "../../../constants/index.js";
+import { colors } from "../../../theme/colors.js";
 
 const NAV_ITEMS = [
   { to: ROUTES.SA.DASHBOARD,     icon: LayoutGrid, label: "Dashboard" },
   { to: ROUTES.SA.MAP,           icon: Map,        label: "Mapa at Koleksyon" },
-  { to: ROUTES.SA.ROUTES,         icon: Route,      label: "Pamamahala ng Ruta" },
+  { to: ROUTES.SA.ROUTE_MGMT,       icon: Route,      label: "Pamamahala ng Ruta" },
   { to: ROUTES.SA.USERS,         icon: Users,      label: "Pamamahala ng Gumagamit" },
   { to: ROUTES.SA.ORGANIZATIONS,  icon: Building2,  label: "Pamamahala ng Organisasyon" },
   { to: ROUTES.SA.REPORTS,       icon: BarChart2,  label: "Mga Ulat at Pagsusuri" },
@@ -28,7 +29,7 @@ export default function Sidebar() {
   return (
     <aside
       className="fixed left-0 top-0 h-screen flex flex-col z-30"
-      style={{ width: 240, background: "#1C2B1E" }}
+      style={{ width: 240, background: colors.sidebarBg }}
     >
       {/* Brand */}
       <div className="px-4 pt-6 pb-4 border-b border-white/10">
@@ -73,7 +74,7 @@ export default function Sidebar() {
                   : "text-white/65 hover:text-white hover:bg-white/10"
               }`
             }
-            style={({ isActive }) => (isActive ? { background: "#2E7D32" } : {})}
+            style={({ isActive }) => (isActive ? { background: colors.primary } : {})}
           >
             <Icon size={17} />
             <span style={{ fontSize: 14 }}>{label}</span>

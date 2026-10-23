@@ -1,6 +1,7 @@
 // --- BE-SMART Mock Data -------------------------------------------------------
 // Single-cluster architecture — Batangas City.
 // Status strings and color mappings stay in sync with mobile.
+import { colors } from "../theme/colors.js";
 
 // -- Barangays (Batangas City) --------------------------------------------------
 export const BARANGAYS = [
@@ -129,21 +130,7 @@ export const RECENT_ACTIVITY = [
   { id: "a8", event: "route_sent",           description: "Route RT-2025-001 sent to Juan dela Cruz",                 timestamp: "2025-05-18T05:05:00Z" },
 ];
 
-// -- Status Color Map (must match mobile app exactly) --------------------------
-export const STATUS_COLORS = {
-  full:        "#DC2626",
-  collected:   "#2E7D32",
-  missed:      "#D97706",
-  ok:          "#2E7D32",
-  available:   "#2E7D32",
-  pending:     "#D97706",
-  completed:   "#2E7D32",
-  delivered:   "#2E7D32",
-  in_progress: "#1976D2",
-  en_route:    "#1976D2",
-  idle:        "#6B7280",
-  at_depot:    "#9CA3AF",
-};
+// -- Status colors are now in constants/index.js (STATUS_COLORS) --------------
 
 // -- Credentials ---------------------------------------------------------------
 // Mock credentials removed — authentication is handled by /api/auth/login.
@@ -396,40 +383,40 @@ export const FULL_BIN_TREND = [
 ];
 
 export const WASTE_BY_TYPE = [
-  { type: "Biodegradable", kg: 9_840, color: "#2E7D32" },
-  { type: "Recyclable",    kg: 7_210, color: "#1976D2" },
-  { type: "Residual",      kg: 5_630, color: "#D97706" },
-  { type: "Special Waste", kg: 2_190, color: "#DC2626" },
+  { type: "Biodegradable", kg: 9_840, color: colors.primary },
+  { type: "Recyclable",    kg: 7_210, color: colors.recyclable },
+  { type: "Residual",      kg: 5_630, color: colors.warning },
+  { type: "Special Waste", kg: 2_190, color: colors.error },
 ];
 
 export const WASTE_BY_TYPE_BY_BARANGAY = {
-  br_1: [{ type: "Biodegradable", kg: 760, color: "#2E7D32" }, { type: "Recyclable", kg: 555, color: "#1976D2" }, { type: "Residual", kg: 420, color: "#D97706" }, { type: "Special Waste", kg: 155, color: "#DC2626" }],
-  br_2: [{ type: "Biodegradable", kg: 790, color: "#2E7D32" }, { type: "Recyclable", kg: 575, color: "#1976D2" }, { type: "Residual", kg: 435, color: "#D97706" }, { type: "Special Waste", kg: 160, color: "#DC2626" }],
-  br_3: [{ type: "Biodegradable", kg: 630, color: "#2E7D32" }, { type: "Recyclable", kg: 460, color: "#1976D2" }, { type: "Residual", kg: 345, color: "#D97706" }, { type: "Special Waste", kg: 135, color: "#DC2626" }],
-  br_4: [{ type: "Biodegradable", kg: 705, color: "#2E7D32" }, { type: "Recyclable", kg: 515, color: "#1976D2" }, { type: "Residual", kg: 390, color: "#D97706" }, { type: "Special Waste", kg: 150, color: "#DC2626" }],
-  br_5: [{ type: "Biodegradable", kg: 690, color: "#2E7D32" }, { type: "Recyclable", kg: 500, color: "#1976D2" }, { type: "Residual", kg: 380, color: "#D97706" }, { type: "Special Waste", kg: 150, color: "#DC2626" }],
-  br_6: [{ type: "Biodegradable", kg: 672, color: "#2E7D32" }, { type: "Recyclable", kg: 490, color: "#1976D2" }, { type: "Residual", kg: 372, color: "#D97706" }, { type: "Special Waste", kg: 146, color: "#DC2626" }],
-  br_7: [{ type: "Biodegradable", kg: 640, color: "#2E7D32" }, { type: "Recyclable", kg: 466, color: "#1976D2" }, { type: "Residual", kg: 354, color: "#D97706" }, { type: "Special Waste", kg: 140, color: "#DC2626" }],
-  br_8: [{ type: "Biodegradable", kg: 632, color: "#2E7D32" }, { type: "Recyclable", kg: 460, color: "#1976D2" }, { type: "Residual", kg: 348, color: "#D97706" }, { type: "Special Waste", kg: 140, color: "#DC2626" }],
+  br_1: [{ type: "Biodegradable", kg: 760, color: colors.primary }, { type: "Recyclable", kg: 555, color: colors.recyclable }, { type: "Residual", kg: 420, color: colors.warning }, { type: "Special Waste", kg: 155, color: colors.error }],
+  br_2: [{ type: "Biodegradable", kg: 790, color: colors.primary }, { type: "Recyclable", kg: 575, color: colors.recyclable }, { type: "Residual", kg: 435, color: colors.warning }, { type: "Special Waste", kg: 160, color: colors.error }],
+  br_3: [{ type: "Biodegradable", kg: 630, color: colors.primary }, { type: "Recyclable", kg: 460, color: colors.recyclable }, { type: "Residual", kg: 345, color: colors.warning }, { type: "Special Waste", kg: 135, color: colors.error }],
+  br_4: [{ type: "Biodegradable", kg: 705, color: colors.primary }, { type: "Recyclable", kg: 515, color: colors.recyclable }, { type: "Residual", kg: 390, color: colors.warning }, { type: "Special Waste", kg: 150, color: colors.error }],
+  br_5: [{ type: "Biodegradable", kg: 690, color: colors.primary }, { type: "Recyclable", kg: 500, color: colors.recyclable }, { type: "Residual", kg: 380, color: colors.warning }, { type: "Special Waste", kg: 150, color: colors.error }],
+  br_6: [{ type: "Biodegradable", kg: 672, color: colors.primary }, { type: "Recyclable", kg: 490, color: colors.recyclable }, { type: "Residual", kg: 372, color: colors.warning }, { type: "Special Waste", kg: 146, color: colors.error }],
+  br_7: [{ type: "Biodegradable", kg: 640, color: colors.primary }, { type: "Recyclable", kg: 466, color: colors.recyclable }, { type: "Residual", kg: 354, color: colors.warning }, { type: "Special Waste", kg: 140, color: colors.error }],
+  br_8: [{ type: "Biodegradable", kg: 632, color: colors.primary }, { type: "Recyclable", kg: 460, color: colors.recyclable }, { type: "Residual", kg: 348, color: colors.warning }, { type: "Special Waste", kg: 140, color: colors.error }],
 };
 
 export const MISSED_REASONS = [
-  { reason: "Truck Breakdown",    count: 28, color: "#DC2626" },
-  { reason: "Route Not Assigned", count: 22, color: "#D97706" },
-  { reason: "Bin Not Accessible", count: 19, color: "#1976D2" },
-  { reason: "Weather / Road",     count: 11, color: "#6B7280" },
-  { reason: "Other",              count:  7, color: "#9CA3AF" },
+  { reason: "Truck Breakdown",    count: 28, color: colors.error },
+  { reason: "Route Not Assigned", count: 22, color: colors.warning },
+  { reason: "Bin Not Accessible", count: 19, color: colors.recyclable },
+  { reason: "Weather / Road",     count: 11, color: colors.gray500 },
+  { reason: "Other",              count:  7, color: colors.textMuted },
 ];
 
 export const MISSED_REASONS_BY_BARANGAY = {
-  br_1: [{ reason: "Truck Breakdown", count: 2, color: "#DC2626" }, { reason: "Route Not Assigned", count: 1, color: "#D97706" }, { reason: "Bin Not Accessible", count: 1, color: "#1976D2" }, { reason: "Other", count: 0, color: "#9CA3AF" }],
-  br_2: [{ reason: "Truck Breakdown", count: 2, color: "#DC2626" }, { reason: "Route Not Assigned", count: 2, color: "#D97706" }, { reason: "Bin Not Accessible", count: 1, color: "#1976D2" }, { reason: "Other", count: 0, color: "#9CA3AF" }],
-  br_3: [{ reason: "Truck Breakdown", count: 1, color: "#DC2626" }, { reason: "Route Not Assigned", count: 1, color: "#D97706" }, { reason: "Bin Not Accessible", count: 1, color: "#1976D2" }, { reason: "Other", count: 2, color: "#9CA3AF" }],
-  br_4: [{ reason: "Truck Breakdown", count: 2, color: "#DC2626" }, { reason: "Route Not Assigned", count: 2, color: "#D97706" }, { reason: "Bin Not Accessible", count: 1, color: "#1976D2" }, { reason: "Other", count: 1, color: "#9CA3AF" }],
-  br_5: [{ reason: "Truck Breakdown", count: 3, color: "#DC2626" }, { reason: "Route Not Assigned", count: 2, color: "#D97706" }, { reason: "Bin Not Accessible", count: 1, color: "#1976D2" }, { reason: "Other", count: 1, color: "#9CA3AF" }],
-  br_6: [{ reason: "Truck Breakdown", count: 3, color: "#DC2626" }, { reason: "Route Not Assigned", count: 2, color: "#D97706" }, { reason: "Bin Not Accessible", count: 1, color: "#1976D2" }, { reason: "Other", count: 1, color: "#9CA3AF" }],
-  br_7: [{ reason: "Truck Breakdown", count: 3, color: "#DC2626" }, { reason: "Route Not Assigned", count: 2, color: "#D97706" }, { reason: "Bin Not Accessible", count: 2, color: "#1976D2" }, { reason: "Other", count: 1, color: "#9CA3AF" }],
-  br_8: [{ reason: "Truck Breakdown", count: 3, color: "#DC2626" }, { reason: "Route Not Assigned", count: 2, color: "#D97706" }, { reason: "Bin Not Accessible", count: 2, color: "#1976D2" }, { reason: "Other", count: 1, color: "#9CA3AF" }],
+  br_1: [{ reason: "Truck Breakdown", count: 2, color: colors.error }, { reason: "Route Not Assigned", count: 1, color: colors.warning }, { reason: "Bin Not Accessible", count: 1, color: colors.recyclable }, { reason: "Other", count: 0, color: colors.textMuted }],
+  br_2: [{ reason: "Truck Breakdown", count: 2, color: colors.error }, { reason: "Route Not Assigned", count: 2, color: colors.warning }, { reason: "Bin Not Accessible", count: 1, color: colors.recyclable }, { reason: "Other", count: 0, color: colors.textMuted }],
+  br_3: [{ reason: "Truck Breakdown", count: 1, color: colors.error }, { reason: "Route Not Assigned", count: 1, color: colors.warning }, { reason: "Bin Not Accessible", count: 1, color: colors.recyclable }, { reason: "Other", count: 2, color: colors.textMuted }],
+  br_4: [{ reason: "Truck Breakdown", count: 2, color: colors.error }, { reason: "Route Not Assigned", count: 2, color: colors.warning }, { reason: "Bin Not Accessible", count: 1, color: colors.recyclable }, { reason: "Other", count: 1, color: colors.textMuted }],
+  br_5: [{ reason: "Truck Breakdown", count: 3, color: colors.error }, { reason: "Route Not Assigned", count: 2, color: colors.warning }, { reason: "Bin Not Accessible", count: 1, color: colors.recyclable }, { reason: "Other", count: 1, color: colors.textMuted }],
+  br_6: [{ reason: "Truck Breakdown", count: 3, color: colors.error }, { reason: "Route Not Assigned", count: 2, color: colors.warning }, { reason: "Bin Not Accessible", count: 1, color: colors.recyclable }, { reason: "Other", count: 1, color: colors.textMuted }],
+  br_7: [{ reason: "Truck Breakdown", count: 3, color: colors.error }, { reason: "Route Not Assigned", count: 2, color: colors.warning }, { reason: "Bin Not Accessible", count: 2, color: colors.recyclable }, { reason: "Other", count: 1, color: colors.textMuted }],
+  br_8: [{ reason: "Truck Breakdown", count: 3, color: colors.error }, { reason: "Route Not Assigned", count: 2, color: colors.warning }, { reason: "Bin Not Accessible", count: 2, color: colors.recyclable }, { reason: "Other", count: 1, color: colors.textMuted }],
 };
 
 export const ECO_TOKEN_MONTHLY = [
@@ -480,3 +467,33 @@ export const MOCK_CREDENTIALS = {
   email:    "superadmin@besmart.gov.ph",
   password: "admin123",
 };
+
+// ── Collector Admin — Analytics mock data ─────────────────────────────────────
+// Used by collector-admin/pages/Reports.jsx analytics tab.
+
+export const CA_MONTHLY_COLLECTIONS = [
+  { month: "Jan", collected: 52, target: 60, missed: 8 },
+  { month: "Feb", collected: 58, target: 60, missed: 2 },
+  { month: "Mar", collected: 55, target: 60, missed: 5 },
+  { month: "Apr", collected: 61, target: 65, missed: 4 },
+  { month: "May", collected: 48, target: 65, missed: 17 },
+];
+
+export const CA_UNIT_PERFORMANCE = [
+  { unit: "Unit Alpha",   plate: "BTC-1021", trips: 18, binsCollected: 42, missedBins: 3, rate: 93 },
+  { unit: "Unit Bravo",   plate: "BTC-1034", trips: 14, binsCollected: 31, missedBins: 5, rate: 86 },
+  { unit: "Unit Charlie", plate: "BTC-1047", trips: 10, binsCollected: 22, missedBins: 2, rate: 92 },
+];
+
+export const CA_DAILY_TREND = [
+  { day: "Mon", collected: 8 }, { day: "Tue", collected: 11 }, { day: "Wed", collected: 7 },
+  { day: "Thu", collected: 13 }, { day: "Fri", collected: 9 }, { day: "Sat", collected: 6 }, { day: "Sun", collected: 3 },
+];
+
+export const CA_MISSED_REASONS = [
+  { reason: "Bin not accessible",   count: 7, color: colors.error },
+  { reason: "Route not dispatched", count: 4, color: colors.warning },
+  { reason: "Truck breakdown",      count: 3, color: colors.recyclable },
+  { reason: "Weather conditions",   count: 2, color: "#9C27B0" /* purple — no token; add one if this status grows */ },
+  { reason: "Other",                count: 1, color: colors.textMuted },
+];

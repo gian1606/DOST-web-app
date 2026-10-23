@@ -1,3 +1,4 @@
+import { colors } from "../../../theme/colors.js";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Truck, CheckCircle, Activity, RefreshCw, Route } from "lucide-react";
 import StatCard    from "../../../components/ui/StatCard";
@@ -27,15 +28,15 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           <button
             className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#fff", color: "#6B7280" }}
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.white, color: colors.gray500 }}
           >
             <RefreshCw size={14} />
             I-refresh
           </button>
           <button
-            onClick={() => navigate(NAV_ROUTES.SA.ROUTES)}
+            onClick={() => navigate(NAV_ROUTES.SA.ROUTE_MGMT)}
             className="flex items-center gap-2 rounded-lg px-4 py-2 font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ fontSize: 13, background: "#2E7D32" }}
+            style={{ fontSize: 13, background: colors.primary }}
           >
             <Route size={14} />
             I-optimize ang Ruta
@@ -46,31 +47,31 @@ export default function Dashboard() {
       {/* Stats row */}
       <div className="grid grid-cols-4 gap-4">
         <StatCard
-          icon={<Trash2 size={18} color="#6B7280" />}
+          icon={<Trash2 size={18} color={colors.gray500} />}
           value={DASHBOARD_STATS.totalBins}
           label="Kabuuang Bilang ng Basurahan"
           subLabel="Buong Lungsod"
         />
         <StatCard
-          icon={<Trash2 size={18} color="#DC2626" />}
+          icon={<Trash2 size={18} color={colors.error} />}
           value={DASHBOARD_STATS.fullBins}
           label="Mga Puno na Basurahan"
           subLabel={DASHBOARD_STATS.fullBins > 5 ? `${Math.min(DASHBOARD_STATS.fullBins, 3)} kritikal` : "Kailangan nang kolektahin"}
-          subLabelColor="#DC2626"
+          subLabelColor={colors.error}
         />
         <StatCard
-          icon={<CheckCircle size={18} color="#2E7D32" />}
+          icon={<CheckCircle size={18} color={colors.primary} />}
           value={DASHBOARD_STATS.collectedToday}
           label="Nakolekta Ngayon"
           subLabel={`${Math.round((DASHBOARD_STATS.collectedToday / Math.max(DASHBOARD_STATS.totalBins, 1)) * 100)}% ng target`}
-          subLabelColor="#2E7D32"
+          subLabelColor={colors.primary}
         />
         <StatCard
-          icon={<Truck size={18} color="#1976D2" />}
+          icon={<Truck size={18} color={colors.recyclable} />}
           value={DASHBOARD_STATS.activeTrucks}
           label="Mga Aktibong Trak"
           subLabel="2 nasa ruta"
-          subLabelColor="#1976D2"
+          subLabelColor={colors.recyclable}
         />
       </div>
 
@@ -79,15 +80,15 @@ export default function Dashboard() {
         {/* Left: Live Map */}
         <div
           className="bg-white rounded-xl p-4 flex flex-col gap-3"
-          style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+          style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
         >
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Live na Mapa</h2>
             <span
               className="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium"
-              style={{ fontSize: 11, background: "#E8F5E9", color: "#2E7D32" }}
+              style={{ fontSize: 11, background: colors.accentSoft, color: colors.primary }}
             >
-              <span className="rounded-full" style={{ width: 6, height: 6, background: "#2E7D32", display: "inline-block" }} />
+              <span className="rounded-full" style={{ width: 6, height: 6, background: colors.primary, display: "inline-block" }} />
               Live
             </span>
           </div>
@@ -99,12 +100,12 @@ export default function Dashboard() {
           {/* Full Bin Alerts */}
           <div
             className="bg-white rounded-xl p-4 flex flex-col gap-2"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             <div className="flex items-center justify-between mb-1">
               <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Mga Alerto sa Puno na Basurahan</h2>
               <span className="rounded-full px-2.5 py-0.5 font-semibold"
-                style={{ fontSize: 12, background: "#FFEBEE", color: "#DC2626" }}>
+                style={{ fontSize: 12, background: colors.errorSoft, color: colors.error }}>
                 {fullBins.length}
               </span>
             </div>
@@ -127,10 +128,10 @@ export default function Dashboard() {
           {/* Recent Activity */}
           <div
             className="bg-white rounded-xl p-4 flex flex-col gap-2 flex-1"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             <div className="flex items-center gap-2 mb-1">
-              <Activity size={16} color="#6B7280" />
+              <Activity size={16} color={colors.gray500} />
               <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>Mga Kamakailang Aktibidad</h2>
             </div>
             <div className="overflow-y-auto" style={{ maxHeight: 200 }}>

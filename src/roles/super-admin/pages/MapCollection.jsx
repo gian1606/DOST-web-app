@@ -1,3 +1,4 @@
+import { colors } from "../../../theme/colors.js";
 import { RefreshCw } from "lucide-react";
 import MapView from "../../../components/ui/MapView";
 import { BINS, TRUCKS, MRF_LOCATIONS } from "../../../mock/data";
@@ -17,7 +18,7 @@ export default function MapCollection() {
         </div>
         <button
           className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors"
-          style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#fff", color: "#6B7280" }}
+          style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.white, color: colors.gray500 }}
         >
           <RefreshCw size={14} />
           Refresh
@@ -27,9 +28,9 @@ export default function MapCollection() {
       {/* Bin status summary */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Full Bins",  count: fullCount,      color: "#DC2626", bg: "#FFEBEE" },
-          { label: "Collected",  count: collectedCount, color: "#2E7D32", bg: "#E8F5E9" },
-          { label: "Missed",     count: missedCount,    color: "#D97706", bg: "#FFF3E0" },
+          { label: "Full Bins",  count: fullCount,      color: colors.error, bg: colors.errorSoft },
+          { label: "Collected",  count: collectedCount, color: colors.primary, bg: colors.accentSoft },
+          { label: "Missed",     count: missedCount,    color: colors.warning, bg: colors.warningSoft },
         ].map((s) => (
           <div
             key={s.label}
@@ -46,7 +47,7 @@ export default function MapCollection() {
       {/* Full-width map */}
       <div
         className="bg-white rounded-xl p-4"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
       >
         <MapView bins={BINS} trucks={TRUCKS} mrfs={MRF_LOCATIONS} height={520} />
       </div>

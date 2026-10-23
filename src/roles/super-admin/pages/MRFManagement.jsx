@@ -1,3 +1,4 @@
+import { colors } from "../../../theme/colors.js";
 import ComingSoon from "../../../components/ui/ComingSoon";
 
 export default function MRFManagement() {
@@ -9,14 +10,14 @@ export default function MRFManagement() {
         </h1>
         <span
           className="rounded-full px-3 py-1 font-semibold"
-          style={{ fontSize: 12, background: "#F3F4F6", color: "#9CA3AF" }}
+          style={{ fontSize: 12, background: colors.gray100, color: colors.textMuted }}
         >
           Coming Soon
         </span>
       </div>
       <div
         className="bg-white rounded-xl"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
       >
         <ComingSoon
           title="MRF Management"

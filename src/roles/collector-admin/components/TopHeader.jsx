@@ -2,13 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDown, UserCircle, Settings, LogOut,
-  Bell, AlertTriangle, Megaphone, CheckCircle,
+  Bell, AlertTriangle,
 } from "lucide-react";
 import { CA_INCOMING_ROUTE } from "../../../mock/data";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { ROUTES, ROUTE_LABELS } from "../../../constants/index.js";
+import { colors } from "../../../theme/colors.js";
+import { NOTIF_TYPE_CONFIG } from "../../../components/ui/notifConfig.jsx";
 
-// Build a simple notification list from the incoming route status
+
 function buildNotifications() {
   const notifs = [];
   if (CA_INCOMING_ROUTE.status === "delivered") {
@@ -25,10 +27,7 @@ function buildNotifications() {
   return notifs;
 }
 
-const NOTIF_TYPE_CONFIG = {
-  route:        { icon: CheckCircle, color: "#1976D2", bg: "#E3F2FD" },
-  announcement: { icon: Megaphone,   color: "#2E7D32", bg: "#E8F5E9" },
-};
+// Build a simple notification list from the incoming route status
 
 export default function CATopHeader() {
   const { pathname } = useLocation();
@@ -70,7 +69,7 @@ export default function CATopHeader() {
   }
 
   return (
-    <header className="fixed top-0 right-0 z-20 flex items-center justify-between px-6" style={{ left: 240, height: 60, background: "#fff", borderBottom: "1px solid #E5E7EB" }}>
+    <header className="fixed top-0 right-0 z-20 flex items-center justify-between px-6" style={{ left: 240, height: 60, background: colors.white, borderBottom: "1px solid " + colors.gray200 }}>
       <div className="flex items-center gap-1.5" style={{ fontSize: 13 }}>
         <span className="text-text-secondary font-medium">BE-SMART</span>
         <span className="text-text-muted">/</span>
@@ -87,21 +86,21 @@ export default function CATopHeader() {
           >
             <Bell size={18} className="text-text-secondary" />
             {unread > 0 && (
-              <span className="absolute top-1 right-1 flex items-center justify-center rounded-full text-white font-bold" style={{ width: 16, height: 16, fontSize: 9, background: "#DC2626" }}>
+              <span className="absolute top-1 right-1 flex items-center justify-center rounded-full text-white font-bold" style={{ width: 16, height: 16, fontSize: 9, background: colors.error }}>
                 {unread}
               </span>
             )}
           </button>
 
           {notifOpen && (
-            <div className="absolute right-0 mt-1 rounded-xl overflow-hidden flex flex-col" style={{ top: "100%", width: 360, background: "#fff", border: "1px solid #E5E7EB", boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 50, maxHeight: 440 }}>
-              <div className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0" style={{ borderColor: "#F3F4F6" }}>
+            <div className="absolute right-0 mt-1 rounded-xl overflow-hidden flex flex-col" style={{ top: "100%", width: 360, background: colors.white, border: "1px solid " + colors.gray200, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", zIndex: 50, maxHeight: 440 }}>
+              <div className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0" style={{ borderColor: colors.gray100 }}>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-text-primary" style={{ fontSize: 14 }}>Notifications</span>
-                  {unread > 0 && <span className="rounded-full px-2 py-0.5 font-semibold text-white" style={{ fontSize: 11, background: "#DC2626" }}>{unread}</span>}
+                  {unread > 0 && <span className="rounded-full px-2 py-0.5 font-semibold text-white" style={{ fontSize: 11, background: colors.error }}>{unread}</span>}
                 </div>
                 {unread > 0 && (
-                  <button onClick={markAllRead} className="text-text-muted hover:text-green-700 transition-colors" style={{ fontSize: 12 }}>Mark all read</button>
+                  <button onClick={markAllRead} className="text-text-muted hover:text-primary transition-colors" style={{ fontSize: 12 }}>Mark all read</button>
                 )}
               </div>
               <div className="overflow-y-auto flex-1">
@@ -115,7 +114,7 @@ export default function CATopHeader() {
                       <div
                         key={n.id}
                         className="flex items-start gap-3 px-4 py-3 border-b last:border-0 hover:bg-gray-50 transition-colors cursor-pointer"
-                        style={{ borderColor: "#F3F4F6", background: !n.read ? "#FAFFFE" : undefined }}
+                        style={{ borderColor: colors.gray100, background: !n.read ? colors.notificationUnread : undefined }}
                         onClick={() => setNotifications((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)))}
                       >
                         <div className="flex-shrink-0 flex items-center justify-center rounded-lg mt-0.5" style={{ width: 32, height: 32, background: cfg.bg }}>
@@ -124,9 +123,9 @@ export default function CATopHeader() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-0.5">
                             <span className="font-semibold text-text-primary truncate" style={{ fontSize: 13 }}>{n.title}</span>
-                            {!n.read && <span className="rounded-full flex-shrink-0" style={{ width: 6, height: 6, background: "#2E7D32", display: "inline-block" }} />}
+                            {!n.read && <span className="rounded-full flex-shrink-0" style={{ width: 6, height: 6, background: colors.primary, display: "inline-block" }} />}
                             {n.priority === "urgent" && (
-                              <span className="flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-semibold flex-shrink-0" style={{ fontSize: 10, background: "#FFEBEE", color: "#DC2626" }}>
+                              <span className="flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-semibold flex-shrink-0" style={{ fontSize: 10, background: colors.errorSoft, color: colors.error }}>
                                 <AlertTriangle size={9} />Urgent
                               </span>
                             )}
@@ -149,8 +148,8 @@ export default function CATopHeader() {
             onClick={() => { setProfileOpen((v) => !v); setNotifOpen(false); }}
             className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors"
           >
-            <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: "#E8F5E9" }}>
-              <UserCircle size={20} color="#2E7D32" />
+            <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: colors.accentSoft }}>
+              <UserCircle size={20} color={colors.primary} />
             </div>
             <div>
               <div className="font-semibold text-text-primary leading-tight" style={{ fontSize: 13 }}>{user.name || "Collector Admin"}</div>
@@ -160,22 +159,22 @@ export default function CATopHeader() {
           </button>
 
           {profileOpen && (
-            <div className="absolute right-0 mt-1 rounded-xl overflow-hidden" style={{ top: "100%", minWidth: 180, background: "#fff", border: "1px solid #E5E7EB", boxShadow: "0 8px 24px rgba(0,0,0,0.10)", zIndex: 50 }}>
+            <div className="absolute right-0 mt-1 rounded-xl overflow-hidden" style={{ top: "100%", minWidth: 180, background: colors.white, border: "1px solid " + colors.gray200, boxShadow: "0 8px 24px rgba(0,0,0,0.10)", zIndex: 50 }}>
               <button
                 onClick={() => { setProfileOpen(false); navigate(ROUTES.CA.SETTINGS); }}
                 className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
-                style={{ fontSize: 14, color: "#374151" }}
+                style={{ fontSize: 14, color: colors.gray700 }}
               >
-                <Settings size={15} color="#6B7280" />
+                <Settings size={15} color={colors.gray500} />
                 Settings
               </button>
-              <div style={{ height: 1, background: "#F3F4F6" }} />
+              <div style={{ height: 1, background: colors.gray100 }} />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 w-full px-4 py-3 hover:bg-red-50 transition-colors text-left"
-                style={{ fontSize: 14, color: "#DC2626" }}
+                style={{ fontSize: 14, color: colors.error }}
               >
-                <LogOut size={15} color="#DC2626" />
+                <LogOut size={15} color={colors.error} />
                 Sign Out
               </button>
             </div>

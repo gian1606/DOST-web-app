@@ -12,8 +12,8 @@ import SASidebar      from "./roles/super-admin/components/Sidebar.jsx";
 import SATopHeader    from "./roles/super-admin/components/TopHeader.jsx";
 import CASidebar      from "./roles/collector-admin/components/Sidebar.jsx";
 import CATopHeader    from "./roles/collector-admin/components/TopHeader.jsx";
-import PBSidebar      from "./roles/punong-barangay/components/PBSidebar.jsx";
-import PBTopHeader    from "./roles/punong-barangay/components/PBTopHeader.jsx";
+import PBSidebar      from "./roles/punong-barangay/components/Sidebar.jsx";
+import PBTopHeader    from "./roles/punong-barangay/components/TopHeader.jsx";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 import { ROUTES, DB_ROLES } from "./constants/index.js";

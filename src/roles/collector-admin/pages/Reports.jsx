@@ -1,38 +1,11 @@
+import { colors } from "../../../theme/colors.js";
 import { useState, useEffect } from "react";
 import {
   CheckCircle, Trash2, Truck, TrendingUp, TrendingDown, AlertTriangle,
   Download, BarChart2, FileWarning, CheckCheck, Clock, ChevronDown, ChevronUp, Fuel,
 } from "lucide-react";
-import { COLLECTOR_UNITS, COLLECTORS, BINS, CA_DASHBOARD_STATS } from "../../../mock/data";
+import { COLLECTOR_UNITS, COLLECTORS, BINS, CA_DASHBOARD_STATS, CA_MONTHLY_COLLECTIONS, CA_UNIT_PERFORMANCE, CA_DAILY_TREND, CA_MISSED_REASONS } from "../../../mock/data";
 import { fetchCollectorReports, resolveCollectorReport } from "../../../services/reports.js";
-
-// ── Inline analytics mock data ────────────────────────────────────────────────
-const MONTHLY_COLLECTIONS = [
-  { month: "Jan", collected: 52, target: 60, missed: 8 },
-  { month: "Feb", collected: 58, target: 60, missed: 2 },
-  { month: "Mar", collected: 55, target: 60, missed: 5 },
-  { month: "Apr", collected: 61, target: 65, missed: 4 },
-  { month: "May", collected: 48, target: 65, missed: 17 },
-];
-
-const UNIT_PERFORMANCE = [
-  { unit: "Unit Alpha",   plate: "BTC-1021", trips: 18, binsCollected: 42, missedBins: 3, rate: 93 },
-  { unit: "Unit Bravo",   plate: "BTC-1034", trips: 14, binsCollected: 31, missedBins: 5, rate: 86 },
-  { unit: "Unit Charlie", plate: "BTC-1047", trips: 10, binsCollected: 22, missedBins: 2, rate: 92 },
-];
-
-const DAILY_TREND = [
-  { day: "Mon", collected: 8 }, { day: "Tue", collected: 11 }, { day: "Wed", collected: 7 },
-  { day: "Thu", collected: 13 }, { day: "Fri", collected: 9 }, { day: "Sat", collected: 6 }, { day: "Sun", collected: 3 },
-];
-
-const MISSED_REASONS = [
-  { reason: "Bin not accessible",    count: 7, color: "#DC2626" },
-  { reason: "Route not dispatched",  count: 4, color: "#D97706" },
-  { reason: "Truck breakdown",       count: 3, color: "#1976D2" },
-  { reason: "Weather conditions",    count: 2, color: "#9C27B0" },
-  { reason: "Other",                 count: 1, color: "#9CA3AF" },
-];
 
 // ── Reusable chart components ─────────────────────────────────────────────────
 function GrowthBadge({ value }) {
@@ -40,7 +13,7 @@ function GrowthBadge({ value }) {
   const Icon = up ? TrendingUp : TrendingDown;
   return (
     <span className="flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold"
-      style={{ fontSize: 11, background: up ? "#E8F5E9" : "#FFEBEE", color: up ? "#2E7D32" : "#DC2626" }}>
+      style={{ fontSize: 11, background: up ? colors.accentSoft : colors.errorSoft, color: up ? colors.primary : colors.error }}>
       <Icon size={10} />{Math.abs(value)}%
     </span>
   );
@@ -55,10 +28,10 @@ function BarChart({ data, valueKey, targetKey, labelKey, height = 140 }) {
           <div className="flex items-end gap-0.5 w-full" style={{ height: height - 20 }}>
             {targetKey && (
               <div className="flex-1 rounded-t-sm opacity-25"
-                style={{ height: `${(d[targetKey] / max) * 100}%`, background: "#9CA3AF", minHeight: 2 }} />
+                style={{ height: `${(d[targetKey] / max) * 100}%`, background: colors.textMuted, minHeight: 2 }} />
             )}
             <div className="flex-1 rounded-t-sm"
-              style={{ height: `${(d[valueKey] / max) * 100}%`, background: "#2E7D32", minHeight: 2 }} />
+              style={{ height: `${(d[valueKey] / max) * 100}%`, background: colors.primary, minHeight: 2 }} />
           </div>
           <span className="text-text-muted text-center" style={{ fontSize: 10 }}>{d[labelKey]}</span>
         </div>
@@ -67,7 +40,7 @@ function BarChart({ data, valueKey, targetKey, labelKey, height = 140 }) {
   );
 }
 
-function Sparkline({ data, valueKey, color = "#2E7D32", height = 60 }) {
+function Sparkline({ data, valueKey, color = colors.primary, height = 60 }) {
   const vals = data.map((d) => d[valueKey]);
   const min = Math.min(...vals);
   const max = Math.max(...vals);
@@ -85,20 +58,20 @@ function Sparkline({ data, valueKey, color = "#2E7D32", height = 60 }) {
 function Section({ title, children }) {
   return (
     <div className="bg-white rounded-xl p-5 flex flex-col gap-4"
-      style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+      style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
       <h2 className="font-semibold text-text-primary" style={{ fontSize: 16 }}>{title}</h2>
       {children}
     </div>
   );
 }
 
-function KpiCard({ icon, label, value, growth, sub, bg = "#F9FAFB" }) {
+function KpiCard({ icon, label, value, growth, sub, bg = colors.gray50 }) {
   return (
     <div className="rounded-xl p-4 flex flex-col gap-2"
-      style={{ background: bg, border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+      style={{ background: bg, border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-center rounded-lg"
-          style={{ width: 34, height: 34, background: "#fff" }}>{icon}</div>
+          style={{ width: 34, height: 34, background: colors.white }}>{icon}</div>
         <GrowthBadge value={growth} />
       </div>
       <div>
@@ -119,7 +92,7 @@ function FuelSavingsGauge({ totalCollections, collectionRate }) {
   const pct          = Math.min(Math.round((savedLitres / maxLitres) * 100), 100);
   const costPerLitre = 65;
   const savedPHP     = (savedLitres * costPerLitre).toLocaleString();
-  const gaugeColor   = pct >= 60 ? "#2E7D32" : pct >= 35 ? "#D97706" : "#DC2626";
+  const gaugeColor   = pct >= 60 ? colors.primary : pct >= 35 ? colors.warning : colors.error;
 
   const SWEEP = 300; const START_DEG = -150;
   const r = 52; const cx = 70; const cy = 70;
@@ -137,15 +110,15 @@ function FuelSavingsGauge({ totalCollections, collectionRate }) {
 
   return (
     <div className="bg-white rounded-xl p-5 flex flex-col gap-4"
-      style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+      style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
       <div className="flex items-center gap-2">
         <div className="flex items-center justify-center rounded-lg"
-          style={{ width: 32, height: 32, background: "#E8F5E9" }}>
-          <Fuel size={16} color="#2E7D32" />
+          style={{ width: 32, height: 32, background: colors.accentSoft }}>
+          <Fuel size={16} color={colors.primary} />
         </div>
         <h2 className="font-semibold text-text-primary" style={{ fontSize: 16 }}>Fuel Savings Gauge</h2>
         <span className="ml-auto rounded-full px-2.5 py-0.5 font-semibold"
-          style={{ fontSize: 11, background: "#E8F5E9", color: "#2E7D32" }}>
+          style={{ fontSize: 11, background: colors.accentSoft, color: colors.primary }}>
           vs. unoptimized baseline
         </span>
       </div>
@@ -153,17 +126,17 @@ function FuelSavingsGauge({ totalCollections, collectionRate }) {
       <div className="flex items-center gap-6">
         <div className="flex-shrink-0 flex flex-col items-center">
           <svg width={140} height={90} viewBox="0 0 140 90">
-            <path d={arcPath(START_DEG, START_DEG + SWEEP, r)} fill="none" stroke="#F3F4F6" strokeWidth={10} strokeLinecap="round" />
+            <path d={arcPath(START_DEG, START_DEG + SWEEP, r)} fill="none" stroke={colors.gray100} strokeWidth={10} strokeLinecap="round" />
             {pct > 0 && <path d={arcPath(START_DEG, activeDeg, r)} fill="none" stroke={gaugeColor} strokeWidth={10} strokeLinecap="round" />}
             {(() => { const p = polarToXY(activeDeg, r); return <circle cx={p.x} cy={p.y} r={5} fill={gaugeColor} />; })()}
-            <text x={cx} y={cy - 4} textAnchor="middle" fill="#1A1A1A" fontWeight="800" fontSize={18}>{pct}%</text>
-            <text x={cx} y={cy + 12} textAnchor="middle" fill="#9CA3AF" fontSize={9}>saved</text>
-            <text x={18} y={84} textAnchor="middle" fill="#9CA3AF" fontSize={8}>0</text>
-            <text x={122} y={84} textAnchor="middle" fill="#9CA3AF" fontSize={8}>100%</text>
+            <text x={cx} y={cy - 4} textAnchor="middle" fill={colors.textHeading} fontWeight="800" fontSize={18}>{pct}%</text>
+            <text x={cx} y={cy + 12} textAnchor="middle" fill={colors.textMuted} fontSize={9}>saved</text>
+            <text x={18} y={84} textAnchor="middle" fill={colors.textMuted} fontSize={8}>0</text>
+            <text x={122} y={84} textAnchor="middle" fill={colors.textMuted} fontSize={8}>100%</text>
           </svg>
           <div className="flex items-center gap-3 mt-1">
-            {[["#DC2626", "Low"], ["#D97706", "Mid"], ["#2E7D32", "High"]].map(([c, l]) => (
-              <span key={l} className="flex items-center gap-1" style={{ fontSize: 10, color: "#9CA3AF" }}>
+            {[[colors.error, "Low"], [colors.warning, "Mid"], [colors.primary, "High"]].map(([c, l]) => (
+              <span key={l} className="flex items-center gap-1" style={{ fontSize: 10, color: colors.textMuted }}>
                 <span className="rounded-full inline-block" style={{ width: 7, height: 7, background: c }} />{l}
               </span>
             ))}
@@ -173,10 +146,10 @@ function FuelSavingsGauge({ totalCollections, collectionRate }) {
         <div className="flex-1 flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-2">
             {[
-              { label: "Litres Saved",    value: `${savedLitres.toLocaleString()} L`, color: "#2E7D32", bg: "#E8F5E9" },
-              { label: "Cost Saved",      value: `₱${savedPHP}`,                      color: "#1976D2", bg: "#E3F2FD" },
-              { label: "Baseline Usage",  value: `${maxLitres.toLocaleString()} L`,   color: "#6B7280", bg: "#F3F4F6" },
-              { label: "Optimized Usage", value: `${(maxLitres - savedLitres).toLocaleString()} L`, color: "#D97706", bg: "#FFF3E0" },
+              { label: "Litres Saved",    value: `${savedLitres.toLocaleString()} L`, color: colors.primary, bg: colors.accentSoft },
+              { label: "Cost Saved",      value: `₱${savedPHP}`,                      color: colors.recyclable, bg: colors.infoSoft },
+              { label: "Baseline Usage",  value: `${maxLitres.toLocaleString()} L`,   color: colors.gray500, bg: colors.gray100 },
+              { label: "Optimized Usage", value: `${(maxLitres - savedLitres).toLocaleString()} L`, color: colors.warning, bg: colors.warningSoft },
             ].map((s) => (
               <div key={s.label} className="rounded-lg px-3 py-2 flex flex-col gap-0.5" style={{ background: s.bg }}>
                 <span className="text-text-muted" style={{ fontSize: 10 }}>{s.label}</span>
@@ -185,9 +158,9 @@ function FuelSavingsGauge({ totalCollections, collectionRate }) {
             ))}
           </div>
           <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-            style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
-            <Fuel size={12} color="#9CA3AF" />
-            <p style={{ fontSize: 11, color: "#6B7280" }}>
+            style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+            <Fuel size={12} color={colors.textMuted} />
+            <p style={{ fontSize: 11, color: colors.gray500 }}>
               {totalCollections} collections · ₱65/L · {collectionRate}% route efficiency
             </p>
           </div>
@@ -199,11 +172,11 @@ function FuelSavingsGauge({ totalCollections, collectionRate }) {
 
 // ── Issue type badge colours ───────────────────────────────────────────────────
 const ISSUE_COLORS = {
-  "Vehicle Problem":   { bg: "#FFEBEE", color: "#DC2626" },
-  "Traffic Jam":       { bg: "#FFF3E0", color: "#D97706" },
-  "Road Closure":      { bg: "#EDE9FE", color: "#7C3AED" },
-  "Weather Condition": { bg: "#E3F2FD", color: "#1976D2" },
-  "Other":             { bg: "#F3F4F6", color: "#6B7280" },
+  "Vehicle Problem":   { bg: colors.errorSoft, color: colors.error },
+  "Traffic Jam":       { bg: colors.warningSoft, color: colors.warning },
+  "Road Closure":      { bg: colors.lockedSoft, color: colors.lockedText },
+  "Weather Condition": { bg: colors.infoSoft, color: colors.recyclable },
+  "Other":             { bg: colors.gray100, color: colors.gray500 },
 };
 
 function IssueBadge({ type }) {
@@ -220,7 +193,7 @@ function StatusBadge({ status }) {
   const isPending = status === "pending";
   return (
     <span className="flex items-center gap-1 rounded-full px-2.5 py-0.5 font-semibold"
-      style={{ fontSize: 11, background: isPending ? "#FFF3E0" : "#E8F5E9", color: isPending ? "#D97706" : "#2E7D32" }}>
+      style={{ fontSize: 11, background: isPending ? colors.warningSoft : colors.accentSoft, color: isPending ? colors.warning : colors.primary }}>
       {isPending ? <Clock size={10} /> : <CheckCheck size={10} />}
       {isPending ? "Pending" : "Resolved"}
     </span>
@@ -268,37 +241,37 @@ function IncidentReports() {
     <div className="flex flex-col gap-5">
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-2 rounded-xl px-4 py-3"
-          style={{ background: "#FFF3E0", border: "1px solid #FFE0B2" }}>
-          <Clock size={15} color="#D97706" />
-          <span className="font-semibold" style={{ fontSize: 14, color: "#D97706" }}>{pending} Pending</span>
+          style={{ background: colors.warningSoft, border: "1px solid " + colors.warningBorder }}>
+          <Clock size={15} color={colors.warning} />
+          <span className="font-semibold" style={{ fontSize: 14, color: colors.warning }}>{pending} Pending</span>
         </div>
         <div className="flex items-center gap-2 rounded-xl px-4 py-3"
-          style={{ background: "#E8F5E9", border: "1px solid #C8E6C9" }}>
-          <CheckCheck size={15} color="#2E7D32" />
-          <span className="font-semibold" style={{ fontSize: 14, color: "#2E7D32" }}>{resolved} Resolved</span>
+          style={{ background: colors.accentSoft, border: "1px solid " + colors.accentBorder }}>
+          <CheckCheck size={15} color={colors.primary} />
+          <span className="font-semibold" style={{ fontSize: 14, color: colors.primary }}>{resolved} Resolved</span>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E7EB" }}>
+        <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid " + colors.gray200 }}>
           {["all", "pending", "resolved"].map((s) => (
             <button key={s} onClick={() => setFilterStatus(s)}
               className="px-4 py-2 capitalize font-medium transition-colors"
-              style={{ fontSize: 13, background: filterStatus === s ? "#2E7D32" : "#fff", color: filterStatus === s ? "#fff" : "#6B7280" }}>
+              style={{ fontSize: 13, background: filterStatus === s ? colors.primary : colors.white, color: filterStatus === s ? "#fff" : colors.gray500 }}>
               {s}
             </button>
           ))}
         </div>
         <button onClick={fetchReports}
           className="flex items-center gap-2 rounded-lg px-3 py-2 font-medium hover:bg-gray-100 transition-colors"
-          style={{ fontSize: 13, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>
+          style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>
           Refresh
         </button>
       </div>
 
       {fetchError && (
         <div className="rounded-xl px-4 py-3"
-          style={{ background: "#FFEBEE", border: "1px solid #FFCDD2", color: "#DC2626", fontSize: 13 }}>
+          style={{ background: colors.errorSoft, border: "1px solid " + colors.errorBorder, color: colors.error, fontSize: 13 }}>
           {fetchError}
         </div>
       )}
@@ -307,7 +280,7 @@ function IncidentReports() {
         <div className="text-center py-16 text-text-muted" style={{ fontSize: 14 }}>Loading reports…</div>
       ) : reports.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-16">
-          <FileWarning size={36} color="#D1D5DB" />
+          <FileWarning size={36} color={colors.gray300} />
           <p className="text-text-muted" style={{ fontSize: 14 }}>No incident reports found.</p>
         </div>
       ) : (
@@ -317,7 +290,7 @@ function IncidentReports() {
             const isPending  = r.status === "pending";
             return (
               <div key={r.id} className="bg-white rounded-xl overflow-hidden"
-                style={{ border: `1.5px solid ${isPending ? "#FFE0B2" : "#E5E7EB"}`, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+                style={{ border: `1.5px solid ${isPending ? "#FFE0B2" : colors.gray200}`, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                 <div className="flex items-center gap-4 px-5 py-4 cursor-pointer"
                   onClick={() => setExpandedId(isExpanded ? null : r.id)}>
                   <div className="flex flex-col gap-1 flex-1 min-w-0">
@@ -336,17 +309,17 @@ function IncidentReports() {
                         onClick={(e) => { e.stopPropagation(); handleResolve(r.id); }}
                         disabled={resolving === r.id}
                         className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-semibold hover:opacity-90 transition-opacity"
-                        style={{ fontSize: 12, background: "#2E7D32", color: "#fff", opacity: resolving === r.id ? 0.6 : 1 }}>
+                        style={{ fontSize: 12, background: colors.primary, color: colors.white, opacity: resolving === r.id ? 0.6 : 1 }}>
                         <CheckCheck size={13} />
                         {resolving === r.id ? "Resolving…" : "Mark Resolved"}
                       </button>
                     )}
-                    {isExpanded ? <ChevronUp size={16} color="#9CA3AF" /> : <ChevronDown size={16} color="#9CA3AF" />}
+                    {isExpanded ? <ChevronUp size={16} color={colors.textMuted} /> : <ChevronDown size={16} color={colors.textMuted} />}
                   </div>
                 </div>
 
                 {isExpanded && (
-                  <div className="px-5 pb-4 flex flex-col gap-3 border-t" style={{ borderColor: "#F3F4F6" }}>
+                  <div className="px-5 pb-4 flex flex-col gap-3 border-t" style={{ borderColor: colors.gray100 }}>
                     <div className="grid grid-cols-3 gap-4 pt-3">
                       <div className="flex flex-col gap-0.5">
                         <span className="text-text-muted uppercase tracking-wide" style={{ fontSize: 10, fontWeight: 600 }}>Collector</span>
@@ -375,7 +348,7 @@ function IncidentReports() {
                       )}
                     </div>
                     {r.notes && (
-                      <div className="rounded-lg px-4 py-3" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+                      <div className="rounded-lg px-4 py-3" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
                         <p className="text-text-muted uppercase tracking-wide mb-1" style={{ fontSize: 10, fontWeight: 600 }}>Notes</p>
                         <p className="text-text-primary" style={{ fontSize: 13, lineHeight: 1.6 }}>{r.notes}</p>
                       </div>
@@ -403,12 +376,12 @@ export default function CAReports() {
   const totalBins      = clusterBins.length;
   const collectionRate = totalBins > 0 ? Math.round((collectedBins / totalBins) * 100) : 0;
 
-  const totalMissed = MISSED_REASONS.reduce((s, r) => s + r.count, 0);
-  const chartData   = period === "monthly" ? MONTHLY_COLLECTIONS : DAILY_TREND;
+  const totalMissed = CA_MISSED_REASONS.reduce((s, r) => s + r.count, 0);
+  const chartData   = period === "monthly" ? CA_MONTHLY_COLLECTIONS : CA_DAILY_TREND;
   const labelKey    = period === "monthly" ? "month" : "day";
 
-  const totalBinsCollected = UNIT_PERFORMANCE.reduce((s, u) => s + u.binsCollected, 0);
-  const avgRate            = Math.round(UNIT_PERFORMANCE.reduce((s, u) => s + u.rate, 0) / UNIT_PERFORMANCE.length);
+  const totalBinsCollected = CA_UNIT_PERFORMANCE.reduce((s, u) => s + u.binsCollected, 0);
+  const avgRate            = Math.round(CA_UNIT_PERFORMANCE.reduce((s, u) => s + u.rate, 0) / CA_UNIT_PERFORMANCE.length);
 
   return (
     <div className="flex flex-col gap-6">
@@ -421,21 +394,21 @@ export default function CAReports() {
         </div>
         {activeTab === "analytics" && (
           <button className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 13, background: "#2E7D32" }}>
+            style={{ fontSize: 13, background: colors.primary }}>
             <Download size={14} /> Export Report
           </button>
         )}
       </div>
 
       {/* Tabs */}
-      <div className="flex rounded-xl overflow-hidden" style={{ border: "1.5px solid #E5E7EB", width: "fit-content" }}>
+      <div className="flex rounded-xl overflow-hidden" style={{ border: "1.5px solid " + colors.gray200, width: "fit-content" }}>
         {[
           { id: "analytics",        label: "Analytics",        icon: <BarChart2 size={14} /> },
           { id: "incident-reports", label: "Incident Reports", icon: <FileWarning size={14} /> },
         ].map((tab) => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className="flex items-center gap-2 px-5 py-2.5 font-semibold transition-colors"
-            style={{ fontSize: 13, background: activeTab === tab.id ? "#2E7D32" : "#fff", color: activeTab === tab.id ? "#fff" : "#6B7280" }}>
+            style={{ fontSize: 13, background: activeTab === tab.id ? colors.primary : colors.white, color: activeTab === tab.id ? "#fff" : colors.gray500 }}>
             {tab.icon}{tab.label}
           </button>
         ))}
@@ -446,22 +419,22 @@ export default function CAReports() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-4 gap-4">
-          <KpiCard icon={<CheckCircle size={18} color="#2E7D32" />} label="Bins Collected"     value={collectedBins}              growth={12}  sub="this period"       bg="#E8F5E9" />
-          <KpiCard icon={<Trash2 size={18} color="#DC2626" />}      label="Full Bins"           value={fullBins}                   growth={-5}  sub="awaiting collection" bg="#FFEBEE" />
-          <KpiCard icon={<AlertTriangle size={18} color="#D97706" />} label="Missed Collections" value={missedBins}               growth={-8}  sub="lower is better"   bg="#FFF3E0" />
-          <KpiCard icon={<Truck size={18} color="#1976D2" />}        label="Active Units"        value={CA_DASHBOARD_STATS.activeUnits} growth={0} sub="collector units" bg="#E3F2FD" />
+          <KpiCard icon={<CheckCircle size={18} color={colors.primary} />} label="Bins Collected"     value={collectedBins}              growth={12}  sub="this period"       bg={colors.accentSoft} />
+          <KpiCard icon={<Trash2 size={18} color={colors.error} />}      label="Full Bins"           value={fullBins}                   growth={-5}  sub="awaiting collection" bg={colors.errorSoft} />
+          <KpiCard icon={<AlertTriangle size={18} color={colors.warning} />} label="Missed Collections" value={missedBins}               growth={-8}  sub="lower is better"   bg={colors.warningSoft} />
+          <KpiCard icon={<Truck size={18} color={colors.recyclable} />}        label="Active Units"        value={CA_DASHBOARD_STATS.activeUnits} growth={0} sub="collector units" bg={colors.infoSoft} />
         </div>
 
         {/* Collection rate ring + Collections chart */}
         <div className="grid gap-4" style={{ gridTemplateColumns: "260px 1fr" }}>
           <div className="bg-white rounded-xl p-5 flex flex-col items-center justify-center gap-3"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
             <h2 className="font-semibold text-text-primary self-start" style={{ fontSize: 16 }}>Collection Rate</h2>
             <div className="relative flex items-center justify-center" style={{ width: 130, height: 130 }}>
               <svg viewBox="0 0 36 36" style={{ width: 130, height: 130, transform: "rotate(-90deg)" }}>
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F3F4F6" strokeWidth="3.2" />
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke={colors.gray100} strokeWidth="3.2" />
                 <circle cx="18" cy="18" r="15.9" fill="none"
-                  stroke={collectionRate >= 80 ? "#2E7D32" : collectionRate >= 60 ? "#D97706" : "#DC2626"}
+                  stroke={collectionRate >= 80 ? colors.primary : collectionRate >= 60 ? colors.warning : colors.error}
                   strokeWidth="3.2"
                   strokeDasharray={`${collectionRate} ${100 - collectionRate}`}
                   strokeLinecap="round" />
@@ -473,9 +446,9 @@ export default function CAReports() {
             </div>
             <div className="w-full flex flex-col gap-1.5">
               {[
-                { label: "Collected", value: collectedBins, color: "#2E7D32" },
-                { label: "Full",      value: fullBins,      color: "#DC2626" },
-                { label: "Missed",    value: missedBins,    color: "#D97706" },
+                { label: "Collected", value: collectedBins, color: colors.primary },
+                { label: "Full",      value: fullBins,      color: colors.error },
+                { label: "Missed",    value: missedBins,    color: colors.warning },
               ].map((s) => (
                 <div key={s.label} className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
@@ -491,18 +464,18 @@ export default function CAReports() {
           <Section title="Collections Overview">
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-4">
-                {[["#2E7D32", "Collected"], ["#9CA3AF", "Target"]].map(([color, label]) => (
+                {[[colors.primary, "Collected"], [colors.textMuted, "Target"]].map(([color, label]) => (
                   <span key={label} className="flex items-center gap-1.5 text-text-muted" style={{ fontSize: 12 }}>
                     <span className="inline-block rounded-sm" style={{ width: 10, height: 10, background: color, opacity: label === "Target" ? 0.4 : 1 }} />
                     {label}
                   </span>
                 ))}
               </div>
-              <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #E5E7EB" }}>
+              <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid " + colors.gray200 }}>
                 {["monthly", "daily"].map((p) => (
                   <button key={p} onClick={() => setPeriod(p)}
                     className="px-3 py-1.5 capitalize font-medium transition-colors"
-                    style={{ fontSize: 12, background: period === p ? "#2E7D32" : "#fff", color: period === p ? "#fff" : "#6B7280" }}>
+                    style={{ fontSize: 12, background: period === p ? colors.primary : colors.white, color: period === p ? "#fff" : colors.gray500 }}>
                     {p}
                   </button>
                 ))}
@@ -511,10 +484,10 @@ export default function CAReports() {
             <BarChart data={chartData} valueKey="collected" targetKey={period === "monthly" ? "target" : undefined} labelKey={labelKey} height={160} />
             {period === "monthly" && (
               <div className="flex gap-2 mt-1">
-                {MONTHLY_COLLECTIONS.map((d, i) => (
+                {CA_MONTHLY_COLLECTIONS.map((d, i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
                     <span className="rounded-full font-semibold text-white flex items-center justify-center"
-                      style={{ width: 18, height: 18, fontSize: 9, background: "#DC2626" }}>{d.missed}</span>
+                      style={{ width: 18, height: 18, fontSize: 9, background: colors.error }}>{d.missed}</span>
                     <span className="text-text-muted" style={{ fontSize: 9 }}>missed</span>
                   </div>
                 ))}
@@ -529,15 +502,15 @@ export default function CAReports() {
             <div className="flex items-end justify-between mb-1">
               <div>
                 <span className="font-bold text-text-primary" style={{ fontSize: 24 }}>
-                  {DAILY_TREND[DAILY_TREND.length - 1].collected}
+                  {CA_DAILY_TREND[CA_DAILY_TREND.length - 1].collected}
                 </span>
                 <span className="text-text-muted ml-1" style={{ fontSize: 13 }}>bins today</span>
               </div>
               <GrowthBadge value={-15} />
             </div>
-            <Sparkline data={DAILY_TREND} valueKey="collected" color="#2E7D32" height={80} />
+            <Sparkline data={CA_DAILY_TREND} valueKey="collected" color={colors.primary} height={80} />
             <div className="flex items-center justify-between mt-1">
-              {DAILY_TREND.map((d) => (
+              {CA_DAILY_TREND.map((d) => (
                 <span key={d.day} className="text-text-muted" style={{ fontSize: 10 }}>{d.day}</span>
               ))}
             </div>
@@ -545,7 +518,7 @@ export default function CAReports() {
 
           <Section title="Missed Collections — Top Reasons">
             <div className="flex flex-col gap-3">
-              {MISSED_REASONS.map((r) => (
+              {CA_MISSED_REASONS.map((r) => (
                 <div key={r.reason} className="flex items-center gap-3">
                   <div className="flex-shrink-0 rounded-full" style={{ width: 10, height: 10, background: r.color }} />
                   <div className="flex-1 min-w-0">
@@ -553,7 +526,7 @@ export default function CAReports() {
                       <span className="text-text-secondary font-medium truncate" style={{ fontSize: 12 }}>{r.reason}</span>
                       <span className="font-semibold text-text-primary ml-2" style={{ fontSize: 12 }}>{r.count}</span>
                     </div>
-                    <div className="rounded-full overflow-hidden" style={{ height: 5, background: "#F3F4F6" }}>
+                    <div className="rounded-full overflow-hidden" style={{ height: 5, background: colors.gray100 }}>
                       <div className="h-full rounded-full transition-all"
                         style={{ width: `${(r.count / totalMissed) * 100}%`, background: r.color }} />
                     </div>
@@ -561,9 +534,9 @@ export default function CAReports() {
                 </div>
               ))}
             </div>
-            <div className="rounded-lg px-3 py-2 mt-1" style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            <div className="rounded-lg px-3 py-2 mt-1" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
               <p className="text-text-muted" style={{ fontSize: 11 }}>
-                Total missed: <strong style={{ color: "#DC2626" }}>{totalMissed}</strong> this period
+                Total missed: <strong style={{ color: colors.error }}>{totalMissed}</strong> this period
               </p>
             </div>
           </Section>
@@ -577,32 +550,32 @@ export default function CAReports() {
           <div className="overflow-hidden rounded-lg" style={{ border: "1px solid #F3F4F6" }}>
             <table className="w-full border-collapse">
               <thead>
-                <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+                <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
                   {["Unit", "Plate No.", "Trips", "Bins Collected", "Missed", "Collection Rate"].map((h) => (
                     <th key={h} className="text-left font-semibold uppercase tracking-wide px-4 py-3"
-                      style={{ fontSize: 11, color: "#6B7280" }}>{h}</th>
+                      style={{ fontSize: 11, color: colors.gray500 }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {UNIT_PERFORMANCE.map((u, i) => (
-                  <tr key={u.unit} style={{ background: i % 2 === 0 ? "#fff" : "#FAFAFA", borderBottom: "1px solid #F3F4F6" }}>
+                {CA_UNIT_PERFORMANCE.map((u, i) => (
+                  <tr key={u.unit} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
                     <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{u.unit}</td>
                     <td className="px-4 py-3 text-text-secondary font-mono" style={{ fontSize: 12 }}>{u.plate}</td>
                     <td className="px-4 py-3 text-text-primary" style={{ fontSize: 13 }}>{u.trips}</td>
                     <td className="px-4 py-3 text-text-primary" style={{ fontSize: 13 }}>{u.binsCollected}</td>
                     <td className="px-4 py-3" style={{ fontSize: 13 }}>
                       <span className="rounded-full px-2 py-0.5 font-semibold"
-                        style={{ fontSize: 11, background: "#FFEBEE", color: "#DC2626" }}>{u.missedBins}</span>
+                        style={{ fontSize: 11, background: colors.errorSoft, color: colors.error }}>{u.missedBins}</span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 rounded-full overflow-hidden" style={{ height: 6, background: "#F3F4F6", maxWidth: 80 }}>
+                        <div className="flex-1 rounded-full overflow-hidden" style={{ height: 6, background: colors.gray100, maxWidth: 80 }}>
                           <div className="h-full rounded-full"
-                            style={{ width: `${u.rate}%`, background: u.rate >= 90 ? "#2E7D32" : u.rate >= 80 ? "#D97706" : "#DC2626" }} />
+                            style={{ width: `${u.rate}%`, background: u.rate >= 90 ? colors.primary : u.rate >= 80 ? colors.warning : colors.error }} />
                         </div>
                         <span className="font-semibold"
-                          style={{ fontSize: 13, color: u.rate >= 90 ? "#2E7D32" : u.rate >= 80 ? "#D97706" : "#DC2626" }}>
+                          style={{ fontSize: 13, color: u.rate >= 90 ? colors.primary : u.rate >= 80 ? colors.warning : colors.error }}>
                           {u.rate}%
                         </span>
                       </div>
@@ -613,13 +586,13 @@ export default function CAReports() {
             </table>
           </div>
           <div className="rounded-lg px-4 py-3 flex items-center justify-between"
-            style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}>
+            style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
             <span className="text-text-muted" style={{ fontSize: 12 }}>
-              Overall rate: <strong style={{ color: "#2E7D32" }}>{avgRate}%</strong>
+              Overall rate: <strong style={{ color: colors.primary }}>{avgRate}%</strong>
             </span>
             <span className="text-text-muted" style={{ fontSize: 12 }}>
-              Total trips: <strong style={{ color: "#1A1A1A" }}>
-                {UNIT_PERFORMANCE.reduce((s, u) => s + u.trips, 0)}
+              Total trips: <strong style={{ color: colors.textHeading }}>
+                {CA_UNIT_PERFORMANCE.reduce((s, u) => s + u.trips, 0)}
               </strong>
             </span>
           </div>

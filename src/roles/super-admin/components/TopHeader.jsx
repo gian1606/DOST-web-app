@@ -2,19 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   ChevronDown, UserCircle, Settings, LogOut,
-  Bell, Calendar, CheckCircle, FileText, Megaphone, AlertTriangle,
+  Bell, AlertTriangle,
 } from "lucide-react";
 import { NOTIFICATIONS } from "../../../mock/data";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { ROUTES, ROUTE_LABELS } from "../../../constants/index.js";
+import { colors } from "../../../theme/colors.js";
+import { NOTIF_TYPE_CONFIG } from "../../../components/ui/notifConfig.jsx";
 
-const NOTIF_TYPE_CONFIG = {
-  task:         { icon: Bell,        color: "#1976D2", bg: "#E3F2FD" },
-  schedule:     { icon: Calendar,    color: "#D97706", bg: "#FFF3E0" },
-  complete:     { icon: CheckCircle, color: "#2E7D32", bg: "#E8F5E9" },
-  report:       { icon: FileText,    color: "#6B7280", bg: "#F3F4F6" },
-  announcement: { icon: Megaphone,   color: "#2E7D32", bg: "#E8F5E9" },
-};
 
 export default function TopHeader() {
   const { pathname } = useLocation();
@@ -66,8 +61,8 @@ export default function TopHeader() {
       style={{
         left: 240,
         height: 60,
-        background: "#fff",
-        borderBottom: "1px solid #E5E7EB",
+        background: colors.white,
+        borderBottom: "1px solid " + colors.gray200,
       }}
     >
       {/* Breadcrumb */}
@@ -90,7 +85,7 @@ export default function TopHeader() {
             {unread > 0 && (
               <span
                 className="absolute top-1 right-1 flex items-center justify-center rounded-full text-white font-bold"
-                style={{ width: 16, height: 16, fontSize: 9, background: "#DC2626" }}
+                style={{ width: 16, height: 16, fontSize: 9, background: colors.error }}
               >
                 {unread}
               </span>
@@ -104,8 +99,8 @@ export default function TopHeader() {
               style={{
                 top: "100%",
                 width: 360,
-                background: "#fff",
-                border: "1px solid #E5E7EB",
+                background: colors.white,
+                border: "1px solid " + colors.gray200,
                 boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
                 zIndex: 50,
                 maxHeight: 440,
@@ -114,7 +109,7 @@ export default function TopHeader() {
               {/* Header */}
               <div
                 className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0"
-                style={{ borderColor: "#F3F4F6" }}
+                style={{ borderColor: colors.gray100 }}
               >
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-text-primary" style={{ fontSize: 14 }}>
@@ -123,7 +118,7 @@ export default function TopHeader() {
                   {unread > 0 && (
                     <span
                       className="rounded-full px-2 py-0.5 font-semibold text-white"
-                      style={{ fontSize: 11, background: "#DC2626" }}
+                      style={{ fontSize: 11, background: colors.error }}
                     >
                       {unread}
                     </span>
@@ -132,7 +127,7 @@ export default function TopHeader() {
                 {unread > 0 && (
                   <button
                     onClick={markAllRead}
-                    className="text-text-muted hover:text-green-700 transition-colors"
+                    className="text-text-muted hover:text-primary transition-colors"
                     style={{ fontSize: 12 }}
                   >
                     Markahan lahat bilang nabasa
@@ -155,8 +150,8 @@ export default function TopHeader() {
                         key={n.id}
                         className="flex items-start gap-3 px-4 py-3 border-b last:border-0 hover:bg-gray-50 transition-colors cursor-pointer"
                         style={{
-                          borderColor: "#F3F4F6",
-                          background: !n.read ? "#FAFFFE" : undefined,
+                          borderColor: colors.gray100,
+                          background: !n.read ? colors.notificationUnread : undefined,
                         }}
                         onClick={() =>
                           setNotifications((prev) =>
@@ -178,13 +173,13 @@ export default function TopHeader() {
                             {!n.read && (
                               <span
                                 className="rounded-full flex-shrink-0"
-                                style={{ width: 6, height: 6, background: "#2E7D32", display: "inline-block" }}
+                                style={{ width: 6, height: 6, background: colors.primary, display: "inline-block" }}
                               />
                             )}
                             {n.priority === "urgent" && (
                               <span
                                 className="flex items-center gap-0.5 rounded-full px-1.5 py-0.5 font-semibold flex-shrink-0"
-                                style={{ fontSize: 10, background: "#FFEBEE", color: "#DC2626" }}
+                                style={{ fontSize: 10, background: colors.errorSoft, color: colors.error }}
                               >
                                 <AlertTriangle size={9} />
                                 Apurahan
@@ -215,9 +210,9 @@ export default function TopHeader() {
           >
             <div
               className="flex items-center justify-center rounded-full"
-              style={{ width: 32, height: 32, background: "#E8F5E9" }}
+              style={{ width: 32, height: 32, background: colors.accentSoft }}
             >
-              <UserCircle size={20} color="#2E7D32" />
+              <UserCircle size={20} color={colors.primary} />
             </div>
             <div>
               <div className="font-semibold text-text-primary leading-tight" style={{ fontSize: 13 }}>
@@ -241,8 +236,8 @@ export default function TopHeader() {
               style={{
                 top: "100%",
                 minWidth: 180,
-                background: "#fff",
-                border: "1px solid #E5E7EB",
+                background: colors.white,
+                border: "1px solid " + colors.gray200,
                 boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
                 zIndex: 50,
               }}
@@ -250,18 +245,18 @@ export default function TopHeader() {
               <button
                 onClick={() => { setProfileOpen(false); navigate(ROUTES.SA.SETTINGS); }}
                 className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 transition-colors text-left"
-                style={{ fontSize: 14, color: "#374151" }}
+                style={{ fontSize: 14, color: colors.gray700 }}
               >
-                <Settings size={15} color="#6B7280" />
+                <Settings size={15} color={colors.gray500} />
                 Mga Setting
               </button>
-              <div style={{ height: 1, background: "#F3F4F6" }} />
+              <div style={{ height: 1, background: colors.gray100 }} />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 w-full px-4 py-3 hover:bg-red-50 transition-colors text-left"
-                style={{ fontSize: 14, color: "#DC2626" }}
+                style={{ fontSize: 14, color: colors.error }}
               >
-                <LogOut size={15} color="#DC2626" />
+                <LogOut size={15} color={colors.error} />
                 Mag-logout
               </button>
             </div>

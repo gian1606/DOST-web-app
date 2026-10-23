@@ -1,7 +1,9 @@
+import { colors } from "../../../theme/colors.js";
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import Modal from "../../../components/ui/Modal";
+import FormField from "../../../components/ui/FormField.jsx";
 import { COLLECTORS, COLLECTOR_UNITS } from "../../../mock/data";
 
 const EMPTY_FORM = { name: "", email: "", tempPassword: "" };
@@ -55,7 +57,7 @@ export default function CAUserManagement() {
           <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>Manage collector accounts — Cluster 1</p>
         </div>
         <button onClick={openAdd} className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-          style={{ fontSize: 14, background: "#2E7D32" }}>
+          style={{ fontSize: 14, background: colors.primary }}>
           <Plus size={15} /> Add Collector Account
         </button>
       </div>
@@ -63,12 +65,12 @@ export default function CAUserManagement() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Total Collectors", value: collectors.length,                                        color: "#1A1A1A" },
-          { label: "Active",           value: collectors.filter((c) => c.status === "active").length,   color: "#2E7D32" },
-          { label: "Inactive",         value: collectors.filter((c) => c.status === "inactive").length, color: "#9CA3AF" },
+          { label: "Total Collectors", value: collectors.length,                                        color: colors.textHeading },
+          { label: "Active",           value: collectors.filter((c) => c.status === "active").length,   color: colors.primary },
+          { label: "Inactive",         value: collectors.filter((c) => c.status === "inactive").length, color: colors.textMuted },
         ].map((s) => (
           <div key={s.label} className="bg-white rounded-xl px-5 py-4 flex items-center gap-4"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
             <div className="font-bold" style={{ fontSize: 28, color: s.color, fontVariantNumeric: "tabular-nums" }}>{s.value}</div>
             <div className="text-text-secondary" style={{ fontSize: 13 }}>{s.label}</div>
           </div>
@@ -77,13 +79,13 @@ export default function CAUserManagement() {
 
       {/* Table */}
       <div className="bg-white rounded-xl overflow-hidden"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
         <table className="w-full border-collapse">
           <thead>
-            <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+            <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
               {["Name", "Role", "Email", "Assigned Unit", "Status", "Last Login", "Actions"].map((h) => (
                 <th key={h} className="text-left font-semibold uppercase tracking-wide px-4 py-3"
-                  style={{ fontSize: 12, color: "#6B7280" }}>{h}</th>
+                  style={{ fontSize: 12, color: colors.gray500 }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -91,7 +93,7 @@ export default function CAUserManagement() {
             {collectors.length === 0
               ? <tr><td colSpan={7} className="text-center text-text-muted py-10" style={{ fontSize: 14 }}>No collectors yet.</td></tr>
               : collectors.map((c, i) => (
-                <tr key={c.id} style={{ background: i % 2 === 0 ? "#fff" : "#FAFAFA", borderBottom: "1px solid #F3F4F6" }}>
+                <tr key={c.id} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
                   <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{c.name}</td>
                   <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>Collector</td>
                   <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>{c.email}</td>
@@ -101,7 +103,7 @@ export default function CAUserManagement() {
                   <td className="px-4 py-3">
                     <button onClick={() => setDeleteTarget(c)}
                       className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-red-50"
-                      style={{ fontSize: 12, color: "#DC2626", border: "1px solid #FECACA" }}>
+                      style={{ fontSize: 12, color: colors.error, border: "1px solid " + colors.inputErrorBorder }}>
                       <Trash2 size={13} /> Delete
                     </button>
                   </td>
@@ -117,9 +119,9 @@ export default function CAUserManagement() {
         footer={
           <>
             <button onClick={() => setModalOpen(false)} className="rounded-lg px-4 py-2 font-medium"
-              style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+              style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
             <button onClick={handleSave} className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90"
-              style={{ fontSize: 14, background: "#2E7D32" }}>Create Account</button>
+              style={{ fontSize: 14, background: colors.primary }}>Create Account</button>
           </>
         }
       >
@@ -135,10 +137,10 @@ export default function CAUserManagement() {
         footer={
           <>
             <button onClick={() => setDeleteTarget(null)} className="rounded-lg px-4 py-2 font-medium"
-              style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+              style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
             <button onClick={() => handleDelete(deleteTarget.id)}
               className="flex items-center gap-2 rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-              style={{ fontSize: 14, background: "#DC2626" }}>
+              style={{ fontSize: 14, background: colors.error }}>
               <Trash2 size={14} /> Delete
             </button>
           </>
@@ -147,13 +149,13 @@ export default function CAUserManagement() {
         {deleteTarget && (
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3 rounded-xl px-4 py-3"
-              style={{ background: "#FFEBEE", border: "1px solid #FFCDD2" }}>
-              <Trash2 size={16} color="#DC2626" className="flex-shrink-0 mt-0.5" />
-              <p style={{ fontSize: 13, color: "#B71C1C" }}>This will permanently delete the account. This action cannot be undone.</p>
+              style={{ background: colors.errorSoft, border: "1px solid " + colors.errorBorder }}>
+              <Trash2 size={16} color={colors.error} className="flex-shrink-0 mt-0.5" />
+              <p style={{ fontSize: 13, color: colors.errorDark }}>This will permanently delete the account. This action cannot be undone.</p>
             </div>
             <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
               {[{ label: "Name", value: deleteTarget.name }, { label: "Email", value: deleteTarget.email }].map(({ label, value }) => (
-                <div key={label} className="flex items-center justify-between px-4 py-2.5 border-b last:border-0" style={{ borderColor: "#F3F4F6" }}>
+                <div key={label} className="flex items-center justify-between px-4 py-2.5 border-b last:border-0" style={{ borderColor: colors.gray100 }}>
                   <span className="text-text-muted font-medium" style={{ fontSize: 13 }}>{label}</span>
                   <span className="text-text-primary font-semibold" style={{ fontSize: 13 }}>{value}</span>
                 </div>
@@ -165,16 +167,3 @@ export default function CAUserManagement() {
     </div>
   );
 }
-
-function FormField({ label, type = "text", value, onChange, error, placeholder }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="rounded-lg px-3 py-2.5 outline-none"
-        style={{ fontSize: 14, border: error ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB" }} />
-      {error && <span style={{ fontSize: 12, color: "#DC2626" }}>{error}</span>}
-    </div>
-  );
-}
-
