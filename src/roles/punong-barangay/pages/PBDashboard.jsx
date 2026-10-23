@@ -1,3 +1,4 @@
+import { colors } from "../../../theme/colors.js";
 import { useNavigate } from "react-router-dom";
 import {
   Trash2,
@@ -29,7 +30,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { ROUTES } from "../../../constants/index.js";
+import { ROUTES, PB_BARANGAY } from "../../../constants/index.js";
 
 // Weekly collection trend (mock analytics data)
 const WEEKLY_DATA = [
@@ -42,8 +43,7 @@ const WEEKLY_DATA = [
   { day: "Sun", collected: 8,  full: 5 },
 ];
 
-// Fixed barangay for this Punong Barangay (Alangilan)
-const PB_BARANGAY = "Alangilan";
+// Fixed barangay for this Punong Barangay (imported from constants)
 
 export default function PBDashboard() {
   const navigate = useNavigate();
@@ -86,9 +86,9 @@ export default function PBDashboard() {
           className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors"
           style={{
             fontSize: 13,
-            border: "1.5px solid #E5E7EB",
-            background: "#fff",
-            color: "#6B7280",
+            border: "1.5px solid " + colors.gray200,
+            background: colors.white,
+            color: colors.gray500,
           }}
         >
           <RefreshCw size={14} />
@@ -99,26 +99,26 @@ export default function PBDashboard() {
       {/* Stats row — 3 primary KPIs */}
       <div className="grid grid-cols-3 gap-4">
         <StatCard
-          icon={<Trash2 size={18} color="#6B7280" />}
+          icon={<Trash2 size={18} color={colors.gray500} />}
           value={stats.totalBins}
           label="Total Bins"
           subLabel={`Brgy. ${PB_BARANGAY}`}
         />
         <StatCard
-          icon={<Trash2 size={18} color="#DC2626" />}
+          icon={<Trash2 size={18} color={colors.error} />}
           value={stats.fullBins}
           label="Full Bins"
           subLabel={stats.fullBins > 0 ? "Needs collection" : "All clear"}
-          subLabelColor={stats.fullBins > 0 ? "#DC2626" : "#2E7D32"}
+          subLabelColor={stats.fullBins > 0 ? colors.error : colors.primary}
         />
         <StatCard
-          icon={<CheckCircle size={18} color="#2E7D32" />}
+          icon={<CheckCircle size={18} color={colors.primary} />}
           value={stats.collectedToday}
           label="Bins Collected Today"
           subLabel={`${Math.round(
             (stats.collectedToday / Math.max(stats.totalBins, 1)) * 100
           )}% of target`}
-          subLabelColor="#2E7D32"
+          subLabelColor={colors.primary}
         />
       </div>
 
@@ -132,7 +132,7 @@ export default function PBDashboard() {
           {/* Live Map */}
           <div
             className="bg-white rounded-xl p-4 flex flex-col gap-3"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>
@@ -140,14 +140,14 @@ export default function PBDashboard() {
               </h2>
               <span
                 className="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium"
-                style={{ fontSize: 11, background: "#E8F5E9", color: "#2E7D32" }}
+                style={{ fontSize: 11, background: colors.accentSoft, color: colors.primary }}
               >
                 <span
                   className="rounded-full"
                   style={{
                     width: 6,
                     height: 6,
-                    background: "#2E7D32",
+                    background: colors.primary,
                     display: "inline-block",
                   }}
                 />
@@ -165,11 +165,11 @@ export default function PBDashboard() {
           {/* Embedded Analytics — Weekly Collection Trend */}
           <div
             className="bg-white rounded-xl p-5 flex flex-col gap-4"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <TrendingUp size={17} color="#2E7D32" />
+                <TrendingUp size={17} color={colors.primary} />
                 <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>
                   Weekly Collection Trend
                 </h2>
@@ -183,25 +183,25 @@ export default function PBDashboard() {
             <div className="flex items-center gap-3">
               <div
                 className="rounded-lg px-3 py-2 flex flex-col"
-                style={{ background: "#E8F5E9", minWidth: 100 }}
+                style={{ background: colors.accentSoft, minWidth: 100 }}
               >
                 <span className="font-bold text-primary" style={{ fontSize: 22 }}>
                   {WEEKLY_DATA.reduce((s, d) => s + d.collected, 0)}
                 </span>
-                <span style={{ fontSize: 11, color: "#2E7D32" }}>Bins Collected</span>
+                <span style={{ fontSize: 11, color: colors.primary }}>Bins Collected</span>
               </div>
               <div
                 className="rounded-lg px-3 py-2 flex flex-col"
-                style={{ background: "#FFEBEE", minWidth: 100 }}
+                style={{ background: colors.errorSoft, minWidth: 100 }}
               >
-                <span className="font-bold" style={{ fontSize: 22, color: "#DC2626" }}>
+                <span className="font-bold" style={{ fontSize: 22, color: colors.error }}>
                   {WEEKLY_DATA.reduce((s, d) => s + d.full, 0)}
                 </span>
-                <span style={{ fontSize: 11, color: "#DC2626" }}>Full Reports</span>
+                <span style={{ fontSize: 11, color: colors.error }}>Full Reports</span>
               </div>
               <div
                 className="rounded-lg px-3 py-2 flex flex-col"
-                style={{ background: "#F3F4F6", minWidth: 100 }}
+                style={{ background: colors.gray100, minWidth: 100 }}
               >
                 <span className="font-bold text-text-primary" style={{ fontSize: 22 }}>
                   {Math.round(
@@ -214,21 +214,21 @@ export default function PBDashboard() {
                   )}
                   %
                 </span>
-                <span style={{ fontSize: 11, color: "#6B7280" }}>Collection Rate</span>
+                <span style={{ fontSize: 11, color: colors.gray500 }}>Collection Rate</span>
               </div>
             </div>
 
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={WEEKLY_DATA} barGap={4}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.gray100} vertical={false} />
                 <XAxis
                   dataKey="day"
-                  tick={{ fontSize: 12, fill: "#9CA3AF" }}
+                  tick={{ fontSize: 12, fill: colors.textMuted }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 12, fill: "#9CA3AF" }}
+                  tick={{ fontSize: 12, fill: colors.textMuted }}
                   axisLine={false}
                   tickLine={false}
                   width={28}
@@ -236,12 +236,12 @@ export default function PBDashboard() {
                 <Tooltip
                   contentStyle={{
                     borderRadius: 10,
-                    border: "1px solid #E5E7EB",
+                    border: "1px solid " + colors.gray200,
                     fontSize: 13,
                   }}
                 />
-                <Bar dataKey="collected" name="Collected" fill="#2E7D32" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="full" name="Full Reports" fill="#FFCDD2" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="collected" name="Collected" fill={colors.primary} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="full" name="Full Reports" fill={colors.errorBorder} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -252,18 +252,18 @@ export default function PBDashboard() {
           {/* Full Bin Alerts */}
           <div
             className="bg-white rounded-xl p-4 flex flex-col gap-2"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
-                <AlertTriangle size={16} color="#DC2626" />
+                <AlertTriangle size={16} color={colors.error} />
                 <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>
                   Full Bin Alerts
                 </h2>
               </div>
               <span
                 className="rounded-full px-2.5 py-0.5 font-semibold"
-                style={{ fontSize: 12, background: "#FFEBEE", color: "#DC2626" }}
+                style={{ fontSize: 12, background: colors.errorSoft, color: colors.error }}
               >
                 {fullBins.length}
               </span>
@@ -290,11 +290,11 @@ export default function PBDashboard() {
           {/* Leaderboard Preview */}
           <div
             className="bg-white rounded-xl p-4 flex flex-col gap-3"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Trophy size={16} color="#D97706" />
+                <Trophy size={16} color={colors.warning} />
                 <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>
                   Top Households
                 </h2>
@@ -302,7 +302,7 @@ export default function PBDashboard() {
               <button
                 onClick={() => navigate(ROUTES.PB.LEADERBOARD)}
                 className="font-medium transition-colors hover:underline"
-                style={{ fontSize: 12, color: "#2E7D32" }}
+                style={{ fontSize: 12, color: colors.primary }}
               >
                 View All
               </button>
@@ -313,7 +313,7 @@ export default function PBDashboard() {
                 <div
                   key={r.residentId}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5"
-                  style={{ background: "#F9FAFB", border: "1px solid #F3F4F6" }}
+                  style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}
                 >
                   {/* Rank badge */}
                   <div
@@ -323,16 +323,16 @@ export default function PBDashboard() {
                       height: 28,
                       fontSize: 12,
                       background:
-                        r.rank === 1 ? "#F59E0B" : r.rank === 2 ? "#9CA3AF" : "#CD7F32",
+                        r.rank === 1 ? colors.rankGoldText : r.rank === 2 ? colors.textMuted : colors.rankBronzeText,
                     }}
                   >
                     {r.rank}
                   </div>
                   <div
                     className="flex-shrink-0 flex items-center justify-center rounded-full"
-                    style={{ width: 26, height: 26, background: "#E8F5E9" }}
+                    style={{ width: 26, height: 26, background: colors.accentSoft }}
                   >
-                    <Home size={13} color="#2E7D32" />
+                    <Home size={13} color={colors.primary} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div
@@ -361,10 +361,10 @@ export default function PBDashboard() {
           {/* Recent Activity */}
           <div
             className="bg-white rounded-xl p-4 flex flex-col gap-2 flex-1"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             <div className="flex items-center gap-2 mb-1">
-              <Activity size={16} color="#6B7280" />
+              <Activity size={16} color={colors.gray500} />
               <h2 className="font-semibold text-text-primary" style={{ fontSize: 17 }}>
                 Recent Activity
               </h2>

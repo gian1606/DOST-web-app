@@ -1,20 +1,11 @@
+import { colors } from "../../../theme/colors.js";
 import { useState } from "react";
 import { Plus, Trash2, Pencil, MapPin } from "lucide-react";
 import Modal from "../../../components/ui/Modal";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import { BARANGAY_ACCOUNTS } from "../../../mock/data";
+import FormField from "../../../components/ui/FormField.jsx";
 
-function FormField({ label, type = "text", value, onChange, error, placeholder }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder} className="rounded-lg px-3 py-2.5 outline-none"
-        style={{ fontSize: 14, border: error ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB" }} />
-      {error && <span style={{ fontSize: 12, color: "#DC2626" }}>{error}</span>}
-    </div>
-  );
-}
 
 const EMPTY_FORM = { name: "", captain: "", email: "" };
 
@@ -85,17 +76,17 @@ function BarangaysTab() {
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search barangay name…"
             className="rounded-lg pl-9 pr-3 py-2 outline-none"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#F9FAFB" }} />
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.gray50 }} />
         </div>
         <div className="flex items-center gap-2">
           <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-            style={{ background: "#F3F4F6", border: "1px solid #E5E7EB" }}>
-            <span className="font-bold" style={{ fontSize: 18, color: "#374151" }}>{barangays.length}</span>
+            style={{ background: colors.gray100, border: "1px solid " + colors.gray200 }}>
+            <span className="font-bold" style={{ fontSize: 18, color: colors.gray700 }}>{barangays.length}</span>
             <span className="font-medium text-text-secondary" style={{ fontSize: 13 }}>Barangays</span>
           </div>
           <button onClick={openAdd}
             className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 14, background: "#2E7D32" }}>
+            style={{ fontSize: 14, background: colors.primary }}>
             <Plus size={15} /> Add Barangay
           </button>
         </div>
@@ -103,13 +94,13 @@ function BarangaysTab() {
 
       {/* Table */}
       <div className="bg-white rounded-xl overflow-hidden"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
         <table className="w-full border-collapse">
           <thead>
-            <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+            <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
               {["Barangay Name", "Captain / Contact", "Email", "Total Bins", "Active Residents", "Status", "Last Activity", "Actions"].map((h) => (
                 <th key={h} className="text-left font-semibold uppercase tracking-wide px-5 py-3"
-                  style={{ fontSize: 11, color: "#6B7280" }}>{h}</th>
+                  style={{ fontSize: 11, color: colors.gray500 }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -119,12 +110,12 @@ function BarangaysTab() {
                 No barangays found.
               </td></tr>
             ) : filtered.map((b, i) => (
-              <tr key={b.id} style={{ background: i % 2 === 0 ? "#fff" : "#FAFAFA", borderBottom: "1px solid #F3F4F6" }}>
+              <tr key={b.id} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center justify-center rounded-full flex-shrink-0"
-                      style={{ width: 28, height: 28, background: "#E8F5E9" }}>
-                      <MapPin size={13} color="#2E7D32" />
+                      style={{ width: 28, height: 28, background: colors.accentSoft }}>
+                      <MapPin size={13} color={colors.primary} />
                     </div>
                     <span className="font-semibold text-text-primary" style={{ fontSize: 13 }}>{b.name}</span>
                   </div>
@@ -139,12 +130,12 @@ function BarangaysTab() {
                   <div className="flex items-center gap-2">
                     <button onClick={() => openEdit(b)}
                       className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 font-medium hover:bg-blue-50 transition-colors"
-                      style={{ fontSize: 12, color: "#1976D2", border: "1px solid #BBDEFB" }}>
+                      style={{ fontSize: 12, color: colors.recyclable, border: "1px solid " + colors.infoBorder }}>
                       <Pencil size={12} /> Edit
                     </button>
                     <button onClick={() => setDeleteTarget(b)}
                       className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-medium hover:bg-red-50 transition-colors"
-                      style={{ fontSize: 12, color: "#DC2626", border: "1px solid #FECACA" }}>
+                      style={{ fontSize: 12, color: colors.error, border: "1px solid " + colors.inputErrorBorder }}>
                       <Trash2 size={12} /> Delete
                     </button>
                   </div>
@@ -161,10 +152,10 @@ function BarangaysTab() {
         footer={<>
           <button onClick={() => setModalOpen(false)}
             className="rounded-lg px-4 py-2 font-medium"
-            style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+            style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
           <button onClick={handleSave}
             className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 14, background: "#2E7D32" }}>
+            style={{ fontSize: 14, background: colors.primary }}>
             {editTarget ? "Save Changes" : "Create Barangay"}
           </button>
         </>}>
@@ -186,19 +177,19 @@ function BarangaysTab() {
         footer={<>
           <button onClick={() => setDeleteTarget(null)}
             className="rounded-lg px-4 py-2 font-medium"
-            style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+            style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
           <button onClick={() => handleDelete(deleteTarget.id)}
             className="flex items-center gap-2 rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 14, background: "#DC2626" }}>
+            style={{ fontSize: 14, background: colors.error }}>
             <Trash2 size={14} /> Delete
           </button>
         </>}>
         {deleteTarget && (
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3 rounded-xl px-4 py-3"
-              style={{ background: "#FFEBEE", border: "1px solid #FFCDD2" }}>
-              <Trash2 size={16} color="#DC2626" className="flex-shrink-0 mt-0.5" />
-              <p style={{ fontSize: 13, color: "#B71C1C" }}>
+              style={{ background: colors.errorSoft, border: "1px solid " + colors.errorBorder }}>
+              <Trash2 size={16} color={colors.error} className="flex-shrink-0 mt-0.5" />
+              <p style={{ fontSize: 13, color: colors.errorDark }}>
                 Deleting this barangay will not remove the associated admin account, but it will become unassigned. This action cannot be undone.
               </p>
             </div>
@@ -208,7 +199,7 @@ function BarangaysTab() {
                 { label: "Captain",       value: deleteTarget.captain },
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between px-4 py-2.5 border-b last:border-0"
-                  style={{ borderColor: "#F3F4F6" }}>
+                  style={{ borderColor: colors.gray100 }}>
                   <span className="text-text-muted font-medium" style={{ fontSize: 13 }}>{label}</span>
                   <span className="text-text-primary font-semibold" style={{ fontSize: 13 }}>{value}</span>
                 </div>

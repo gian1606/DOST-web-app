@@ -9,15 +9,10 @@ export default function AlertRow({ name, description, timeReported }) {
 
   return (
     <div className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
-      {/* Red icon bg */}
-      <div
-        className="flex-shrink-0 flex items-center justify-center rounded-lg"
-        style={{ width: 34, height: 34, background: "#FFEBEE" }}
-      >
+      <div className="flex-shrink-0 flex items-center justify-center rounded-lg bg-error-soft"
+        style={{ width: 34, height: 34 }}>
         <span style={{ fontSize: 16 }}>🗑️</span>
       </div>
-
-      {/* Text */}
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-text-primary truncate" style={{ fontSize: 13 }}>
           {name}
@@ -27,13 +22,7 @@ export default function AlertRow({ name, description, timeReported }) {
           {time && <span className="text-text-muted ml-1">· {time}</span>}
         </div>
       </div>
-
-      {/* Red dot */}
-      <div
-        className="flex-shrink-0 rounded-full"
-        style={{ width: 8, height: 8, background: "#DC2626" }}
-      />
+      <div className="flex-shrink-0 rounded-full bg-error" style={{ width: 8, height: 8 }} />
     </div>
   );
 }
-

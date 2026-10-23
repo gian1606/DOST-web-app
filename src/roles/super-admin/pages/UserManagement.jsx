@@ -1,20 +1,11 @@
+import { colors } from "../../../theme/colors.js";
 import { useState } from "react";
 import { Plus, Trash2, Building, ChevronDown } from "lucide-react";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import Modal       from "../../../components/ui/Modal";
 import { BARANGAY_ACCOUNTS } from "../../../mock/data";
+import FormField from "../../../components/ui/FormField.jsx";
 
-function FormField({ label, type = "text", value, onChange, error, placeholder }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder} className="rounded-lg px-3 py-2.5 outline-none"
-        style={{ fontSize: 14, border: error ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB" }} />
-      {error && <span style={{ fontSize: 12, color: "#DC2626" }}>{error}</span>}
-    </div>
-  );
-}
 
 const EMPTY_BARANGAY_FORM = { name: "", captain: "", email: "", tempPassword: "" };
 
@@ -85,12 +76,12 @@ function BarangayAdminTab() {
       <div className="flex items-center justify-between">
         <div className="flex gap-3">
           {[
-            { label: "Total",    value: barangays.length, bg: "#F3F4F6", color: "#374151" },
-            { label: "Active",   value: activeCount,      bg: "#E8F5E9", color: "#2E7D32" },
-            { label: "Inactive", value: inactiveCount,    bg: "#FFEBEE", color: "#DC2626" },
+            { label: "Total",    value: barangays.length, bg: colors.gray100, color: colors.gray700 },
+            { label: "Active",   value: activeCount,      bg: colors.accentSoft, color: colors.primary },
+            { label: "Inactive", value: inactiveCount,    bg: colors.errorSoft, color: colors.error },
           ].map((s) => (
             <div key={s.label} className="flex items-center gap-2 rounded-lg px-3 py-2"
-              style={{ background: s.bg, border: "1px solid #E5E7EB" }}>
+              style={{ background: s.bg, border: "1px solid " + colors.gray200 }}>
               <span className="font-bold" style={{ fontSize: 18, color: s.color }}>{s.value}</span>
               <span className="font-medium text-text-secondary" style={{ fontSize: 13 }}>{s.label}</span>
             </div>
@@ -98,7 +89,7 @@ function BarangayAdminTab() {
         </div>
         <button onClick={openAdd}
           className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-          style={{ fontSize: 14, background: "#2E7D32" }}>
+          style={{ fontSize: 14, background: colors.primary }}>
           <Plus size={15} /> Add Barangay Admin
         </button>
       </div>
@@ -110,12 +101,12 @@ function BarangayAdminTab() {
           <input value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search barangay, captain, email…"
             className="w-full rounded-lg pl-9 pr-3 py-2 outline-none"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#F9FAFB" }} />
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.gray50 }} />
         </div>
         <div className="relative flex items-center">
           <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
             className="appearance-none rounded-lg pl-3 pr-8 py-2 outline-none font-medium"
-            style={{ fontSize: 13, border: "1.5px solid #E5E7EB", background: "#fff", color: "#374151", minWidth: 140 }}>
+            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.white, color: colors.gray700, minWidth: 140 }}>
             <option value="all">All Statuses</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
@@ -125,7 +116,7 @@ function BarangayAdminTab() {
         {(filterStatus !== "all" || search) && (
           <button onClick={() => { setFilterStatus("all"); setSearch(""); }}
             className="rounded-lg px-3 py-2 font-medium hover:bg-red-50 transition-colors"
-            style={{ fontSize: 13, border: "1.5px solid #FECACA", color: "#DC2626", background: "#FFF5F5" }}>
+            style={{ fontSize: 13, border: "1.5px solid #FECACA", color: colors.error, background: colors.errorSoft }}>
             ✕ Clear
           </button>
         )}
@@ -133,13 +124,13 @@ function BarangayAdminTab() {
 
       {/* Table */}
       <div className="bg-white rounded-xl overflow-hidden"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
         <table className="w-full border-collapse">
           <thead>
-            <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+            <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
               {["Barangay Name", "Captain / Contact", "Email", "Total Bins", "Active Residents", "Status", "Last Activity", "Actions"].map((h) => (
                 <th key={h} className="text-left font-semibold uppercase tracking-wide px-4 py-3"
-                  style={{ fontSize: 11, color: "#6B7280" }}>{h}</th>
+                  style={{ fontSize: 11, color: colors.gray500 }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -149,7 +140,7 @@ function BarangayAdminTab() {
                 No barangay admin accounts match your filters.
               </td></tr>
             ) : filtered.map((b, i) => (
-              <tr key={b.id} style={{ background: i % 2 === 0 ? "#fff" : "#FAFAFA", borderBottom: "1px solid #F3F4F6" }}>
+              <tr key={b.id} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
                 <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{b.name}</td>
                 <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>{b.captain}</td>
                 <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>{b.email}</td>
@@ -160,7 +151,7 @@ function BarangayAdminTab() {
                 <td className="px-4 py-3">
                   <button onClick={() => setDeleteTarget(b)}
                     className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-red-50"
-                    style={{ fontSize: 12, color: "#DC2626", border: "1px solid #FECACA" }}>
+                    style={{ fontSize: 12, color: colors.error, border: "1px solid #FECACA" }}>
                     <Trash2 size={13} /> Delete
                   </button>
                 </td>
@@ -175,10 +166,10 @@ function BarangayAdminTab() {
         footer={<>
           <button onClick={() => setModalOpen(false)}
             className="rounded-lg px-4 py-2 font-medium"
-            style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+            style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
           <button onClick={handleSave}
             className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 14, background: "#2E7D32" }}>Create Account</button>
+            style={{ fontSize: 14, background: colors.primary }}>Create Account</button>
         </>}>
         <div className="flex flex-col gap-4">
           <FormField label="Barangay Name" value={form.name} onChange={(v) => setForm((p) => ({ ...p, name: v }))}
@@ -200,19 +191,19 @@ function BarangayAdminTab() {
         footer={<>
           <button onClick={() => setDeleteTarget(null)}
             className="rounded-lg px-4 py-2 font-medium"
-            style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+            style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
           <button onClick={() => handleDelete(deleteTarget.id)}
             className="flex items-center gap-2 rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 14, background: "#DC2626" }}>
+            style={{ fontSize: 14, background: colors.error }}>
             <Trash2 size={14} /> Delete
           </button>
         </>}>
         {deleteTarget && (
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3 rounded-xl px-4 py-3"
-              style={{ background: "#FFEBEE", border: "1px solid #FFCDD2" }}>
-              <Trash2 size={16} color="#DC2626" className="flex-shrink-0 mt-0.5" />
-              <p style={{ fontSize: 13, color: "#B71C1C" }}>This will permanently delete the account. This action cannot be undone.</p>
+              style={{ background: colors.errorSoft, border: "1px solid " + colors.errorBorder }}>
+              <Trash2 size={16} color={colors.error} className="flex-shrink-0 mt-0.5" />
+              <p style={{ fontSize: 13, color: colors.errorDark }}>This will permanently delete the account. This action cannot be undone.</p>
             </div>
             <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
               {[
@@ -222,7 +213,7 @@ function BarangayAdminTab() {
                 { label: "Status",        value: deleteTarget.status === "active" ? "Active" : "Inactive" },
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between px-4 py-2.5 border-b last:border-0"
-                  style={{ borderColor: "#F3F4F6" }}>
+                  style={{ borderColor: colors.gray100 }}>
                   <span className="text-text-muted font-medium" style={{ fontSize: 13 }}>{label}</span>
                   <span className="text-text-primary font-semibold" style={{ fontSize: 13 }}>{value}</span>
                 </div>

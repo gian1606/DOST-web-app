@@ -14,7 +14,7 @@ export default function Modal({ open, onClose, title, children, footer }) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="bg-white w-full max-w-lg flex flex-col"
+        className="bg-white w-full max-w-lg flex flex-col border border-gray-200"
         style={{
           borderRadius: 16,
           boxShadow: "0 8px 24px rgba(0,0,0,0.09), 0 4px 8px rgba(0,0,0,0.05)",
@@ -22,10 +22,7 @@ export default function Modal({ open, onClose, title, children, footer }) {
         }}
       >
         {/* Header */}
-        <div
-          className="flex items-center justify-between px-6 py-4 border-b"
-          style={{ borderColor: "#E5E7EB" }}
-        >
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="font-bold text-text-primary" style={{ fontSize: 17 }}>
             {title}
           </h2>
@@ -42,10 +39,7 @@ export default function Modal({ open, onClose, title, children, footer }) {
 
         {/* Footer */}
         {footer && (
-          <div
-            className="flex items-center justify-end gap-3 px-6 py-4 border-t"
-            style={{ borderColor: "#E5E7EB" }}
-          >
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200">
             {footer}
           </div>
         )}
@@ -53,4 +47,3 @@ export default function Modal({ open, onClose, title, children, footer }) {
     </div>
   );
 }
-

@@ -1,7 +1,9 @@
+import { colors } from "../../../theme/colors.js";
 import { useState } from "react";
 import { Plus, Pencil, Trash2, Gift, PackageX } from "lucide-react";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import Modal from "../../../components/ui/Modal";
+import FormField from "../../../components/ui/FormField.jsx";
 import { REWARDS } from "../../../mock/data";
 
 const EMPTY_FORM = {
@@ -104,7 +106,7 @@ export default function Rewards() {
         <button
           onClick={openAdd}
           className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-          style={{ fontSize: 14, background: "#2E7D32" }}
+          style={{ fontSize: 14, background: colors.primary }}
         >
           <Plus size={15} />
           Add Reward
@@ -114,25 +116,25 @@ export default function Rewards() {
       {/* Summary chips */}
       <div className="flex items-center gap-3">
         <SummaryChip
-          icon={<Gift size={14} color="#2E7D32" />}
+          icon={<Gift size={14} color={colors.primary} />}
           label="Total Rewards"
           value={rewards.length}
-          bg="#E8F5E9"
-          color="#2E7D32"
+          bg={colors.accentSoft}
+          color={colors.primary}
         />
         <SummaryChip
-          icon={<Gift size={14} color="#1976D2" />}
+          icon={<Gift size={14} color={colors.recyclable} />}
           label="Available"
           value={rewards.filter((r) => r.status === "available").length}
-          bg="#E3F2FD"
-          color="#1976D2"
+          bg={colors.infoSoft}
+          color={colors.recyclable}
         />
         <SummaryChip
-          icon={<PackageX size={14} color="#D97706" />}
+          icon={<PackageX size={14} color={colors.warning} />}
           label="Out of Stock"
           value={rewards.filter((r) => r.stock === 0).length}
-          bg="#FFF3E0"
-          color="#D97706"
+          bg={colors.warningSoft}
+          color={colors.warning}
         />
       </div>
 
@@ -142,15 +144,15 @@ export default function Rewards() {
           <div
             key={r.id}
             className="bg-white rounded-xl p-5 flex flex-col gap-3"
-            style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+            style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
           >
             {/* Icon + status */}
             <div className="flex items-start justify-between">
               <div
                 className="flex items-center justify-center rounded-xl"
-                style={{ width: 44, height: 44, background: "#E8F5E9" }}
+                style={{ width: 44, height: 44, background: colors.accentSoft }}
               >
-                <Gift size={22} color="#2E7D32" />
+                <Gift size={22} color={colors.primary} />
               </div>
               <StatusBadge status={r.status} />
             </div>
@@ -177,12 +179,12 @@ export default function Rewards() {
               </div>
               <div
                 className="w-px self-stretch"
-                style={{ background: "#E5E7EB" }}
+                style={{ background: colors.gray200 }}
               />
               <div>
                 <div
                   className="font-bold"
-                  style={{ fontSize: 20, color: r.stock === 0 ? "#DC2626" : "#1A1A1A" }}
+                  style={{ fontSize: 20, color: r.stock === 0 ? colors.error : colors.textHeading }}
                 >
                   {r.stock}
                 </div>
@@ -193,11 +195,11 @@ export default function Rewards() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 pt-1 border-t" style={{ borderColor: "#F3F4F6" }}>
+            <div className="flex items-center gap-2 pt-1 border-t" style={{ borderColor: colors.gray100 }}>
               <button
                 onClick={() => openEdit(r)}
                 className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-gray-100"
-                style={{ fontSize: 13, color: "#6B7280" }}
+                style={{ fontSize: 13, color: colors.gray500 }}
               >
                 <Pencil size={13} />
                 Edit
@@ -205,7 +207,7 @@ export default function Rewards() {
               <button
                 onClick={() => setDeleteModal(r)}
                 className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-red-50 ml-auto"
-                style={{ fontSize: 13, color: "#DC2626" }}
+                style={{ fontSize: 13, color: colors.error }}
               >
                 <Trash2 size={13} />
                 Delete
@@ -225,14 +227,14 @@ export default function Rewards() {
             <button
               onClick={() => setModalOpen(false)}
               className="rounded-lg px-4 py-2 font-medium transition-colors"
-              style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}
+              style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-              style={{ fontSize: 14, background: "#2E7D32" }}
+              style={{ fontSize: 14, background: colors.primary }}
             >
               {editReward ? "Save Changes" : "Add Reward"}
             </button>
@@ -282,9 +284,9 @@ export default function Rewards() {
               className="rounded-lg px-3 py-2.5 outline-none"
               style={{
                 fontSize: 14,
-                border: "1.5px solid #E5E7EB",
-                background: "#F9FAFB",
-                color: "#1A1A1A",
+                border: "1.5px solid " + colors.gray200,
+                background: colors.gray50,
+                color: colors.textHeading,
               }}
             >
               <option value="available">Available</option>
@@ -304,14 +306,14 @@ export default function Rewards() {
             <button
               onClick={() => setDeleteModal(null)}
               className="rounded-lg px-4 py-2 font-medium"
-              style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}
+              style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}
             >
               Cancel
             </button>
             <button
               onClick={() => handleDelete(deleteModal.id)}
               className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90"
-              style={{ fontSize: 14, background: "#DC2626" }}
+              style={{ fontSize: 14, background: colors.error }}
             >
               Delete
             </button>
@@ -342,27 +344,3 @@ function SummaryChip({ icon, label, value, bg, color }) {
     </div>
   );
 }
-
-function FormField({ label, type = "text", value, onChange, error, placeholder }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>
-        {label}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="rounded-lg px-3 py-2.5 outline-none"
-        style={{
-          fontSize: 14,
-          border: error ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB",
-          background: "#F9FAFB",
-        }}
-      />
-      {error && <span style={{ fontSize: 12, color: "#DC2626" }}>{error}</span>}
-    </div>
-  );
-}
-

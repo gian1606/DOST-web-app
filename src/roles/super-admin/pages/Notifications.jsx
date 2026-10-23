@@ -1,29 +1,12 @@
+import { colors } from "../../../theme/colors.js";
 import { useState } from "react";
 import { Plus, Bell, Calendar, CheckCircle, FileText, Megaphone, AlertTriangle } from "lucide-react";
 import Modal  from "../../../components/ui/Modal";
 import { NOTIFICATIONS } from "../../../mock/data";
-
-const TYPE_CONFIG = {
-  task:         { icon: Bell,        color: "#1976D2", bg: "#E3F2FD" },
-  schedule:     { icon: Calendar,    color: "#D97706", bg: "#FFF3E0" },
-  complete:     { icon: CheckCircle, color: "#2E7D32", bg: "#E8F5E9" },
-  report:       { icon: FileText,    color: "#6B7280", bg: "#F3F4F6" },
-  announcement: { icon: Megaphone,   color: "#2E7D32", bg: "#E8F5E9" },
-};
+import { NOTIF_TYPE_CONFIG } from "../../../components/ui/notifConfig.jsx";
+import FormField from "../../../components/ui/FormField.jsx";
 
 const EMPTY_FORM = { title: "", body: "", priority: "normal" };
-
-function FormField({ label, type = "text", value, onChange, error, placeholder }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="rounded-lg px-3 py-2.5 outline-none"
-        style={{ fontSize: 14, border: error ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB" }} />
-      {error && <span style={{ fontSize: 12, color: "#DC2626" }}>{error}</span>}
-    </div>
-  );
-}
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
@@ -72,7 +55,7 @@ export default function Notifications() {
         <button
           onClick={() => { setModalOpen(true); setPreview(false); setForm(EMPTY_FORM); setFormErrors({}); }}
           className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-          style={{ fontSize: 14, background: "#2E7D32" }}
+          style={{ fontSize: 14, background: colors.primary }}
         >
           <Plus size={15} />
           Send Announcement
@@ -80,13 +63,13 @@ export default function Notifications() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 border-b" style={{ borderColor: "#E5E7EB" }}>
+      <div className="flex items-center gap-1 border-b" style={{ borderColor: colors.gray200 }}>
         {["sent", "received"].map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className="px-5 py-2.5 font-medium capitalize transition-colors"
             style={{
               fontSize: 14,
-              color: tab === t ? "#2E7D32" : "#6B7280",
+              color: tab === t ? colors.primary : colors.gray500,
               borderBottom: tab === t ? "2px solid #2E7D32" : "2px solid transparent",
               marginBottom: -1,
             }}>
@@ -97,17 +80,17 @@ export default function Notifications() {
 
       {/* List */}
       <div className="bg-white rounded-xl overflow-hidden"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
         {notifications.length === 0 ? (
           <div className="text-center text-text-muted py-12" style={{ fontSize: 14 }}>No notifications.</div>
         ) : (
           notifications.map((n) => {
-            const cfg  = TYPE_CONFIG[n.type] ?? TYPE_CONFIG.announcement;
+            const cfg  = NOTIF_TYPE_CONFIG[n.type] ?? NOTIF_TYPE_CONFIG.announcement;
             const Icon = cfg.icon;
             return (
               <div key={n.id}
                 className="flex items-start gap-4 px-5 py-4 border-b last:border-0 transition-colors hover:bg-gray-50"
-                style={{ borderColor: "#F3F4F6", background: !n.read ? "#FAFFFE" : undefined }}>
+                style={{ borderColor: colors.gray100, background: !n.read ? colors.notificationUnread : undefined }}>
                 <div className="flex-shrink-0 flex items-center justify-center rounded-lg mt-0.5"
                   style={{ width: 36, height: 36, background: cfg.bg }}>
                   <Icon size={17} color={cfg.color} />
@@ -116,11 +99,11 @@ export default function Notifications() {
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="font-semibold text-text-primary" style={{ fontSize: 14 }}>{n.title}</span>
                     {!n.read && (
-                      <span className="rounded-full" style={{ width: 7, height: 7, background: "#2E7D32", display: "inline-block", flexShrink: 0 }} />
+                      <span className="rounded-full" style={{ width: 7, height: 7, background: colors.primary, display: "inline-block", flexShrink: 0 }} />
                     )}
                     {n.priority === "urgent" && (
                       <span className="flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold"
-                        style={{ fontSize: 11, background: "#FFEBEE", color: "#DC2626" }}>
+                        style={{ fontSize: 11, background: colors.errorSoft, color: colors.error }}>
                         <AlertTriangle size={10} />Urgent
                       </span>
                     )}
@@ -130,7 +113,7 @@ export default function Notifications() {
                 <div className="flex-shrink-0 flex flex-col items-end gap-1.5">
                   <span className="text-text-muted" style={{ fontSize: 11 }}>{formatTime(n.sentAt)}</span>
                   <span className="rounded-full px-2.5 py-0.5 font-medium"
-                    style={{ fontSize: 11, background: "#F3F4F6", color: "#6B7280" }}>
+                    style={{ fontSize: 11, background: colors.gray100, color: colors.gray500 }}>
                     All Staff
                   </span>
                 </div>
@@ -150,16 +133,16 @@ export default function Notifications() {
             <>
               <button onClick={() => setPreview(false)}
                 className="rounded-lg px-4 py-2 font-medium"
-                style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Back to Edit</button>
+                style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Back to Edit</button>
               <button onClick={handleSend}
                 className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90"
-                style={{ fontSize: 14, background: "#2E7D32" }}>Confirm &amp; Send</button>
+                style={{ fontSize: 14, background: colors.primary }}>Confirm &amp; Send</button>
             </>
           ) : (
             <>
               <button onClick={() => setModalOpen(false)}
                 className="rounded-lg px-4 py-2 font-medium"
-                style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+                style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
               <button
                 onClick={() => {
                   const e = validateForm();
@@ -167,26 +150,26 @@ export default function Notifications() {
                   setPreview(true);
                 }}
                 className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90"
-                style={{ fontSize: 14, background: "#2E7D32" }}>Preview</button>
+                style={{ fontSize: 14, background: colors.primary }}>Preview</button>
             </>
           )
         }
       >
         {preview ? (
-          <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
+          <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: colors.gray50, border: "1px solid " + colors.gray200 }}>
             <div className="flex items-center gap-2">
-              <Megaphone size={16} color="#2E7D32" />
+              <Megaphone size={16} color={colors.primary} />
               <span className="font-bold text-text-primary" style={{ fontSize: 15 }}>{form.title}</span>
               {form.priority === "urgent" && (
                 <span className="rounded-full px-2 py-0.5 font-semibold"
-                  style={{ fontSize: 11, background: "#FFEBEE", color: "#DC2626" }}>Urgent</span>
+                  style={{ fontSize: 11, background: colors.errorSoft, color: colors.error }}>Urgent</span>
               )}
             </div>
             <p className="text-text-secondary" style={{ fontSize: 13, lineHeight: 1.6 }}>{form.body}</p>
-            <div className="flex items-center gap-4 pt-2 border-t" style={{ borderColor: "#E5E7EB" }}>
+            <div className="flex items-center gap-4 pt-2 border-t" style={{ borderColor: colors.gray200 }}>
               <span className="text-text-muted" style={{ fontSize: 12 }}>Target: <strong>All Staff</strong></span>
               <span className="text-text-muted" style={{ fontSize: 12 }}>
-                Priority: <strong style={{ color: form.priority === "urgent" ? "#DC2626" : "#6B7280" }}>{form.priority}</strong>
+                Priority: <strong style={{ color: form.priority === "urgent" ? colors.error : colors.gray500 }}>{form.priority}</strong>
               </span>
             </div>
           </div>
@@ -203,9 +186,9 @@ export default function Notifications() {
                 placeholder="Write your announcement here…"
                 rows={4}
                 className="rounded-lg px-3 py-2.5 outline-none resize-none"
-                style={{ fontSize: 14, border: formErrors.body ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB" }}
+                style={{ fontSize: 14, border: formErrors.body ? "1.5px solid " + colors.error : "1.5px solid " + colors.gray200, background: colors.gray50 }}
               />
-              {formErrors.body && <span style={{ fontSize: 12, color: "#DC2626" }}>{formErrors.body}</span>}
+              {formErrors.body && <span style={{ fontSize: 12, color: colors.error }}>{formErrors.body}</span>}
             </div>
             <div className="flex flex-col gap-1">
               <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>Priority</label>
@@ -213,7 +196,7 @@ export default function Notifications() {
                 value={form.priority}
                 onChange={(e) => setForm((p) => ({ ...p, priority: e.target.value }))}
                 className="rounded-lg px-3 py-2.5 outline-none"
-                style={{ fontSize: 14, border: "1.5px solid #E5E7EB", background: "#F9FAFB", color: "#1A1A1A" }}
+                style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, background: colors.gray50, color: colors.textHeading }}
               >
                 <option value="normal">Normal</option>
                 <option value="urgent">Urgent</option>

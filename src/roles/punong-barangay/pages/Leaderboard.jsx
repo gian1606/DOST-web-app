@@ -1,11 +1,13 @@
+import { colors } from "../../../theme/colors.js";
 import { useState } from "react";
 import { Trophy, Medal, Star, Calendar, Home } from "lucide-react";
 import { LEADERBOARD_PERIODS } from "../../../mock/data";
+import { PB_BARANGAY } from "../../../constants/index.js";
 
 const BADGE_CONFIG = {
-  gold:   { bg: "#FEF3C7", color: "#D97706", label: "Gold",   icon: "🥇" },
-  silver: { bg: "#F3F4F6", color: "#6B7280", label: "Silver", icon: "🥈" },
-  bronze: { bg: "#FEF0E7", color: "#C2410C", label: "Bronze", icon: "🥉" },
+  gold:   { bg: colors.rankGoldBg, color: colors.warning, label: "Gold",   icon: "🥇" },
+  silver: { bg: colors.gray100, color: colors.gray500, label: "Silver", icon: "🥈" },
+  bronze: { bg: colors.rankBronzeBg, color: colors.rankBronzeText, label: "Bronze", icon: "🥉" },
 };
 
 // All available months in descending order (newest first)
@@ -17,8 +19,7 @@ const MONTH_OPTIONS = [
   { key: "2025-01", label: "January 2025" },
 ];
 
-const CURRENT_MONTH = "2025-05";
-const BARANGAY_NAME = "Alangilan";
+const CURRENT_MONTH = new Date().toISOString().slice(0, 7); // e.g. "2025-05"
 
 export default function Leaderboard() {
   const [month, setMonth] = useState(CURRENT_MONTH);
@@ -37,25 +38,25 @@ export default function Leaderboard() {
             Household Leaderboard
           </h1>
           <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-            Top households in Barangay {BARANGAY_NAME} by waste reporting activity.
+            Top households in Barangay {PB_BARANGAY} by waste reporting activity.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div
             className="flex items-center gap-2 rounded-full px-4 py-2"
-            style={{ background: "#E8F5E9", border: "1px solid #A5D6A7" }}
+            style={{ background: colors.accentSoft, border: "1px solid " + colors.accentBorderLight }}
           >
-            <Home size={14} color="#2E7D32" />
-            <span className="font-semibold" style={{ fontSize: 13, color: "#2E7D32" }}>
-              Brgy. {BARANGAY_NAME}
+            <Home size={14} color={colors.primary} />
+            <span className="font-semibold" style={{ fontSize: 13, color: colors.primary }}>
+              Brgy. {PB_BARANGAY}
             </span>
           </div>
           <div
             className="flex items-center gap-2 rounded-full px-4 py-2"
-            style={{ background: "#FEF3C7", border: "1px solid #FDE68A" }}
+            style={{ background: colors.rankGoldBg, border: "1px solid #FDE68A" }}
           >
-            <Trophy size={14} color="#D97706" />
-            <span className="font-semibold" style={{ fontSize: 13, color: "#D97706" }}>
+            <Trophy size={14} color={colors.warning} />
+            <span className="font-semibold" style={{ fontSize: 13, color: colors.warning }}>
               {ranked.length} Households
             </span>
           </div>
@@ -65,9 +66,9 @@ export default function Leaderboard() {
       {/* Month filter — dropdown */}
       <div
         className="bg-white rounded-xl px-4 py-3 flex items-center gap-3"
-        style={{ border: "1px solid #E5E7EB" }}
+        style={{ border: "1px solid " + colors.gray200 }}
       >
-        <Calendar size={15} color="#6B7280" />
+        <Calendar size={15} color={colors.gray500} />
         <label
           className="font-medium text-text-secondary"
           style={{ fontSize: 13 }}
@@ -82,9 +83,9 @@ export default function Leaderboard() {
           className="rounded-lg px-3 py-2 outline-none"
           style={{
             fontSize: 13,
-            border: "1.5px solid #E5E7EB",
-            background: "#F9FAFB",
-            color: "#1A1A1A",
+            border: "1.5px solid " + colors.gray200,
+            background: colors.gray50,
+            color: colors.textHeading,
             minWidth: 180,
           }}
         >
@@ -103,7 +104,7 @@ export default function Leaderboard() {
       {topThree.length >= 1 && (
         <div
           className="bg-white rounded-xl p-6"
-          style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+          style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
         >
           <div className="flex items-end gap-2">
 
@@ -117,7 +118,7 @@ export default function Leaderboard() {
                 <div className="text-white/80 text-center" style={{ fontSize: 11 }}>{topThree[1]?.street ?? ""}</div>
                 <div className="font-black text-white" style={{ fontSize: 24 }}>{topThree[1]?.pointsEarned.toLocaleString() ?? "—"}</div>
                 <div className="text-white/70" style={{ fontSize: 10 }}>Eco Points</div>
-                <div className="rounded-full px-2.5 py-0.5 font-semibold" style={{ fontSize: 11, background: "rgba(255,255,255,0.25)", color: "#fff" }}>
+                <div className="rounded-full px-2.5 py-0.5 font-semibold" style={{ fontSize: 11, background: "rgba(255,255,255,0.25)", color: colors.white }}>
                   {topThree[1]?.reportsSubmitted} reports
                 </div>
               </div>
@@ -134,7 +135,7 @@ export default function Leaderboard() {
                 <div className="text-white/80 text-center" style={{ fontSize: 11 }}>{topThree[0]?.street ?? ""}</div>
                 <div className="font-black text-white" style={{ fontSize: 28 }}>{topThree[0]?.pointsEarned.toLocaleString() ?? "—"}</div>
                 <div className="text-white/70" style={{ fontSize: 10 }}>Eco Points</div>
-                <div className="rounded-full px-2.5 py-0.5 font-semibold" style={{ fontSize: 11, background: "rgba(255,255,255,0.25)", color: "#fff" }}>
+                <div className="rounded-full px-2.5 py-0.5 font-semibold" style={{ fontSize: 11, background: "rgba(255,255,255,0.25)", color: colors.white }}>
                   {topThree[0]?.reportsSubmitted} reports
                 </div>
               </div>
@@ -151,7 +152,7 @@ export default function Leaderboard() {
                 <div className="text-white/80 text-center" style={{ fontSize: 11 }}>{topThree[2]?.street ?? ""}</div>
                 <div className="font-black text-white" style={{ fontSize: 22 }}>{topThree[2]?.pointsEarned.toLocaleString() ?? "—"}</div>
                 <div className="text-white/70" style={{ fontSize: 10 }}>Eco Points</div>
-                <div className="rounded-full px-2.5 py-0.5 font-semibold" style={{ fontSize: 11, background: "rgba(255,255,255,0.25)", color: "#fff" }}>
+                <div className="rounded-full px-2.5 py-0.5 font-semibold" style={{ fontSize: 11, background: "rgba(255,255,255,0.25)", color: colors.white }}>
                   {topThree[2]?.reportsSubmitted} reports
                 </div>
               </div>
@@ -159,26 +160,26 @@ export default function Leaderboard() {
             </div>
 
           </div>
-          <div className="rounded-b-lg" style={{ height: 14, background: "#6B7280" }} />
+          <div className="rounded-b-lg" style={{ height: 14, background: colors.gray500 }} />
         </div>
       )}
 
       {/* Full rankings table */}
       <div
         className="bg-white rounded-xl overflow-hidden"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
       >
         <div
           className="px-5 py-3 border-b flex items-center justify-between"
-          style={{ borderColor: "#E5E7EB", background: "#F9FAFB" }}
+          style={{ borderColor: colors.gray200, background: colors.gray50 }}
         >
           <div className="flex items-center gap-2">
-            <Medal size={15} color="#6B7280" />
+            <Medal size={15} color={colors.gray500} />
             <span
               className="font-semibold text-text-secondary uppercase tracking-wide"
               style={{ fontSize: 12 }}
             >
-              Full Rankings — Brgy. {BARANGAY_NAME}
+              Full Rankings — Brgy. {PB_BARANGAY}
             </span>
           </div>
           <span className="text-text-muted" style={{ fontSize: 12 }}>
@@ -188,12 +189,12 @@ export default function Leaderboard() {
 
         <table className="w-full border-collapse">
           <thead>
-            <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+            <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
               {["Rank", "Household", "Street", "Reports", "Eco Points", "Badge"].map((h) => (
                 <th
                   key={h}
                   className="text-left font-semibold uppercase tracking-wide px-5 py-3"
-                  style={{ fontSize: 12, color: "#6B7280" }}
+                  style={{ fontSize: 12, color: colors.gray500 }}
                 >
                   {h}
                 </th>
@@ -216,8 +217,8 @@ export default function Leaderboard() {
                     style={{
                       background:
                         r.displayRank <= 3
-                          ? r.displayRank === 1 ? "#FFFBEB" : "#FAFAFA"
-                          : i % 2 === 0 ? "#fff" : "#FAFAFA",
+                          ? r.displayRank === 1 ? colors.amberHighlight : colors.tableRowAlt
+                          : i % 2 === 0 ? "#fff" : colors.tableRowAlt,
                       borderBottom: "1px solid #F3F4F6",
                     }}
                   >
@@ -242,9 +243,9 @@ export default function Leaderboard() {
                       <div className="flex items-center gap-3">
                         <div
                           className="flex-shrink-0 flex items-center justify-center rounded-full"
-                          style={{ width: 32, height: 32, background: "#E8F5E9" }}
+                          style={{ width: 32, height: 32, background: colors.accentSoft }}
                         >
-                          <Home size={15} color="#2E7D32" />
+                          <Home size={15} color={colors.primary} />
                         </div>
                         <span className="font-semibold text-text-primary" style={{ fontSize: 13 }}>
                           {r.name}
@@ -260,7 +261,7 @@ export default function Leaderboard() {
                     {/* Reports */}
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-1.5">
-                        <Star size={13} color="#D97706" />
+                        <Star size={13} color={colors.warning} />
                         <span className="font-semibold text-text-primary" style={{ fontSize: 13 }}>
                           {r.reportsSubmitted}
                         </span>

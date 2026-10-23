@@ -1,7 +1,7 @@
+import { colors } from "../../../theme/colors.js";
 import MapView from "../../../components/ui/MapView";
 import { BINS, TRUCKS, MRF_LOCATIONS } from "../../../mock/data";
-
-const PB_BARANGAY = "Alangilan";
+import { PB_BARANGAY } from "../../../constants/index.js";
 
 export default function PBMapView() {
   const bins = BINS.filter((b) => b.barangay === PB_BARANGAY);
@@ -26,11 +26,11 @@ export default function PBMapView() {
         </div>
         <span
           className="flex items-center gap-1.5 rounded-full px-3 py-1.5 font-medium"
-          style={{ fontSize: 12, background: "#E8F5E9", color: "#2E7D32", border: "1px solid #A5D6A7" }}
+          style={{ fontSize: 12, background: colors.accentSoft, color: colors.primary, border: "1px solid " + colors.accentBorderLight }}
         >
           <span
             className="rounded-full"
-            style={{ width: 7, height: 7, background: "#2E7D32", display: "inline-block" }}
+            style={{ width: 7, height: 7, background: colors.primary, display: "inline-block" }}
           />
           Live
         </span>
@@ -39,10 +39,10 @@ export default function PBMapView() {
       {/* Bin status summary */}
       <div className="grid grid-cols-4 gap-3">
         {[
-          { label: "Total Bins",  value: bins.length,     bg: "#F9FAFB", color: "#1A1A1A", border: "#E5E7EB" },
-          { label: "Full",        value: fullCount,       bg: "#FFEBEE", color: "#DC2626", border: "#FFCDD2" },
-          { label: "Collected",   value: collectedCount,  bg: "#E8F5E9", color: "#2E7D32", border: "#A5D6A7" },
-          { label: "Missed",      value: missedCount,     bg: "#FFF3E0", color: "#D97706", border: "#FFCC80" },
+          { label: "Total Bins",  value: bins.length,     bg: colors.gray50, color: colors.textHeading, border: colors.gray200 },
+          { label: "Full",        value: fullCount,       bg: colors.errorSoft, color: colors.error, border: colors.errorBorder },
+          { label: "Collected",   value: collectedCount,  bg: colors.accentSoft, color: colors.primary, border: colors.accentBorderLight },
+          { label: "Missed",      value: missedCount,     bg: colors.warningSoft, color: colors.warning, border: colors.warningBorder },
         ].map((s) => (
           <div
             key={s.label}
@@ -60,7 +60,7 @@ export default function PBMapView() {
       {/* Map */}
       <div
         className="bg-white rounded-xl p-4"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
       >
         <MapView
           bins={bins}
@@ -73,11 +73,11 @@ export default function PBMapView() {
       {/* Bin list */}
       <div
         className="bg-white rounded-xl overflow-hidden"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
       >
         <div
           className="px-5 py-3 border-b"
-          style={{ borderColor: "#E5E7EB", background: "#F9FAFB" }}
+          style={{ borderColor: colors.gray200, background: colors.gray50 }}
         >
           <span className="font-semibold text-text-secondary uppercase tracking-wide" style={{ fontSize: 12 }}>
             Bin Status — Brgy. {PB_BARANGAY}
@@ -85,12 +85,12 @@ export default function PBMapView() {
         </div>
         <table className="w-full border-collapse">
           <thead>
-            <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+            <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
               {["Bin", "Street", "Status", "Reported By", "Time Reported"].map((h) => (
                 <th
                   key={h}
                   className="text-left font-semibold uppercase tracking-wide px-5 py-3"
-                  style={{ fontSize: 12, color: "#6B7280" }}
+                  style={{ fontSize: 12, color: colors.gray500 }}
                 >
                   {h}
                 </th>
@@ -102,7 +102,7 @@ export default function PBMapView() {
               <tr
                 key={b.id}
                 style={{
-                  background: i % 2 === 0 ? "#fff" : "#FAFAFA",
+                  background: i % 2 === 0 ? "#fff" : colors.tableRowAlt,
                   borderBottom: "1px solid #F3F4F6",
                 }}
               >
@@ -136,14 +136,14 @@ export default function PBMapView() {
 }
 
 const STATUS_STYLES = {
-  full:      { bg: "#FFEBEE", color: "#DC2626", label: "Full" },
-  ok:        { bg: "#E8F5E9", color: "#2E7D32", label: "OK" },
-  collected: { bg: "#E8F5E9", color: "#2E7D32", label: "Collected" },
-  missed:    { bg: "#FFF3E0", color: "#D97706", label: "Missed" },
+  full:      { bg: colors.errorSoft, color: colors.error, label: "Full" },
+  ok:        { bg: colors.accentSoft, color: colors.primary, label: "OK" },
+  collected: { bg: colors.accentSoft, color: colors.primary, label: "Collected" },
+  missed:    { bg: colors.warningSoft, color: colors.warning, label: "Missed" },
 };
 
 function StatusPill({ status }) {
-  const s = STATUS_STYLES[status] ?? { bg: "#F3F4F6", color: "#6B7280", label: status };
+  const s = STATUS_STYLES[status] ?? { bg: colors.gray100, color: colors.gray500, label: status };
   return (
     <span
       className="inline-flex items-center rounded-full px-2.5 py-0.5 font-medium"

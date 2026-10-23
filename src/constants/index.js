@@ -35,7 +35,7 @@ export const ROUTES = {
     BASE:           "/super-admin",
     DASHBOARD:       "/super-admin/dashboard",
     MAP:             "/super-admin/map",
-    ROUTES:          "/super-admin/routes",
+    ROUTE_MGMT:      "/super-admin/routes",
     USERS:           "/super-admin/users",
     ORGANIZATIONS:   "/super-admin/organizations",
     REPORTS:         "/super-admin/reports",
@@ -75,7 +75,7 @@ export const ROUTE_LABELS = {
   // Super Admin
   [ROUTES.SA.DASHBOARD]:       "Dashboard",
   [ROUTES.SA.MAP]:             "Mapa at Koleksyon",
-  [ROUTES.SA.ROUTES]:          "Pamamahala ng Ruta",
+  [ROUTES.SA.ROUTE_MGMT]:          "Pamamahala ng Ruta",
   [ROUTES.SA.USERS]:           "Pamamahala ng Gumagamit",
   [ROUTES.SA.ORGANIZATIONS]:   "Pamamahala ng Organisasyon",
   [ROUTES.SA.REPORTS]:         "Mga Ulat at Pagsusuri",
@@ -110,3 +110,25 @@ export const PB_CLUSTER  = "c1";
 // ── Default map center (Brgy. Alangilan, Batangas City) ───────────────────────
 export const DEFAULT_LAT = 13.7565;
 export const DEFAULT_LNG = 121.0583;
+
+// ── Status color map ──────────────────────────────────────────────────────────
+// Maps bin/truck/route status strings to their display hex color.
+// Used by MapView, StatusBadge, and any page that renders status indicators.
+// Keep in sync with the mobile app's equivalent map in constants/index.js.
+// References theme/colors.js — never bare hex.
+import { colors } from "../theme/colors.js";
+
+export const STATUS_COLORS = {
+  full:        colors.error,
+  collected:   colors.primary,
+  missed:      colors.warning,
+  ok:          colors.primary,
+  available:   colors.primary,
+  pending:     colors.warning,
+  completed:   colors.primary,
+  delivered:   colors.primary,
+  in_progress: colors.recyclable,
+  en_route:    colors.recyclable,
+  idle:        colors.gray500,
+  at_depot:    colors.textMuted,
+};

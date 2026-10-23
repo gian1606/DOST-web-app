@@ -1,7 +1,9 @@
+import { colors } from "../../../theme/colors.js";
 import { useState } from "react";
 import { Plus, Trash2, Info } from "lucide-react";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import Modal from "../../../components/ui/Modal";
+import FormField from "../../../components/ui/FormField.jsx";
 import { MRF_PERSONNEL, MRF_LOCATIONS } from "../../../mock/data";
 
 const EMPTY_FORM = { name: "", email: "", mrf: "", tempPassword: "" };
@@ -70,7 +72,7 @@ export default function MRFPersonnel() {
         <button
           onClick={openAdd}
           className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
-          style={{ fontSize: 14, background: "#2E7D32" }}
+          style={{ fontSize: 14, background: colors.primary }}
         >
           <Plus size={15} />
           Add MRF Account
@@ -79,28 +81,28 @@ export default function MRFPersonnel() {
 
       {/* Privacy notice */}
       <div className="flex items-start gap-3 rounded-xl px-4 py-3"
-        style={{ background: "#E3F2FD", border: "1px solid #90CAF9" }}>
-        <Info size={16} color="#1976D2" className="flex-shrink-0 mt-0.5" />
-        <p style={{ fontSize: 13, color: "#1565C0" }}>
+        style={{ background: colors.infoSoft, border: "1px solid #90CAF9" }}>
+        <Info size={16} color={colors.recyclable} className="flex-shrink-0 mt-0.5" />
+        <p style={{ fontSize: 13, color: colors.blueDark }}>
           Only MRF personnel accounts are managed here. Resident data is private and restricted from this view.
         </p>
       </div>
 
       {/* Table */}
       <div className="bg-white rounded-xl overflow-hidden"
-        style={{ border: "1px solid #E5E7EB", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
         <table className="w-full border-collapse">
           <thead>
-            <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+            <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
               {["Name", "Role", "Assigned MRF", "Email", "Status", "Last Login", "Actions"].map((h) => (
                 <th key={h} className="text-left font-semibold uppercase tracking-wide px-4 py-3"
-                  style={{ fontSize: 12, color: "#6B7280" }}>{h}</th>
+                  style={{ fontSize: 12, color: colors.gray500 }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {users.map((u, i) => (
-              <tr key={u.id} style={{ background: i % 2 === 0 ? "#fff" : "#FAFAFA", borderBottom: "1px solid #F3F4F6" }}>
+              <tr key={u.id} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
                 <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{u.name}</td>
                 <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>MRF Personnel</td>
                 <td className="px-4 py-3 text-text-primary" style={{ fontSize: 13 }}>{u.mrf}</td>
@@ -111,7 +113,7 @@ export default function MRFPersonnel() {
                   <button
                     onClick={() => setDeleteTarget(u)}
                     className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-red-50"
-                    style={{ fontSize: 12, color: "#DC2626", border: "1px solid #FECACA" }}
+                    style={{ fontSize: 12, color: colors.error, border: "1px solid " + colors.inputErrorBorder }}
                   >
                     <Trash2 size={13} /> Delete
                   </button>
@@ -127,9 +129,9 @@ export default function MRFPersonnel() {
         footer={
           <>
             <button onClick={() => setModalOpen(false)} className="rounded-lg px-4 py-2 font-medium"
-              style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+              style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
             <button onClick={handleSave} className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-              style={{ fontSize: 14, background: "#2E7D32" }}>Create Account</button>
+              style={{ fontSize: 14, background: colors.primary }}>Create Account</button>
           </>
         }
       >
@@ -140,11 +142,11 @@ export default function MRFPersonnel() {
             <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>Assigned MRF Facility</label>
             <select value={form.mrf} onChange={(e) => setForm((p) => ({ ...p, mrf: e.target.value }))}
               className="rounded-lg px-3 py-2.5 outline-none"
-              style={{ fontSize: 14, border: formErrors.mrf ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB", color: "#1A1A1A" }}>
+              style={{ fontSize: 14, border: formErrors.mrf ? "1.5px solid " + colors.error : "1.5px solid " + colors.gray200, background: colors.gray50, color: colors.textHeading }}>
               <option value="">Select an MRF facility…</option>
               {MRF_LOCATIONS.map((m) => <option key={m.id} value={m.name}>{m.name}</option>)}
             </select>
-            {formErrors.mrf && <span style={{ fontSize: 12, color: "#DC2626" }}>{formErrors.mrf}</span>}
+            {formErrors.mrf && <span style={{ fontSize: 12, color: colors.error }}>{formErrors.mrf}</span>}
           </div>
           <FormField label="Temporary Password" type="password" value={form.tempPassword} onChange={(v) => setForm((p) => ({ ...p, tempPassword: v }))} error={formErrors.tempPassword} placeholder="Min. 8 characters" />
         </div>
@@ -155,10 +157,10 @@ export default function MRFPersonnel() {
         footer={
           <>
             <button onClick={() => setDeleteTarget(null)} className="rounded-lg px-4 py-2 font-medium"
-              style={{ fontSize: 14, border: "1.5px solid #E5E7EB", color: "#6B7280" }}>Cancel</button>
+              style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
             <button onClick={() => handleDelete(deleteTarget.id)}
               className="flex items-center gap-2 rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-              style={{ fontSize: 14, background: "#DC2626" }}>
+              style={{ fontSize: 14, background: colors.error }}>
               <Trash2 size={14} /> Delete
             </button>
           </>
@@ -167,13 +169,13 @@ export default function MRFPersonnel() {
         {deleteTarget && (
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3 rounded-xl px-4 py-3"
-              style={{ background: "#FFEBEE", border: "1px solid #FFCDD2" }}>
-              <Trash2 size={16} color="#DC2626" className="flex-shrink-0 mt-0.5" />
-              <p style={{ fontSize: 13, color: "#B71C1C" }}>This will permanently delete the account. This action cannot be undone.</p>
+              style={{ background: colors.errorSoft, border: "1px solid " + colors.errorBorder }}>
+              <Trash2 size={16} color={colors.error} className="flex-shrink-0 mt-0.5" />
+              <p style={{ fontSize: 13, color: colors.errorDark }}>This will permanently delete the account. This action cannot be undone.</p>
             </div>
             <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
               {[{ label: "Name", value: deleteTarget.name }, { label: "Email", value: deleteTarget.email }, { label: "Assigned MRF", value: deleteTarget.mrf }].map(({ label, value }) => (
-                <div key={label} className="flex items-center justify-between px-4 py-2.5 border-b last:border-0" style={{ borderColor: "#F3F4F6" }}>
+                <div key={label} className="flex items-center justify-between px-4 py-2.5 border-b last:border-0" style={{ borderColor: colors.gray100 }}>
                   <span className="text-text-muted font-medium" style={{ fontSize: 13 }}>{label}</span>
                   <span className="text-text-primary font-semibold" style={{ fontSize: 13 }}>{value}</span>
                 </div>
@@ -185,16 +187,3 @@ export default function MRFPersonnel() {
     </div>
   );
 }
-
-function FormField({ label, type = "text", value, onChange, error, placeholder }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="font-medium text-text-primary" style={{ fontSize: 13 }}>{label}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        className="rounded-lg px-3 py-2.5 outline-none"
-        style={{ fontSize: 14, border: error ? "1.5px solid #DC2626" : "1.5px solid #E5E7EB", background: "#F9FAFB" }} />
-      {error && <span style={{ fontSize: 12, color: "#DC2626" }}>{error}</span>}
-    </div>
-  );
-}
-

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { ROUTES } from "../../../constants/index.js";
+import { colors } from "../../../theme/colors.js";
 
 const NAV_ITEMS = [
   { to: ROUTES.PB.DASHBOARD,   icon: LayoutGrid, label: "Dashboard" },
@@ -21,12 +22,12 @@ const NAV_ITEMS = [
   { to: ROUTES.PB.SETTINGS,    icon: Settings,   label: "Mga Setting" },
 ];
 
-export default function PBSidebar() {
+export default function Sidebar() {
   const { user } = useAuth();
   return (
     <aside
       className="fixed left-0 top-0 h-screen flex flex-col z-30"
-      style={{ width: 240, background: "#1C2B1E" }}
+      style={{ width: 240, background: colors.sidebarBg }}
     >
       {/* Brand */}
       <div className="px-4 pt-6 pb-4 border-b border-white/10">
@@ -71,7 +72,7 @@ export default function PBSidebar() {
                   : "text-white/65 hover:text-white hover:bg-white/10"
               }`
             }
-            style={({ isActive }) => (isActive ? { background: "#2E7D32" } : {})}
+            style={({ isActive }) => (isActive ? { background: colors.primary } : {})}
           >
             <Icon size={17} />
             <span style={{ fontSize: 14 }}>{label}</span>

@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock } from "lucide-react";
+import { loginColors } from "../../theme/colors.js";
 import { loginUser } from "../../services/auth.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { ROLE_ROUTES, ROUTES } from "../../constants/index.js";
@@ -28,7 +29,7 @@ function FloatingField({ id, label, type = "text", value, onChange, error, right
             transform: lifted ? "none" : "translateY(-50%)",
             fontSize: lifted ? 10 : 14,
             fontWeight: lifted ? 600 : 400,
-            color: focused ? "#86EFAC" : error ? "#FCA5A5" : "rgba(255,255,255,0.50)",
+            color: focused ? loginColors.labelFocus : error ? loginColors.labelError : "rgba(255,255,255,0.50)",
             pointerEvents: "none",
             transition: "top 0.16s ease, font-size 0.16s ease, color 0.16s ease",
             letterSpacing: lifted ? 0.3 : 0,
@@ -70,7 +71,7 @@ function FloatingField({ id, label, type = "text", value, onChange, error, right
           </div>
         )}
       </div>
-      {error && <span style={{ fontSize: 12, color: "#FCA5A5", paddingLeft: 2 }}>{error}</span>}
+      {error && <span style={{ fontSize: 12, color: loginColors.labelError, paddingLeft: 2 }}>{error}</span>}
     </div>
   );
 }
@@ -122,7 +123,7 @@ export default function Login() {
   return (
     <div
       className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden"
-      style={{ background: "#111827" }}
+      style={{ background: loginColors.bg }}
     >
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -158,7 +159,7 @@ export default function Login() {
         </div>
         <div
           className="text-center mt-1 mb-6"
-          style={{ fontSize: 12, color: "#86EFAC", maxWidth: 320, lineHeight: 1.5 }}
+          style={{ fontSize: 12, color: loginColors.labelFocus, maxWidth: 320, lineHeight: 1.5 }}
         >
           Batangas Environmental Segregation, Monitoring,
           <br />
@@ -169,7 +170,7 @@ export default function Login() {
           {errors.form && (
             <div
               className="rounded-lg px-4 py-3 text-center font-medium"
-              style={{ background: "rgba(220,38,38,0.18)", color: "#FCA5A5", fontSize: 13, border: "1px solid rgba(220,38,38,0.35)" }}
+              style={{ background: "rgba(220,38,38,0.18)", color: loginColors.labelError, fontSize: 13, border: "1px solid rgba(220,38,38,0.35)" }}
             >
               {errors.form}
             </div>
