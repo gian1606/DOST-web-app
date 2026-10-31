@@ -189,18 +189,6 @@ export const CA_RECENT_ACTIVITY = [
   { id: "ca6", event: "bin_reported",         description: "Bin B-01 (Cuta) reported full by resident",                  timestamp: "2025-05-18T07:45:00Z" },
 ];
 
-// -- Rewards --------------------------------------------------------------------
-export const REWARDS = [
-  { id: "rw1", name: "Lucky Me! Canton (5-pack)",  pointsCost: 30,  stock: 80,  status: "available",   description: "5-pack instant canton noodles, assorted flavors." },
-  { id: "rw2", name: "Rice (1 kg)",                pointsCost: 50,  stock: 60,  status: "available",   description: "1 kilogram of well-milled white rice." },
-  { id: "rw3", name: "Canned Sardines (3-pack)",   pointsCost: 40,  stock: 50,  status: "available",   description: "3 cans of sardines in tomato sauce." },
-  { id: "rw4", name: "Cooking Oil (250 ml)",       pointsCost: 60,  stock: 35,  status: "available",   description: "250 ml bottle of refined cooking oil." },
-  { id: "rw5", name: "Sugar (1 kg)",               pointsCost: 45,  stock: 40,  status: "available",   description: "1 kilogram of refined white sugar." },
-  { id: "rw6", name: "Grocery Voucher (P50)",      pointsCost: 150, stock: 20,  status: "available",   description: "P50 grocery voucher redeemable at partner stores." },
-  { id: "rw7", name: "Eco Bag",                    pointsCost: 25,  stock: 100, status: "available",   description: "Reusable eco-friendly shopping bag." },
-  { id: "rw8", name: "Laundry Detergent (500 g)",  pointsCost: 55,  stock: 0,   status: "unavailable", description: "500 g powder detergent for laundry use." },
-];
-
 // -- Leaderboard — Barangay Households -----------------------------------------
 export const LEADERBOARD_PERIODS = {
   "2025-05": [
