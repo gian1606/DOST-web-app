@@ -111,6 +111,16 @@ export const PB_CLUSTER  = "c1";
 export const DEFAULT_LAT = 13.7565;
 export const DEFAULT_LNG = 121.0583;
 
+// ── MRF Facility names (used by PB portal MRF Personnel form) ─────────────────
+// Maps the display name shown in the dropdown to the barangay stored in users.barangay.
+export const MRF_FACILITIES = [
+  { id: "m1", name: "MRF Alangilan",       barangay: "Alangilan"        },
+  { id: "m2", name: "MRF Cuta",            barangay: "Cuta"             },
+  { id: "m3", name: "MRF Kumintang Ibaba", barangay: "Kumintang Ibaba"  },
+  { id: "m4", name: "MRF Libjo",           barangay: "Libjo"            },
+  { id: "m5", name: "MRF Pallocan West",   barangay: "Pallocan West"    },
+];
+
 // ── Status color map ──────────────────────────────────────────────────────────
 // Maps bin/truck/route status strings to their display hex color.
 // Used by MapView, StatusBadge, and any page that renders status indicators.

@@ -70,6 +70,7 @@ export const TRUCKS = [
 ];
 
 // -- MRF Locations --------------------------------------------------------------
+// Scaffolding for map pages (MapCollection, PBMapView, RouteManagement).
 // status: 'available' | 'full'
 export const MRF_LOCATIONS = [
   { id: "m1", name: "MRF Alangilan",        barangay: "Alangilan",        status: "available", posX: 0.30, posY: 0.15 },
@@ -309,15 +310,6 @@ export const SA_LEADERBOARD_PERIODS = {
     { rank: 8, barangayId: "br_starita",   name: "Sta. Rita Karsada",  totalHouseholds: 120, reportsSubmitted: 100, pointsEarned: 2000, collectionRate: 70, badge: "bronze" },
   ],
 };
-
-// -- MRF Personnel -------------------------------------------------------------
-export const MRF_PERSONNEL = [
-  { id: "mp1", name: "Roberto Navarro",  email: "roberto.navarro@besmart.gov.ph",  mrf: "MRF Alangilan",       role: "mrf_personnel", status: "active",   lastLogin: "2025-05-18T07:00:00Z" },
-  { id: "mp2", name: "Liza Ocampo",      email: "liza.ocampo@besmart.gov.ph",      mrf: "MRF Cuta",            role: "mrf_personnel", status: "active",   lastLogin: "2025-05-18T06:30:00Z" },
-  { id: "mp3", name: "Dante Soriano",    email: "dante.soriano@besmart.gov.ph",    mrf: "MRF Kumintang Ibaba", role: "mrf_personnel", status: "inactive", lastLogin: "2025-05-12T09:00:00Z" },
-  { id: "mp4", name: "Cynthia Ramos",    email: "cynthia.ramos@besmart.gov.ph",    mrf: "MRF Libjo",           role: "mrf_personnel", status: "active",   lastLogin: "2025-05-17T15:00:00Z" },
-  { id: "mp5", name: "Ernesto Pascual",  email: "ernesto.pascual@besmart.gov.ph",  mrf: "MRF Pallocan West",   role: "mrf_personnel", status: "active",   lastLogin: "2025-05-18T08:15:00Z" },
-];
 
 // -- Reports & Analytics -------------------------------------------------------
 
