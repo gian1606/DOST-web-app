@@ -28,12 +28,12 @@ function normalizeReward(raw) {
 // ── Service functions ─────────────────────────────────────────────────────────
 
 /**
- * GET /api/eco/rewards?all=true
- * Returns all rewards (active + inactive) for the admin catalog view.
+ * GET /api/eco/rewards
+ * Returns active rewards for the admin catalog view.
  * @returns {Promise<NormalizedReward[]>}
  */
 export async function fetchRewards() {
-  const data = await api.get("/eco/rewards", { all: "true" });
+  const data = await api.get("/eco/rewards");
   return (Array.isArray(data) ? data : []).map(normalizeReward);
 }
 
