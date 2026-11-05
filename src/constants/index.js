@@ -96,7 +96,7 @@ export const ROUTE_LABELS = {
   // Punong Barangay
   [ROUTES.PB.DASHBOARD]:     "Dashboard",
   [ROUTES.PB.MAP]:           "Live na Mapa",
-  [ROUTES.PB.QRCODES]:       "Mga QR Code ng Basurahan",
+  [ROUTES.PB.QRCODES]:       "Mga QR Code",
   [ROUTES.PB.REWARDS]:       "Pamamahala ng Gantimpala",
   [ROUTES.PB.LEADERBOARD]:   "Ranggo ng mga Sambahayan",
   [ROUTES.PB.USERS]:         "Mga Tauhan ng MRF",

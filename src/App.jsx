@@ -48,7 +48,7 @@ const PBNotifications = lazy(() => import("./roles/punong-barangay/pages/PBNotif
 const Rewards         = lazy(() => import("./roles/punong-barangay/pages/Rewards.jsx"));
 const Leaderboard     = lazy(() => import("./roles/punong-barangay/pages/Leaderboard.jsx"));
 const MRFPersonnel    = lazy(() => import("./roles/punong-barangay/pages/MRFPersonnel.jsx"));
-const BinQRCodes      = lazy(() => import("./roles/punong-barangay/pages/BinQRCodes.jsx"));
+const QRCodes         = lazy(() => import("./roles/punong-barangay/pages/QRCodes.jsx"));
 const PBSettings      = lazy(() => import("./roles/punong-barangay/pages/PBSettings.jsx"));
 
 function PortalLoader() {
@@ -128,7 +128,7 @@ export default function App() {
             <Route index element={<Navigate to={ROUTES.PB.DASHBOARD} replace />} />
             <Route path="dashboard"     element={<PBDashboard />} />
             <Route path="map"           element={<PBMapView />} />
-            <Route path="qrcodes"       element={<BinQRCodes />} />
+            <Route path="qrcodes"       element={<QRCodes />} />
             <Route path="rewards"       element={<Rewards />} />
             <Route path="leaderboard"   element={<Leaderboard />} />
             <Route path="users"         element={<MRFPersonnel />} />
