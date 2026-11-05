@@ -237,7 +237,7 @@ function FuelSavingsGauge({ totalCollections, collectionRate }) {
             ))}
           </div>
           <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-            style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+            style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
             <Fuel size={12} color={colors.textMuted} />
             <p style={{ fontSize: 11, color: colors.gray500 }}>
               Based on {totalCollections.toLocaleString()} collections · ₱65/L · route optimization at {collectionRate}% efficiency
@@ -310,7 +310,7 @@ function CarbonReductionCounter({ totalCollections, collectionRate }) {
           { emoji: "⛽", value: `${Math.round(savedLitres).toLocaleString()} L`, label: "Diesel saved", sub: "route optimization" },
         ].map((c) => (
           <div key={c.label} className="rounded-xl p-3 flex flex-col items-center gap-1 text-center"
-            style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+            style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
             <span style={{ fontSize: 22 }}>{c.emoji}</span>
             <span className="font-bold text-text-primary" style={{ fontSize: 16 }}>{c.value}</span>
             <span className="font-medium text-text-secondary" style={{ fontSize: 11 }}>{c.label}</span>
@@ -320,7 +320,7 @@ function CarbonReductionCounter({ totalCollections, collectionRate }) {
       </div>
 
       <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-        style={{ background: colors.accentSoft, border: "1px solid #BBF7D0" }}>
+        style={{ background: colors.accentSoft, border: `1px solid ${colors.accentBorder}` }}>
         <Wind size={12} color={colors.greenDark} />
         <p style={{ fontSize: 11, color: colors.successClassic }}>
           Diesel combustion factor: 2.68 kg CO₂/L · based on {totalCollections.toLocaleString()} collections this period
@@ -450,7 +450,7 @@ export default function Reports() {
               {["monthly", "weekly"].map((p) => (
                 <button key={p} onClick={() => setPeriod(p)}
                   className="px-3 py-1.5 capitalize font-medium transition-colors"
-                  style={{ fontSize: 12, background: period === p ? colors.primary : colors.white, color: period === p ? "#fff" : colors.gray500 }}>
+                  style={{ fontSize: 12, background: period === p ? colors.primary : colors.white, color: period === p ? colors.white : colors.gray500 }}>
                   {p}
                 </button>
               ))}
@@ -502,7 +502,7 @@ export default function Reports() {
             </div>
             <GrowthBadge value={kpi.collectionRateChange} />
           </div>
-          <div className="rounded-lg px-3 py-2" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+          <div className="rounded-lg px-3 py-2" style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
             <p className="text-text-muted" style={{ fontSize: 11 }}>
               Target: <strong>85%</strong>
             </p>
@@ -550,7 +550,7 @@ export default function Reports() {
               </div>
             ))}
           </div>
-          <div className="rounded-lg px-3 py-2 mt-1" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+          <div className="rounded-lg px-3 py-2 mt-1" style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
             <p className="text-text-muted" style={{ fontSize: 11 }}>
               Total: <strong style={{ color: colors.textHeading }}>{totalWaste.toLocaleString()} kg</strong>
               &nbsp;—&nbsp;{(totalWaste / 1000).toFixed(1)} metric tons
@@ -606,7 +606,7 @@ export default function Reports() {
               { label: "Waste Collected",     value: `${(kpi.totalWasteKg / 1000).toFixed(1)}t`, color: colors.gray500 },
             ].map((item) => (
               <div key={item.label} className="rounded-lg p-3 flex flex-col gap-1"
-                style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+                style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
                 <span className="text-text-muted" style={{ fontSize: 11 }}>{item.label}</span>
                 <span className="font-bold" style={{ fontSize: 20, color: item.color }}>{item.value}</span>
               </div>
@@ -632,7 +632,7 @@ export default function Reports() {
               </div>
             ))}
           </div>
-          <div className="rounded-lg px-3 py-2 mt-1" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+          <div className="rounded-lg px-3 py-2 mt-1" style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
             <p className="text-text-muted" style={{ fontSize: 11 }}>
               Total missed: <strong style={{ color: colors.error }}>{totalMissed}</strong> this period
             </p>
@@ -642,10 +642,10 @@ export default function Reports() {
 
       {/* Recent exports */}
       <Section title="Recent Report Exports">
-        <div className="overflow-hidden rounded-lg" style={{ border: "1px solid #F3F4F6" }}>
+        <div className="overflow-hidden rounded-lg" style={{ border: `1px solid ${colors.gray100}` }}>
           {REPORT_EXPORTS.map((r, i) => (
             <div key={r.id} className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
-              style={{ borderBottom: i < REPORT_EXPORTS.length - 1 ? "1px solid #F3F4F6" : "none" }}>
+              style={{ borderBottom: i < REPORT_EXPORTS.length - 1 ? `1px solid ${colors.gray100}` : "none" }}>
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center rounded-lg flex-shrink-0"
                   style={{ width: 32, height: 32, background: colors.gray100 }}>

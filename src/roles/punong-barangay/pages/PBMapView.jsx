@@ -105,8 +105,8 @@ export default function PBMapView() {
               <tr
                 key={b.id}
                 style={{
-                  background: i % 2 === 0 ? "#fff" : colors.tableRowAlt,
-                  borderBottom: "1px solid #F3F4F6",
+                  background: i % 2 === 0 ? colors.white : colors.tableRowAlt,
+                  borderBottom: `1px solid ${colors.gray100}`,
                 }}
               >
                 <td className="px-5 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>

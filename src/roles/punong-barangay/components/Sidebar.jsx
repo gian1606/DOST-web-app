@@ -15,7 +15,7 @@ import { colors } from "../../../theme/colors.js";
 const NAV_ITEMS = [
   { to: ROUTES.PB.DASHBOARD,   icon: LayoutGrid, label: "Dashboard" },
   { to: ROUTES.PB.MAP,         icon: Map,        label: "Live na Mapa" },
-  { to: ROUTES.PB.QRCODES,     icon: QrCode,     label: "Mga QR Code ng Basurahan" },
+  { to: ROUTES.PB.QRCODES,     icon: QrCode,     label: "Mga QR Code" },
   { to: ROUTES.PB.REWARDS,     icon: Gift,       label: "Pamamahala ng Gantimpala" },
   { to: ROUTES.PB.LEADERBOARD, icon: Trophy,     label: "Ranggo ng mga Sambahayan" },
   { to: ROUTES.PB.USERS,       icon: Users,      label: "Mga Tauhan ng MRF" },

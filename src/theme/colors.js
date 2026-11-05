@@ -95,6 +95,24 @@ export const colors = {
   greenDark:      "#16A34A",   // green-600 — carbon saved icon
   infoClassic:    "#1D4ED8",   // blue-700 — info badge (matches info token)
   successClassic: "#15803D",   // green-700 — success (matches success token)
+
+  // ── Tailwind built-in gray-600 alias (mirrors built-in scale) ───────────
+  gray600: "#4B5563",   // gray-600 — medium body text (mirrors Tailwind built-in)
+
+  // ── Leaderboard podium bars ─────────────────────────────────────────────
+  // Gradients live here only (Tailwind can't express arbitrary stops).
+  podiumBarGoldGradient:   "linear-gradient(180deg,#FBBF24 0%,#D97706 100%)",
+  podiumBarSilverGradient: "linear-gradient(180deg,#9CA3AF 0%,#6B7280 100%)",
+  podiumBarBronzeGradient: "linear-gradient(180deg,#CD9E6B 0%,#92400E 100%)",
+  podiumGoldText:   "#92400E",   // amber-800 — gold bar text / bronze badge text
+  podiumBronzeText: "#78350F",   // brown — bronze bar text
+  medalGoldText:    "#B45309",   // amber-700 — gold medal text
+
+  // ── Barangay avatar gradient (BarangayManagement) ──────────────────────
+  barangayAvatarGradient: "linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%)",
+
+  // ── Organization header gradient (OrganizationManagement) ────────────
+  orgHeaderGradient: "linear-gradient(135deg, #1C3A20 0%, #2E7D32 100%)",
 };
 
 // ── Login page specific ────────────────────────────────────────────────────
@@ -103,6 +121,7 @@ export const loginColors = {
   bg:          "#111827",   // Dark page background
   labelFocus:  "#86EFAC",   // Floating label color when focused
   labelError:  "#FCA5A5",   // Floating label color on error
+  buttonGradient: "linear-gradient(135deg, #2E7D32 0%, #388E3C 100%)",   // Login submit button gradient
 };
 
 // ── Map placeholder ────────────────────────────────────────────────────────

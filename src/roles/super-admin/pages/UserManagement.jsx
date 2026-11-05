@@ -22,27 +22,27 @@ function OnlineStatusBadge({ status }) {
   const config = {
     online: { 
       label: "Online", 
-      dotColor: "#10B981", 
-      bgColor: "#D1FAE5", 
-      textColor: "#065F46" 
+      dotColor: colors.success,
+      bgColor: colors.accentSoft,
+      textColor: colors.success
     },
     recently_active: { 
       label: "Recently Active", 
-      dotColor: "#F59E0B", 
-      bgColor: "#FEF3C7", 
-      textColor: "#92400E" 
+      dotColor: colors.warning,
+      bgColor: colors.rankGoldBg,
+      textColor: colors.podiumGoldText
     },
     offline: { 
       label: "Offline", 
-      dotColor: "#6B7280", 
-      bgColor: "#F3F4F6", 
-      textColor: "#374151" 
+      dotColor: colors.gray500,
+      bgColor: colors.gray100,
+      textColor: colors.gray700
     },
     never: { 
       label: "Never Logged In", 
-      dotColor: "#9CA3AF", 
-      bgColor: "#F9FAFB", 
-      textColor: "#6B7280" 
+      dotColor: colors.gray400,
+      bgColor: colors.gray50,
+      textColor: colors.gray500
     },
   };
 
@@ -72,8 +72,8 @@ export default function UserManagement() {
         <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
           Create and manage Punong Barangay (Barangay Admin) user accounts
         </p>
-        <div className="mt-2 rounded-lg px-3 py-2" style={{ background: "#E3F2FD", border: "1px solid #90CAF9" }}>
-          <p style={{ fontSize: 12, color: "#1565C0" }}>
+        <div className="mt-2 rounded-lg px-3 py-2" style={{ background: colors.infoSoft, border: `1px solid ${colors.infoBorder}` }}>
+          <p style={{ fontSize: 12, color: colors.blueDark }}>
             ℹ️ <strong>Note:</strong> This page is for creating user accounts only. To add new barangays, go to <strong>Barangay Management</strong>.
           </p>
         </div>
@@ -339,7 +339,7 @@ function BarangayAdminTab() {
           {[
             { label: "Total",      value: barangays.length, bg: colors.gray100, color: colors.gray700 },
             { label: "Enabled",    value: enabledCount,     bg: colors.accentSoft, color: colors.primary },
-            { label: "Disabled",   value: disabledCount,    bg: "#FEF3C7", color: "#92400E" },
+            { label: "Disabled",   value: disabledCount,    bg: colors.rankGoldBg, color: colors.podiumGoldText },
             { label: "Unassigned", value: unassignedCount,  bg: colors.errorSoft, color: colors.error },
           ].map((s) => (
             <div key={s.label} className="flex items-center gap-2 rounded-lg px-3 py-2"
@@ -471,7 +471,7 @@ function BarangayAdminTab() {
                 No barangay admin accounts match your filters.
               </td></tr>
             ) : sorted.map((b, i) => (
-              <tr key={b.id} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
+              <tr key={b.id} style={{ background: i % 2 === 0 ? colors.white : colors.tableRowAlt, borderBottom: `1px solid ${colors.gray100}` }}>
                 <td className="px-4 py-3" style={{ fontSize: 13 }}>
                   {b.name ? (
                     <span className="font-semibold text-text-primary">{b.name}</span>
@@ -506,7 +506,7 @@ function BarangayAdminTab() {
                       // Enabled accounts: Only show Disable button
                       <button onClick={() => handleToggleStatus(b)}
                         className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-orange-50"
-                        style={{ fontSize: 12, color: "#F97316", border: "1px solid #FED7AA" }}>
+                        style={{ fontSize: 12, color: colors.orangeAlert, border: `1px solid ${colors.warningBorder}` }}>
                         <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                         Disable
                       </button>
@@ -514,7 +514,7 @@ function BarangayAdminTab() {
                       // Disabled accounts (with barangay): Only show Enable button
                       <button onClick={() => handleEnable(b)}
                         className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-green-50"
-                        style={{ fontSize: 12, color: "#10B981", border: "1px solid #86EFAC" }}>
+                        style={{ fontSize: 12, color: colors.success, border: `1px solid ${colors.accentBorderLight}` }}>
                         <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" ry="2"/><path d="M12 11V7a2 2 0 0 1 4 0"/></svg>
                         Enable
                       </button>
@@ -522,7 +522,7 @@ function BarangayAdminTab() {
                       // Unassigned accounts (no barangay): Only show Delete button
                       <button onClick={() => setDeleteTarget(b)}
                         className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-red-50"
-                        style={{ fontSize: 12, color: colors.error, border: "1px solid #FECACA" }}>
+                        style={{ fontSize: 12, color: colors.error, border: `1px solid ${colors.inputErrorBorder}` }}>
                         <Trash2 size={13} /> Delete
                       </button>
                     )}
@@ -589,7 +589,7 @@ function BarangayAdminTab() {
                   </thead>
                   <tbody>
                     {deletedAccounts.map((acc, i) => (
-                      <tr key={acc.id} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
+                      <tr key={acc.id} style={{ background: i % 2 === 0 ? colors.white : colors.tableRowAlt, borderBottom: `1px solid ${colors.gray100}` }}>
                         <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{acc.barangayName}</td>
                         <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>{acc.captain}</td>
                         <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>{acc.email}</td>
@@ -821,7 +821,7 @@ function BarangayAdminTab() {
                 This will permanently delete this account and all associated data. This action cannot be undone.
               </p>
             </div>
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
+            <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${colors.gray100}` }}>
               {[
                 { label: "Barangay Name", value: deleteTarget.name || "—" },
                 { label: "Captain",       value: deleteTarget.captain || "—" },
@@ -847,7 +847,7 @@ function BarangayAdminTab() {
             style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
           <button onClick={confirmDisable}
             className="flex items-center gap-2 rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 14, background: "#F97316" }}>
+            style={{ fontSize: 14, background: colors.orangeAlert }}>
             <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Disable Account
           </button>
@@ -855,18 +855,18 @@ function BarangayAdminTab() {
         {disableTarget && (
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3 rounded-xl px-4 py-3"
-              style={{ background: "#FFF7ED", border: "1px solid #FED7AA" }}>
-              <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              style={{ background: colors.warningSoft, border: `1px solid ${colors.warningBorder}` }}>
+              <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={colors.orangeAlert} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               <div>
-                <p className="font-semibold" style={{ fontSize: 13, color: "#C2410C", marginBottom: 4 }}>
+                <p className="font-semibold" style={{ fontSize: 13, color: colors.rankBronzeText, marginBottom: 4 }}>
                   This will suspend the account temporarily
                 </p>
-                <p style={{ fontSize: 12, color: "#C2410C" }}>
+                <p style={{ fontSize: 12, color: colors.rankBronzeText }}>
                   The Punong Barangay will not be able to log in until the account is re-enabled. This is useful for inspections, audits, or temporary suspensions. Account data will be preserved.
                 </p>
               </div>
             </div>
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
+            <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${colors.gray100}` }}>
               {[
                 { label: "Barangay Name", value: disableTarget.name || "—" },
                 { label: "Captain",       value: disableTarget.captain || "—" },

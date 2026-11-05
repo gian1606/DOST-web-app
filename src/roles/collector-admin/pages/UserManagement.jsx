@@ -177,7 +177,7 @@ export default function CAUserManagement() {
                 </tr>
               )
               : collectors.map((c, i) => (
-                <tr key={c.id} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
+                <tr key={c.id} style={{ background: i % 2 === 0 ? colors.white : colors.tableRowAlt, borderBottom: `1px solid ${colors.gray100}` }}>
                   <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{c.name}</td>
                   <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>Collector</td>
                   <td className="px-4 py-3 text-text-secondary" style={{ fontSize: 13 }}>{c.email}</td>
@@ -251,7 +251,7 @@ export default function CAUserManagement() {
                 This will permanently delete the account. This action cannot be undone.
               </p>
             </div>
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
+            <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${colors.gray100}` }}>
               {[{ label: "Name", value: deleteTarget.name }, { label: "Email", value: deleteTarget.email }].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between px-4 py-2.5 border-b last:border-0"
                   style={{ borderColor: colors.gray100 }}>

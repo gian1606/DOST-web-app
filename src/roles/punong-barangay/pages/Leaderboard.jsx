@@ -75,7 +75,7 @@ export default function Leaderboard() {
           </div>
           <div
             className="flex items-center gap-2 rounded-full px-4 py-2"
-            style={{ background: colors.rankGoldBg, border: "1px solid #FDE68A" }}
+            style={{ background: colors.rankGoldBg, border: `1px solid ${colors.rankGoldBorder}` }}
           >
             <Trophy size={14} color={colors.warning} />
             <span className="font-semibold" style={{ fontSize: 13, color: colors.warning }}>
@@ -133,7 +133,7 @@ export default function Leaderboard() {
             {/* 2nd place — silver */}
             <div
               className="flex-1 flex flex-col items-center justify-between rounded-t-xl px-3 py-5 overflow-hidden"
-              style={{ height: 280, background: "linear-gradient(180deg, #BDC3C7 0%, #95A5A6 100%)" }}
+              style={{ height: 280, background: colors.podiumSilverGradient }}
             >
               <div className="flex flex-col items-center gap-1.5 w-full">
                 <div className="font-bold text-white text-center leading-tight" style={{ fontSize: 14 }}>{topThree[1]?.name ?? "—"}</div>
@@ -150,7 +150,7 @@ export default function Leaderboard() {
             {/* 1st place — gold */}
             <div
               className="flex-1 flex flex-col items-center justify-between rounded-t-xl px-3 py-5 overflow-hidden"
-              style={{ height: 360, background: "linear-gradient(180deg, #F7DC6F 0%, #D4A017 100%)" }}
+              style={{ height: 360, background: colors.podiumGoldGradient }}
             >
               <div className="flex flex-col items-center gap-1.5 w-full">
                 <div className="font-bold text-white text-center leading-tight" style={{ fontSize: 15 }}>{topThree[0]?.name ?? "—"}</div>
@@ -167,7 +167,7 @@ export default function Leaderboard() {
             {/* 3rd place — bronze */}
             <div
               className="flex-1 flex flex-col items-center justify-between rounded-t-xl px-3 py-5 overflow-hidden"
-              style={{ height: 230, background: "linear-gradient(180deg, #D4956A 0%, #A0522D 100%)" }}
+              style={{ height: 230, background: colors.podiumBronzeGradient }}
             >
               <div className="flex flex-col items-center gap-1.5 w-full">
                 <div className="font-bold text-white text-center leading-tight" style={{ fontSize: 14 }}>{topThree[2]?.name ?? "—"}</div>
@@ -240,8 +240,8 @@ export default function Leaderboard() {
                       background:
                         r.displayRank <= 3
                           ? r.displayRank === 1 ? colors.amberHighlight : colors.tableRowAlt
-                          : i % 2 === 0 ? "#fff" : colors.tableRowAlt,
-                      borderBottom: "1px solid #F3F4F6",
+                          : i % 2 === 0 ? colors.white : colors.tableRowAlt,
+                      borderBottom: `1px solid ${colors.gray100}`,
                     }}
                   >
                     {/* Rank */}

@@ -304,7 +304,7 @@ export default function MRFPersonnel() {
                 <tr
                   key={u.id}
                   style={{
-                    background: i % 2 === 0 ? "#fff" : colors.tableRowAlt,
+                    background: i % 2 === 0 ? colors.white : colors.tableRowAlt,
                     borderBottom: `1px solid ${colors.gray100}`,
                   }}
                 >

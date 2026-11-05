@@ -80,7 +80,7 @@ export default function CAMapCollection() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[[<Ruler size={14} color={colors.gray500} />, "Total Distance", `${route.distanceKm} km`], [<Clock size={14} color={colors.gray500} />, "Est. Time", `${route.estimatedMinutes} min`], [<MapPin size={14} color={colors.gray500} />, "Bins to Collect", route.bins.length], [<Cpu size={14} color={colors.gray500} />, "Algorithm", "Nearest Neighbor"]].map(([icon, label, value], i) => (
-              <div key={i} className="rounded-lg p-3 flex flex-col gap-1" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+              <div key={i} className="rounded-lg p-3 flex flex-col gap-1" style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
                 <div className="flex items-center gap-1.5">{icon}<span className="text-text-muted" style={{ fontSize: 11 }}>{label}</span></div>
                 <div className="font-semibold text-text-primary" style={{ fontSize: 14 }}>{value}</div>
               </div>
