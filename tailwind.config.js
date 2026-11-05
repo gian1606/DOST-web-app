@@ -21,7 +21,7 @@ export default {
 
         // ── Surfaces ──────────────────────────────────────────────────────────
         surface:           "#FFFFFF",   // White — cards, modals, panels
-        background:        "#F4F6F9",   // Cool Off-White — page background
+        background:        "#F0F7F1",   // Light Green Tint — page background
 
         // ── Borders ───────────────────────────────────────────────────────────
         "card-border":     "#DDE3ED",   // Slate Border — card/divider borders

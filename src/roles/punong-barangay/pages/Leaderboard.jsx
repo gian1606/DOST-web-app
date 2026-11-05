@@ -2,7 +2,7 @@ import { colors } from "../../../theme/colors.js";
 import { useState } from "react";
 import { Trophy, Medal, Star, Calendar, Home } from "lucide-react";
 import { LEADERBOARD_PERIODS } from "../../../mock/data";
-import { PB_BARANGAY } from "../../../constants/index.js";
+import { useAuth } from "../../../context/AuthContext";
 
 const BADGE_CONFIG = {
   gold:   { bg: colors.rankGoldBg, color: colors.warning, label: "Gold",   icon: "🥇" },
@@ -10,24 +10,46 @@ const BADGE_CONFIG = {
   bronze: { bg: colors.rankBronzeBg, color: colors.rankBronzeText, label: "Bronze", icon: "🥉" },
 };
 
-// All available months in descending order (newest first)
-const MONTH_OPTIONS = [
-  { key: "2025-05", label: "May 2025" },
-  { key: "2025-04", label: "April 2025" },
-  { key: "2025-03", label: "March 2025" },
-  { key: "2025-02", label: "February 2025" },
-  { key: "2025-01", label: "January 2025" },
-];
+// Generate dynamic month options starting from January 2026 to current month
+const generateMonthOptions = () => {
+  const startYear = 2026;
+  const startMonth = 1; // January
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1; // 0-indexed, so add 1
+  
+  const options = [];
+  
+  // Loop from start date to current date
+  for (let year = startYear; year <= currentYear; year++) {
+    const startM = (year === startYear) ? startMonth : 1;
+    const endM = (year === currentYear) ? currentMonth : 12;
+    
+    for (let month = startM; month <= endM; month++) {
+      const key = `${year}-${String(month).padStart(2, '0')}`;
+      const monthName = new Date(year, month - 1).toLocaleString('en-US', { month: 'long' });
+      const label = `${monthName} ${year}`;
+      options.push({ key, label });
+    }
+  }
+  
+  // Return in descending order (newest first)
+  return options.reverse();
+};
 
-const CURRENT_MONTH = new Date().toISOString().slice(0, 7); // e.g. "2025-05"
+const MONTH_OPTIONS = generateMonthOptions();
+const CURRENT_MONTH = new Date().toISOString().slice(0, 7); // e.g. "2026-11"
 
 export default function Leaderboard() {
+  const { user } = useAuth();
   const [month, setMonth] = useState(CURRENT_MONTH);
 
   const data = LEADERBOARD_PERIODS[month] ?? [];
   const ranked = data.map((r, i) => ({ ...r, displayRank: i + 1 }));
   const topThree = ranked.slice(0, 3);
   const selectedLabel = MONTH_OPTIONS.find((o) => o.key === month)?.label ?? month;
+  
+  const barangayName = user?.barangay || "N/A";
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,7 +60,7 @@ export default function Leaderboard() {
             Household Leaderboard
           </h1>
           <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-            Top households in Barangay {PB_BARANGAY} by waste reporting activity.
+            Top households in Barangay {barangayName} by waste reporting activity.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -48,7 +70,7 @@ export default function Leaderboard() {
           >
             <Home size={14} color={colors.primary} />
             <span className="font-semibold" style={{ fontSize: 13, color: colors.primary }}>
-              Brgy. {PB_BARANGAY}
+              Brgy. {barangayName}
             </span>
           </div>
           <div
@@ -179,7 +201,7 @@ export default function Leaderboard() {
               className="font-semibold text-text-secondary uppercase tracking-wide"
               style={{ fontSize: 12 }}
             >
-              Full Rankings — Brgy. {PB_BARANGAY}
+              Full Rankings — Brgy. {barangayName}
             </span>
           </div>
           <span className="text-text-muted" style={{ fontSize: 12 }}>

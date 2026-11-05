@@ -37,6 +37,7 @@ export const ROUTES = {
     MAP:             "/super-admin/map",
     ROUTE_MGMT:      "/super-admin/routes",
     USERS:           "/super-admin/users",
+    BARANGAYS:       "/super-admin/barangays",
     ORGANIZATIONS:   "/super-admin/organizations",
     REPORTS:         "/super-admin/reports",
     MRF:             "/super-admin/mrf",

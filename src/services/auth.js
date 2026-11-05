@@ -39,3 +39,14 @@ function normalizeUser(raw) {
     clusterId: raw.cluster_id ?? raw.clusterId ?? null,
   };
 }
+
+/**
+ * GET /auth/me
+ * Fetches fresh user data from the database.
+ * Useful when user data may have changed (barangay renamed, profile updated).
+ * @returns {Promise<NormalizedUser>}
+ */
+export async function refreshUserData() {
+  const data = await api.get("/auth/me");
+  return normalizeUser(data.user);
+}

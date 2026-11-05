@@ -379,7 +379,9 @@ export default function Reports() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Reports &amp; Analytics</h1>
-          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>{scopeLabel} — May 2025</p>
+          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
+            {scopeLabel} — {new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+          </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap justify-end">

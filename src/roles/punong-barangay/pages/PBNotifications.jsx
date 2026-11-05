@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Plus, Bell, Calendar, CheckCircle, FileText, Megaphone, AlertTriangle, Home } from "lucide-react";
 import Modal from "../../../components/ui/Modal";
 import { NOTIFICATIONS } from "../../../mock/data";
-import { PB_BARANGAY } from "../../../constants/index.js";
+import { useAuth } from "../../../context/AuthContext";
 import { NOTIF_TYPE_CONFIG } from "../../../components/ui/notifConfig.jsx";
 import FormField from "../../../components/ui/FormField.jsx";
 
@@ -15,6 +15,9 @@ const EMPTY_FORM = {
 };
 
 export default function PBNotifications() {
+  const { user } = useAuth();
+  const barangayName = user?.barangay || "Unknown";
+  
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
   const [tab, setTab] = useState("sent");
   const [modalOpen, setModalOpen] = useState(false);
@@ -64,7 +67,7 @@ export default function PBNotifications() {
             Notifications
           </h1>
           <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-            Send announcements to residents of Barangay {PB_BARANGAY}.
+            Send announcements to residents of Barangay {barangayName}.
           </p>
         </div>
         <button
@@ -161,7 +164,7 @@ export default function PBNotifications() {
                     style={{ fontSize: 11, background: colors.accentSoft, color: colors.primary }}
                   >
                     <Home size={10} />
-                    Brgy. {PB_BARANGAY}
+                    Brgy. {barangayName}
                   </span>
                 </div>
               </div>
@@ -241,7 +244,7 @@ export default function PBNotifications() {
             </p>
             <div className="flex items-center gap-4 pt-2 border-t" style={{ borderColor: colors.gray200 }}>
               <span className="text-text-muted" style={{ fontSize: 12 }}>
-                To: <strong>Brgy. {PB_BARANGAY} Residents</strong>
+                To: <strong>Brgy. {barangayName} Residents</strong>
               </span>
               <span className="text-text-muted" style={{ fontSize: 12 }}>
                 Priority:{" "}
@@ -261,7 +264,7 @@ export default function PBNotifications() {
               <Home size={14} color={colors.primary} />
               <span style={{ fontSize: 13, color: colors.primary }}>
                 This announcement will be sent to all residents of{" "}
-                <strong>Barangay {PB_BARANGAY}</strong>.
+                <strong>Barangay {barangayName}</strong>.
               </span>
             </div>
 

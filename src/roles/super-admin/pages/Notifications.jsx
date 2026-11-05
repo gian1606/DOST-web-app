@@ -1,20 +1,30 @@
 import { colors } from "../../../theme/colors.js";
-import { useState } from "react";
-import { Plus, Bell, Calendar, CheckCircle, FileText, Megaphone, AlertTriangle } from "lucide-react";
-import Modal  from "../../../components/ui/Modal";
-import { NOTIFICATIONS } from "../../../mock/data";
+import { useState, useEffect } from "react";
+import { Plus, Bell, AlertTriangle, Megaphone } from "lucide-react";
+import Modal    from "../../../components/ui/Modal";
 import { NOTIF_TYPE_CONFIG } from "../../../components/ui/notifConfig.jsx";
 import FormField from "../../../components/ui/FormField.jsx";
+import { fetchNotifications, sendNotification } from "../../../services/superAdmin.js";
 
 const EMPTY_FORM = { title: "", body: "", priority: "normal" };
 
 export default function Notifications() {
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
-  const [tab, setTab]         = useState("sent");
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [tab, setTab]           = useState("sent");
   const [modalOpen, setModalOpen] = useState(false);
-  const [preview, setPreview] = useState(false);
-  const [form, setForm]       = useState(EMPTY_FORM);
+  const [preview, setPreview]   = useState(false);
+  const [form, setForm]         = useState(EMPTY_FORM);
   const [formErrors, setFormErrors] = useState({});
+  const [sending, setSending]   = useState(false);
+  const [apiError, setApiError] = useState("");
+
+  useEffect(() => {
+    fetchNotifications()
+      .then(setNotifications)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   function validateForm() {
     const e = {};
@@ -23,25 +33,28 @@ export default function Notifications() {
     return e;
   }
 
-  function handleSend() {
+  async function handleSend() {
     const e = validateForm();
     if (Object.keys(e).length) { setFormErrors(e); return; }
-    setNotifications((prev) => [
-      {
-        id:       `n${Date.now()}`,
-        type:     "announcement",
+    setSending(true);
+    setApiError("");
+    try {
+      const created = await sendNotification({
         title:    form.title,
         body:     form.body,
-        target:   "all",
         priority: form.priority,
-        sentAt:   new Date().toISOString(),
-        read:     false,
-      },
-      ...prev,
-    ]);
-    setModalOpen(false);
-    setForm(EMPTY_FORM);
-    setPreview(false);
+        type:     "announcement",
+        target:   "all",
+      });
+      setNotifications((prev) => [created, ...prev]);
+      setModalOpen(false);
+      setForm(EMPTY_FORM);
+      setPreview(false);
+    } catch (err) {
+      setApiError(err.message || "Failed to send notification.");
+    } finally {
+      setSending(false);
+    }
   }
 
   function formatTime(ts) {
@@ -53,7 +66,7 @@ export default function Notifications() {
       <div className="flex items-center justify-between">
         <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Notifications</h1>
         <button
-          onClick={() => { setModalOpen(true); setPreview(false); setForm(EMPTY_FORM); setFormErrors({}); }}
+          onClick={() => { setModalOpen(true); setPreview(false); setForm(EMPTY_FORM); setFormErrors({}); setApiError(""); }}
           className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
           style={{ fontSize: 14, background: colors.primary }}
         >
@@ -81,7 +94,12 @@ export default function Notifications() {
       {/* List */}
       <div className="bg-white rounded-xl overflow-hidden"
         style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-        {notifications.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full border-4 border-t-transparent"
+              style={{ width: 28, height: 28, borderColor: colors.primary, borderTopColor: "transparent" }} />
+          </div>
+        ) : notifications.length === 0 ? (
           <div className="text-center text-text-muted py-12" style={{ fontSize: 14 }}>No notifications.</div>
         ) : (
           notifications.map((n) => {
@@ -134,9 +152,11 @@ export default function Notifications() {
               <button onClick={() => setPreview(false)}
                 className="rounded-lg px-4 py-2 font-medium"
                 style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Back to Edit</button>
-              <button onClick={handleSend}
+              <button onClick={handleSend} disabled={sending}
                 className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90"
-                style={{ fontSize: 14, background: colors.primary }}>Confirm &amp; Send</button>
+                style={{ fontSize: 14, background: colors.primary, opacity: sending ? 0.7 : 1 }}>
+                {sending ? "Sending…" : "Confirm & Send"}
+              </button>
             </>
           ) : (
             <>

@@ -1,5 +1,7 @@
 import { colors } from "../../../theme/colors.js";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import {
   Trash2,
   CheckCircle,
@@ -9,6 +11,7 @@ import {
   TrendingUp,
   AlertTriangle,
   Home,
+  Building2,
 } from "lucide-react";
 import StatCard from "../../../components/ui/StatCard";
 import AlertRow from "../../../components/ui/AlertRow";
@@ -30,7 +33,8 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { ROUTES, PB_BARANGAY } from "../../../constants/index.js";
+import { ROUTES } from "../../../constants/index.js";
+import { fetchAllBarangays, fetchMyClusterInfo } from "../../../services/superAdmin.js";
 
 // Weekly collection trend (mock analytics data)
 const WEEKLY_DATA = [
@@ -43,15 +47,107 @@ const WEEKLY_DATA = [
   { day: "Sun", collected: 8,  full: 5 },
 ];
 
-// Fixed barangay for this Punong Barangay (imported from constants)
-
 export default function PBDashboard() {
   const navigate = useNavigate();
+  const { user, refreshUser } = useAuth();
+  
+  const [clusterInfo, setClusterInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Get barangay name from logged-in user
+  const barangayName = user?.barangay || "Unknown";
+
+  // Force refresh user data on mount to get latest barangay name
+  useEffect(() => {
+    async function initialize() {
+      try {
+        await refreshUser(); // Refresh user data from database
+      } catch (error) {
+        console.error("Failed to refresh user on mount:", error);
+      }
+    }
+    initialize();
+  }, []); // Run once on mount
+
+  // Fetch cluster information for this barangay
+  useEffect(() => {
+    async function loadClusterInfo() {
+      try {
+        const clusterLabel = await fetchMyClusterInfo();
+        console.log('Cluster label from API:', clusterLabel);
+        setClusterInfo(clusterLabel);
+      } catch (error) {
+        console.error("Failed to load cluster info:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    if (barangayName && barangayName !== "Unknown") {
+      loadClusterInfo();
+    } else {
+      setLoading(false);
+    }
+  }, [barangayName]);
+
+  // Refresh user data AND cluster info when window gains focus (in case barangay was renamed)
+  useEffect(() => {
+    async function handleFocus() {
+      try {
+        // Refresh user data from database first
+        await refreshUser();
+        
+        // Then refresh cluster info
+        if (barangayName && barangayName !== "Unknown") {
+          const clusterLabel = await fetchMyClusterInfo();
+          setClusterInfo(clusterLabel);
+        }
+      } catch (error) {
+        console.error("Failed to refresh data:", error);
+      }
+    }
+    
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [barangayName, refreshUser]);
+
+  // Listen for barangay updates from Super Admin
+  useEffect(() => {
+    async function handleBarangayUpdated() {
+      try {
+        // Refresh user data to get the new barangay name
+        await refreshUser();
+      } catch (error) {
+        console.error("Failed to refresh after barangay update:", error);
+      }
+    }
+    
+    window.addEventListener('barangayUpdated', handleBarangayUpdated);
+    return () => window.removeEventListener('barangayUpdated', handleBarangayUpdated);
+  }, [refreshUser]);
+
+  // Listen for cluster updates from Super Admin
+  useEffect(() => {
+    async function handleClusterUpdated() {
+      try {
+        // Refresh cluster info when Super Admin edits cluster name or assignments
+        if (barangayName && barangayName !== "Unknown") {
+          const clusterLabel = await fetchMyClusterInfo();
+          setClusterInfo(clusterLabel);
+        }
+      } catch (error) {
+        console.error("Failed to refresh after cluster update:", error);
+      }
+    }
+    
+    window.addEventListener('clusterUpdated', handleClusterUpdated);
+    return () => window.removeEventListener('clusterUpdated', handleClusterUpdated);
+  }, [barangayName]);
 
   // Show only bins within this barangay
-  const filteredBins = BINS.filter((b) => b.barangay === PB_BARANGAY);
+  const filteredBins = BINS.filter((b) => b.barangay === barangayName);
   const filteredTrucks = TRUCKS;
-  const filteredMRFs = MRF_LOCATIONS.filter((m) => m.barangay === PB_BARANGAY);
+  const filteredMRFs = MRF_LOCATIONS.filter((m) => m.barangay === barangayName);
   const fullBins = filteredBins.filter((b) => b.status === "full");
 
   const stats = {
@@ -73,14 +169,46 @@ export default function PBDashboard() {
   return (
     <div className="flex flex-col gap-6">
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <div
+        className="flex items-center justify-between rounded-xl px-5 py-4"
+        style={{
+          background: colors.white,
+          border: "1px solid " + colors.gray200,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+        }}
+      >
         <div>
           <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>
-            Barangay {PB_BARANGAY} Dashboard
+            Barangay {barangayName} Dashboard
           </h1>
-          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-            {today}
-          </p>
+          <div className="flex items-center gap-3 mt-1">
+            <p className="text-text-secondary" style={{ fontSize: 14 }}>
+              {today}
+            </p>
+            {!loading && (
+              <>
+                <span
+                  className="rounded-full"
+                  style={{
+                    width: 4,
+                    height: 4,
+                    background: colors.gray300,
+                  }}
+                />
+                <div className="flex items-center gap-1.5">
+                  <Building2 size={14} color={clusterInfo ? colors.primary : colors.gray400} />
+                  <span 
+                    className="font-medium" 
+                    style={{ 
+                      fontSize: 14, 
+                      color: clusterInfo ? colors.primary : colors.gray500 
+                    }}>
+                    {clusterInfo || "Not assigned to a cluster"}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
         </div>
         <button
           className="flex items-center gap-2 rounded-lg px-4 py-2 font-medium transition-colors"
@@ -102,7 +230,7 @@ export default function PBDashboard() {
           icon={<Trash2 size={18} color={colors.gray500} />}
           value={stats.totalBins}
           label="Total Bins"
-          subLabel={`Brgy. ${PB_BARANGAY}`}
+          subLabel={`Brgy. ${barangayName}`}
         />
         <StatCard
           icon={<Trash2 size={18} color={colors.error} />}

@@ -1,11 +1,14 @@
 import { colors } from "../../../theme/colors.js";
 import MapView from "../../../components/ui/MapView";
 import { BINS, TRUCKS, MRF_LOCATIONS } from "../../../mock/data";
-import { PB_BARANGAY } from "../../../constants/index.js";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function PBMapView() {
-  const bins = BINS.filter((b) => b.barangay === PB_BARANGAY);
-  const mrfs = MRF_LOCATIONS.filter((m) => m.barangay === PB_BARANGAY);
+  const { user } = useAuth();
+  const barangayName = user?.barangay || "Unknown";
+  
+  const bins = BINS.filter((b) => b.barangay === barangayName);
+  const mrfs = MRF_LOCATIONS.filter((m) => m.barangay === barangayName);
 
   const fullCount   = bins.filter((b) => b.status === "full").length;
   const okCount     = bins.filter((b) => b.status === "ok").length;
@@ -21,7 +24,7 @@ export default function PBMapView() {
             Live Map
           </h1>
           <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-            Real-time bin and truck monitoring — Barangay {PB_BARANGAY}
+            Real-time bin and truck monitoring — Barangay {barangayName}
           </p>
         </div>
         <span
@@ -80,7 +83,7 @@ export default function PBMapView() {
           style={{ borderColor: colors.gray200, background: colors.gray50 }}
         >
           <span className="font-semibold text-text-secondary uppercase tracking-wide" style={{ fontSize: 12 }}>
-            Bin Status — Brgy. {PB_BARANGAY}
+            Bin Status — Brgy. {barangayName}
           </span>
         </div>
         <table className="w-full border-collapse">

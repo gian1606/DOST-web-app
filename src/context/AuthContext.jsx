@@ -1,6 +1,6 @@
 // ─── AuthContext — single source of truth for auth state ──────────────────────
 //
-// Owns isAuthenticated, user, role, token, login(), logout().
+// Owns isAuthenticated, user, role, token, login(), logout(), refreshUser().
 // Pages and components read auth via useAuth() — never via sessionStorage.
 // AuthContext is the only module besides services/ that imports from api.js
 // (it calls setToken / clearToken to keep the request wrapper in sync).
@@ -8,6 +8,7 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { SESSION_KEYS } from "../constants/index.js";
 import { setToken, clearToken } from "../services/api.js";
+import { refreshUserData } from "../services/auth.js";
 
 const AuthContext = createContext(null);
 
@@ -57,8 +58,26 @@ export function AuthProvider({ children }) {
     setRole(null);
   }, []);
 
+  /**
+   * Fetch fresh user data from the database and update the context.
+   * Useful when user data may have changed (barangay renamed, profile updated).
+   */
+  const refreshUser = useCallback(async () => {
+    try {
+      const freshUser = await refreshUserData();
+      sessionStorage.setItem(SESSION_KEYS.USER, JSON.stringify(freshUser));
+      setUser(freshUser);
+      setRole(freshUser.role);
+      return freshUser;
+    } catch (error) {
+      console.error("Failed to refresh user data:", error);
+      // If refresh fails, keep current user data
+      return user;
+    }
+  }, [user]);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, token, user, role, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, token, user, role, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

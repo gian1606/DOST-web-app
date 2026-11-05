@@ -61,15 +61,15 @@ export default function TopHeader() {
       style={{
         left: 240,
         height: 60,
-        background: colors.white,
-        borderBottom: "1px solid " + colors.gray200,
+        background: "#2E7D32",
+        borderBottom: "1px solid rgba(255,255,255,0.15)",
       }}
     >
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5" style={{ fontSize: 13 }}>
-        <span className="text-text-secondary font-medium">BE-SMART</span>
-        <span className="text-text-muted">/</span>
-        <span className="text-text-primary font-semibold">{pageLabel}</span>
+        <span className="font-medium" style={{ color: "rgba(255,255,255,0.75)" }}>BE-SMART</span>
+        <span style={{ color: "rgba(255,255,255,0.5)" }}>/</span>
+        <span className="font-semibold text-white">{pageLabel}</span>
       </div>
 
       {/* Right controls */}
@@ -79,9 +79,10 @@ export default function TopHeader() {
         <div className="relative" ref={notifRef}>
           <button
             onClick={() => { setNotifOpen((v) => !v); setProfileOpen(false); }}
-            className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="relative p-2 rounded-lg transition-colors"
+            style={{ background: "rgba(255,255,255,0.08)" }}
           >
-            <Bell size={18} className="text-text-secondary" />
+            <Bell size={18} color="rgba(255,255,255,0.8)" />
             {unread > 0 && (
               <span
                 className="absolute top-1 right-1 flex items-center justify-center rounded-full text-white font-bold"
@@ -206,26 +207,26 @@ export default function TopHeader() {
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => { setProfileOpen((v) => !v); setNotifOpen(false); }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors"
+            className="flex items-center gap-2 cursor-pointer rounded-lg px-2 py-1.5 transition-colors"
+            style={{ background: "rgba(255,255,255,0.08)" }}
           >
             <div
               className="flex items-center justify-center rounded-full"
-              style={{ width: 32, height: 32, background: colors.accentSoft }}
+              style={{ width: 32, height: 32, background: "rgba(255,255,255,0.15)" }}
             >
-              <UserCircle size={20} color={colors.primary} />
+              <UserCircle size={20} color="rgba(255,255,255,0.85)" />
             </div>
             <div>
-              <div className="font-semibold text-text-primary leading-tight" style={{ fontSize: 13 }}>
+              <div className="font-semibold leading-tight" style={{ fontSize: 13, color: "#fff" }}>
                 {user?.name || "Super Admin"}
               </div>
-              <div className="text-text-muted leading-tight" style={{ fontSize: 11 }}>
+              <div className="leading-tight" style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>
                 Tagapamahala
               </div>
             </div>
             <ChevronDown
               size={14}
-              className="text-text-muted ml-1 transition-transform"
-              style={{ transform: profileOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+              style={{ color: "rgba(255,255,255,0.5)", marginLeft: 4, transform: profileOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.15s" }}
             />
           </button>
 

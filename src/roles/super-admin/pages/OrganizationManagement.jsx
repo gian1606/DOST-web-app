@@ -1,213 +1,518 @@
+/**
+ * OrganizationManagement.jsx — Super Admin
+ *
+ * Two-level UI:
+ *   Level 1 — Clusters: SOLID-EAST, SOLID-NORTH, … (CRUD)
+ *   Level 2 — Barangays inside a cluster (assign / unassign from full list)
+ *
+ * Super Admin does NOT add new barangay names — they only assign existing
+ * Batangas City barangays to clusters.
+ */
+
 import { colors } from "../../../theme/colors.js";
-import { useState } from "react";
-import { Plus, Trash2, Pencil, MapPin } from "lucide-react";
-import Modal from "../../../components/ui/Modal";
-import StatusBadge from "../../../components/ui/StatusBadge";
-import { BARANGAY_ACCOUNTS } from "../../../mock/data";
+import { useState, useEffect } from "react";
+import { Plus, Trash2, Pencil, MapPin, ChevronRight, ArrowLeft, X } from "lucide-react";
+import Modal    from "../../../components/ui/Modal";
 import FormField from "../../../components/ui/FormField.jsx";
+import {
+  fetchClusters,
+  createCluster,
+  updateCluster,
+  deleteCluster,
+  assignBarangayToCluster,
+  unassignBarangayFromCluster,
+  fetchAllBarangays,
+} from "../../../services/superAdmin.js";
 
-
-const EMPTY_FORM = { name: "", captain: "", email: "" };
-
-export default function OrganizationManagement() {
+// ── helpers ───────────────────────────────────────────────────────────────────
+function ClusterBadge({ count }) {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Organization Management</h1>
-        <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-          Manage barangays — the organizational units that admin accounts are assigned to
-        </p>
-      </div>
-      <BarangaysTab />
-    </div>
+    <span className="rounded-full px-2.5 py-0.5 font-semibold"
+      style={{ fontSize: 12, background: colors.accentSoft, color: colors.primary }}>
+      {count} barangay{count !== 1 ? "s" : ""}
+    </span>
   );
 }
 
-function BarangaysTab() {
-  const [barangays, setBarangays]     = useState(
-    BARANGAY_ACCOUNTS.map((b) => ({ id: b.id, name: b.name, captain: b.captain, email: b.email, status: b.status, totalBins: b.totalBins, activeResidents: b.activeResidents, lastActivity: b.lastActivity }))
-  );
-  const [modalOpen, setModalOpen]     = useState(false);
-  const [editTarget, setEditTarget]   = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const [form, setForm]               = useState(EMPTY_FORM);
-  const [formErrors, setFormErrors]   = useState({});
-  const [search, setSearch]           = useState("");
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+export default function OrganizationManagement() {
+  const [clusters, setClusters]         = useState([]);
+  const [allBarangays, setAllBarangays] = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [apiError, setApiError]         = useState("");
 
-  const filtered = barangays.filter((b) =>
-    !search.trim() || b.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Which cluster is "open" (Level 2 view)
+  const [activeCluster, setActiveCluster] = useState(null);
 
-  function openAdd()   { setEditTarget(null); setForm(EMPTY_FORM); setFormErrors({}); setModalOpen(true); }
-  function openEdit(b) { setEditTarget(b); setForm({ name: b.name, captain: b.captain, email: b.email }); setFormErrors({}); setModalOpen(true); }
+  // Cluster CRUD modals
+  const [clusterModal, setClusterModal]   = useState(false);
+  const [editCluster, setEditCluster]     = useState(null);
+  const [deleteCluster_, setDeleteCluster_] = useState(null);
+  const [clusterForm, setClusterForm]     = useState({ name: "", label: "" });
+  const [clusterErrors, setClusterErrors] = useState({});
+  const [saving, setSaving]               = useState(false);
 
-  function validate() {
+  // Barangay assign - no modal needed for drag-drop
+  const [selectedBrgy, setSelectedBrgy]  = useState("");
+  const [sortOrder, setSortOrder] = useState("alpha"); // "alpha", "date-newest", "date-oldest"
+
+  // ── Load ─────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([fetchClusters(), fetchAllBarangays()])
+      .then(([c, b]) => { setClusters(c); setAllBarangays(b); })
+      .catch((err) => setApiError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Refresh barangay list when window gains focus (in case barangays were deleted)
+  useEffect(() => {
+    function handleFocus() {
+      fetchAllBarangays()
+        .then((b) => setAllBarangays(b))
+        .catch((err) => console.error("Failed to refresh barangays:", err));
+    }
+    
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
+  // Keep activeCluster in sync when clusters list updates
+  useEffect(() => {
+    if (activeCluster) {
+      const updated = clusters.find((c) => c.id === activeCluster.id);
+      if (updated) setActiveCluster(updated);
+    }
+  }, [clusters]);
+
+  // ── Cluster CRUD ─────────────────────────────────────────────────────────
+  function openAddCluster()  { setEditCluster(null); setClusterForm({ name: "", label: "" }); setClusterErrors({}); setClusterModal(true); }
+  function openEditCluster(c) { setEditCluster(c); setClusterForm({ name: c.name, label: c.label }); setClusterErrors({}); setClusterModal(true); }
+
+  function validateCluster() {
     const e = {};
-    if (!form.name.trim())    e.name    = "Barangay name is required.";
-    if (!form.captain.trim()) e.captain = "Captain is required.";
-    if (!form.email.trim())   e.email   = "Email is required.";
+    if (!clusterForm.label.trim()) e.label = "Cluster name is required.";
     return e;
   }
 
-  function handleSave() {
-    const e = validate();
-    if (Object.keys(e).length) { setFormErrors(e); return; }
-    if (editTarget) {
-      setBarangays((prev) => prev.map((b) => b.id === editTarget.id
-        ? { ...b, name: form.name.trim(), captain: form.captain.trim(), email: form.email.trim() } : b));
-    } else {
-      setBarangays((prev) => [...prev, {
-        id: `br${Date.now()}`, name: form.name.trim(), captain: form.captain.trim(),
-        email: form.email.trim(), status: "active", totalBins: 0, activeResidents: 0,
-        lastActivity: new Date().toISOString().split("T")[0],
-      }]);
-    }
-    setModalOpen(false);
+  async function handleSaveCluster() {
+    const e = validateCluster();
+    if (Object.keys(e).length) { setClusterErrors(e); return; }
+    setSaving(true); setApiError("");
+    try {
+      if (editCluster) {
+        const updated = await updateCluster(editCluster.id, { label: clusterForm.label });
+        setClusters((prev) => prev.map((c) => c.id === editCluster.id ? { ...c, ...updated } : c));
+        
+        // Broadcast event so PB Dashboard can refresh
+        window.dispatchEvent(new CustomEvent('clusterUpdated', { 
+          detail: { clusterId: editCluster.id, oldLabel: editCluster.label, newLabel: clusterForm.label }
+        }));
+      } else {
+        // Auto-generate cluster ID from label (e.g., "Solid East" → "SOLID-EAST")
+        const autoGeneratedName = clusterForm.label.trim().toUpperCase().replace(/\s+/g, '-');
+        const created = await createCluster({ name: autoGeneratedName, label: clusterForm.label });
+        setClusters((prev) => [...prev, created]);
+      }
+      setClusterModal(false);
+    } catch (err) {
+      setApiError(err.message || "Failed to save cluster.");
+    } finally { setSaving(false); }
   }
 
-  function handleDelete(id) { setBarangays((p) => p.filter((b) => b.id !== id)); setDeleteTarget(null); }
+  async function handleDeleteCluster(id) {
+    try {
+      await deleteCluster(id);
+      setClusters((prev) => prev.filter((c) => c.id !== id));
+      setDeleteCluster_(null);
+      if (activeCluster?.id === id) setActiveCluster(null);
+    } catch (err) {
+      setApiError(err.message || "Failed to delete cluster.");
+    }
+  }
+
+  // ── Barangay assignment ───────────────────────────────────────────────────
+  // Barangays not yet assigned to ANY cluster (including the active one)
+  const availableForAssign = allBarangays.filter((b) => !b.cluster_id);
+
+  // Sort available barangays
+  const sortedAvailable = [...availableForAssign].sort((a, b) => {
+    if (sortOrder === "alpha") {
+      return a.name.localeCompare(b.name);
+    } else if (sortOrder === "date-newest") {
+      // Use created_at since fetchAllBarangays returns raw data
+      const dateA = new Date(a.created_at || a.createdAt || 0).getTime();
+      const dateB = new Date(b.created_at || b.createdAt || 0).getTime();
+      const dateDiff = dateB - dateA;
+      // If dates are the same, sort alphabetically as secondary
+      return dateDiff !== 0 ? dateDiff : a.name.localeCompare(b.name);
+    } else { // date-oldest
+      const dateA = new Date(a.created_at || a.createdAt || 0).getTime();
+      const dateB = new Date(b.created_at || b.createdAt || 0).getTime();
+      const dateDiff = dateA - dateB;
+      // If dates are the same, sort alphabetically as secondary
+      return dateDiff !== 0 ? dateDiff : a.name.localeCompare(b.name);
+    }
+  });
+
+  async function handleDragDrop(barangayId) {
+    if (!activeCluster) return;
+    setSaving(true); setApiError("");
+    try {
+      const updatedBrgy = await assignBarangayToCluster(activeCluster.id, barangayId);
+      setClusters((prev) => prev.map((c) =>
+        c.id === activeCluster.id ? { ...c, barangays: updatedBrgy } : c
+      ));
+      // Also mark it assigned in the allBarangays list so it disappears from available
+      setAllBarangays((prev) => prev.map((b) =>
+        b.id === barangayId ? { ...b, cluster_id: activeCluster.id, cluster_label: activeCluster.label } : b
+      ));
+      
+      // Broadcast event so PB Dashboard can refresh cluster info
+      window.dispatchEvent(new CustomEvent('clusterUpdated', { 
+        detail: { clusterId: activeCluster.id, barangayId }
+      }));
+    } catch (err) {
+      setApiError(err.message || "Failed to assign barangay.");
+    } finally { setSaving(false); }
+  }
+
+  async function handleUnassign(barangayId) {
+    if (!activeCluster) return;
+    try {
+      await unassignBarangayFromCluster(activeCluster.id, barangayId);
+      setClusters((prev) => prev.map((c) =>
+        c.id === activeCluster.id
+          ? { ...c, barangays: c.barangays.filter((b) => b.id !== barangayId) }
+          : c
+      ));
+      // Also mark it unassigned in the allBarangays list
+      setAllBarangays((prev) => prev.map((b) =>
+        b.id === barangayId ? { ...b, cluster_id: null, cluster_label: null } : b
+      ));
+      
+      // Broadcast event so PB Dashboard can refresh cluster info
+      window.dispatchEvent(new CustomEvent('clusterUpdated', { 
+        detail: { clusterId: activeCluster.id, barangayId }
+      }));
+    } catch (err) {
+      setApiError(err.message || "Failed to unassign barangay.");
+    }
+  }
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full border-4 border-t-transparent"
+          style={{ width: 32, height: 32, borderColor: colors.primary, borderTopColor: "transparent" }} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="relative flex items-center" style={{ minWidth: 240 }}>
-          <svg className="absolute left-3 text-text-muted" width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search barangay name…"
-            className="rounded-lg pl-9 pr-3 py-2 outline-none"
-            style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, background: colors.gray50 }} />
+      {/* Page header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Organization Management</h1>
+          <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
+            Manage solid waste clusters and assign barangays to each cluster
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-            style={{ background: colors.gray100, border: "1px solid " + colors.gray200 }}>
-            <span className="font-bold" style={{ fontSize: 18, color: colors.gray700 }}>{barangays.length}</span>
-            <span className="font-medium text-text-secondary" style={{ fontSize: 13 }}>Barangays</span>
-          </div>
-          <button onClick={openAdd}
+        {!activeCluster && (
+          <button onClick={openAddCluster}
             className="flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
             style={{ fontSize: 14, background: colors.primary }}>
-            <Plus size={15} /> Add Barangay
+            <Plus size={15} /> Add Cluster
           </button>
+        )}
+      </div>
+
+      {apiError && (
+        <div className="rounded-lg px-4 py-3 font-medium"
+          style={{ background: colors.errorSoft, color: colors.error, fontSize: 13, border: "1px solid " + colors.errorBorder }}>
+          {apiError}
         </div>
-      </div>
+      )}
 
-      {/* Table */}
-      <div className="bg-white rounded-xl overflow-hidden"
-        style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
-              {["Barangay Name", "Captain / Contact", "Email", "Total Bins", "Active Residents", "Status", "Last Activity", "Actions"].map((h) => (
-                <th key={h} className="text-left font-semibold uppercase tracking-wide px-5 py-3"
-                  style={{ fontSize: 11, color: colors.gray500 }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr><td colSpan={8} className="text-center text-text-muted py-10" style={{ fontSize: 14 }}>
-                No barangays found.
-              </td></tr>
-            ) : filtered.map((b, i) => (
-              <tr key={b.id} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
-                <td className="px-5 py-3">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center justify-center rounded-full flex-shrink-0"
-                      style={{ width: 28, height: 28, background: colors.accentSoft }}>
-                      <MapPin size={13} color={colors.primary} />
+      {/* ── LEVEL 1: Cluster list ─────────────────────────────────────────── */}
+      {!activeCluster && (
+        <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
+          {clusters.map((c) => (
+            <div key={c.id}
+              className="bg-white rounded-2xl flex flex-col cursor-pointer transition-all hover:shadow-lg"
+              style={{ border: "1px solid " + colors.gray200, boxShadow: "0 2px 12px rgba(46,125,50,0.10)", overflow: "hidden" }}
+              onClick={() => setActiveCluster(c)}>
+
+              {/* Coloured top strip */}
+              <div className="px-5 pt-5 pb-4 flex items-center justify-between"
+                style={{ background: "linear-gradient(135deg, #1C3A20 0%, #2E7D32 100%)" }}>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center rounded-xl flex-shrink-0"
+                    style={{ width: 44, height: 44, background: "rgba(255,255,255,0.15)" }}>
+                    <MapPin size={20} color="#fff" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-white leading-tight" style={{ fontSize: 18 }}>{c.label}</div>
+                    <div className="text-white/60 leading-tight mt-0.5" style={{ fontSize: 12 }}>{c.name}</div>
+                  </div>
+                </div>
+                <ChevronRight size={18} color="rgba(255,255,255,0.6)" />
+              </div>
+
+              {/* Body */}
+              <div className="px-5 py-4 flex flex-col gap-4">
+                {/* Stat */}
+                <div className="flex items-center gap-3">
+                  <div className="rounded-xl px-4 py-2.5 flex items-center gap-2"
+                    style={{ background: colors.accentSoft, border: "1px solid " + colors.accentBorderLight }}>
+                    <span className="font-black" style={{ fontSize: 24, color: colors.primary }}>
+                      {c.barangays?.length ?? 0}
+                    </span>
+                    <span className="font-medium text-text-secondary" style={{ fontSize: 13 }}>
+                      Barangay{c.barangays?.length !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Preview of barangay names */}
+                {(c.barangays ?? []).length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {(c.barangays ?? []).slice(0, 4).map((b) => (
+                      <span key={b.id} className="rounded-full px-2.5 py-0.5 font-medium"
+                        style={{ fontSize: 11, background: colors.gray100, color: colors.gray600 }}>
+                        {b.name}
+                      </span>
+                    ))}
+                    {(c.barangays ?? []).length > 4 && (
+                      <span className="rounded-full px-2.5 py-0.5 font-medium"
+                        style={{ fontSize: 11, background: colors.gray100, color: colors.gray500 }}>
+                        +{(c.barangays ?? []).length - 4} more
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex items-center gap-2 pt-1 border-t" style={{ borderColor: colors.gray100 }}
+                  onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => openEditCluster(c)}
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 font-medium hover:bg-blue-50 transition-colors"
+                    style={{ fontSize: 13, color: colors.recyclable, border: "1px solid " + colors.infoBorder }}>
+                    <Pencil size={13} /> Edit Name
+                  </button>
+                  <button onClick={() => setDeleteCluster_(c)}
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 font-medium hover:bg-red-50 transition-colors"
+                    style={{ fontSize: 13, color: colors.error, border: "1px solid " + colors.inputErrorBorder }}>
+                    <Trash2 size={13} /> Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+          {clusters.length === 0 && (
+            <div className="col-span-full flex flex-col items-center justify-center py-20 gap-3">
+              <MapPin size={40} color={colors.textMuted} />
+              <p className="text-text-muted font-medium" style={{ fontSize: 15 }}>No clusters yet.</p>
+              <p className="text-text-muted" style={{ fontSize: 13 }}>Click "Add Cluster" to create one.</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── LEVEL 2: Barangays inside a cluster (DRAG-DROP) ──────────────────────────── */}
+      {activeCluster && (
+        <div className="flex flex-col gap-4">
+          {/* Back + header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button onClick={() => setActiveCluster(null)}
+                className="flex items-center gap-1.5 rounded-lg px-3 py-2 font-medium hover:bg-gray-100 transition-colors"
+                style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>
+                <ArrowLeft size={14} /> Back to Clusters
+              </button>
+              <div>
+                <span className="font-bold text-text-primary" style={{ fontSize: 18 }}>{activeCluster.label}</span>
+                <span className="text-text-muted ml-2" style={{ fontSize: 13 }}>({activeCluster.name})</span>
+              </div>
+            </div>
+            {/* Sort options */}
+            <div className="flex items-center gap-2">
+              <span className="text-text-muted font-medium" style={{ fontSize: 12 }}>Sort:</span>
+              <button
+                onClick={() => setSortOrder("alpha")}
+                className={`rounded-lg px-3 py-1.5 font-medium transition-all ${sortOrder === "alpha" ? "text-white" : "hover:bg-gray-100"}`}
+                style={{ fontSize: 12, background: sortOrder === "alpha" ? colors.primary : "transparent", border: `1px solid ${sortOrder === "alpha" ? colors.primary : colors.gray200}`, color: sortOrder === "alpha" ? "white" : colors.gray600 }}>
+                A-Z
+              </button>
+              <button
+                onClick={() => setSortOrder("date-newest")}
+                className={`rounded-lg px-3 py-1.5 font-medium transition-all ${sortOrder === "date-newest" ? "text-white" : "hover:bg-gray-100"}`}
+                style={{ fontSize: 12, background: sortOrder === "date-newest" ? colors.primary : "transparent", border: `1px solid ${sortOrder === "date-newest" ? colors.primary : colors.gray200}`, color: sortOrder === "date-newest" ? "white" : colors.gray600 }}>
+                Newest
+              </button>
+              <button
+                onClick={() => setSortOrder("date-oldest")}
+                className={`rounded-lg px-3 py-1.5 font-medium transition-all ${sortOrder === "date-oldest" ? "text-white" : "hover:bg-gray-100"}`}
+                style={{ fontSize: 12, background: sortOrder === "date-oldest" ? colors.primary : "transparent", border: `1px solid ${sortOrder === "date-oldest" ? colors.primary : colors.gray200}`, color: sortOrder === "date-oldest" ? "white" : colors.gray600 }}>
+                Oldest
+              </button>
+            </div>
+          </div>
+
+          {/* Drag-drop interface: side by side */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* LEFT: Available barangays */}
+            <div className="bg-white rounded-xl overflow-hidden"
+              style={{ border: "1px solid " + colors.gray200, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+              <div className="px-5 py-3 border-b"
+                style={{ background: colors.gray50, borderColor: colors.gray200 }}>
+                <span className="font-semibold text-text-secondary uppercase tracking-wide" style={{ fontSize: 11 }}>
+                  Available Barangays
+                </span>
+                <p className="text-text-muted mt-0.5" style={{ fontSize: 11 }}>
+                  Drag barangays to the right to assign them
+                </p>
+              </div>
+              <div className="p-3 flex flex-col gap-2" style={{ minHeight: 300, maxHeight: 500, overflowY: "auto" }}>
+                {sortedAvailable.length === 0 ? (
+                  <div className="text-center text-text-muted py-10" style={{ fontSize: 13 }}>
+                    {allBarangays.length === 0 ? "No barangays in system. Create barangays first in Barangay Management." : "All barangays are assigned."}
+                  </div>
+                ) : sortedAvailable.map((b) => (
+                  <div
+                    key={b.id}
+                    draggable
+                    onDragStart={(e) => e.dataTransfer.setData("barangayId", b.id)}
+                    className="rounded-lg px-4 py-3 cursor-move hover:shadow-md transition-all"
+                    style={{ background: colors.gray50, border: "1px solid " + colors.gray200 }}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke={colors.gray400} strokeWidth={2}>
+                          <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                        <span className="font-semibold text-text-primary" style={{ fontSize: 14 }}>{b.name}</span>
+                      </div>
+                      {b.cluster_label && (
+                        <span className="rounded-full px-2 py-0.5 font-medium" style={{ fontSize: 10, background: colors.errorSoft, color: colors.error }}>
+                          in {b.cluster_label}
+                        </span>
+                      )}
                     </div>
-                    <span className="font-semibold text-text-primary" style={{ fontSize: 13 }}>{b.name}</span>
                   </div>
-                </td>
-                <td className="px-5 py-3 text-text-secondary" style={{ fontSize: 13 }}>{b.captain}</td>
-                <td className="px-5 py-3 text-text-secondary" style={{ fontSize: 13 }}>{b.email}</td>
-                <td className="px-5 py-3 text-text-primary" style={{ fontSize: 13 }}>{b.totalBins}</td>
-                <td className="px-5 py-3 text-text-primary" style={{ fontSize: 13 }}>{b.activeResidents}</td>
-                <td className="px-5 py-3"><StatusBadge status={b.status} /></td>
-                <td className="px-5 py-3 text-text-secondary" style={{ fontSize: 13 }}>{b.lastActivity}</td>
-                <td className="px-5 py-3">
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => openEdit(b)}
-                      className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 font-medium hover:bg-blue-50 transition-colors"
-                      style={{ fontSize: 12, color: colors.recyclable, border: "1px solid " + colors.infoBorder }}>
-                      <Pencil size={12} /> Edit
-                    </button>
-                    <button onClick={() => setDeleteTarget(b)}
-                      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-medium hover:bg-red-50 transition-colors"
-                      style={{ fontSize: 12, color: colors.error, border: "1px solid " + colors.inputErrorBorder }}>
-                      <Trash2 size={12} /> Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                ))}
+              </div>
+            </div>
 
-      {/* Add / Edit modal */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}
-        title={editTarget ? "Edit Barangay" : "Add Barangay"}
+            {/* RIGHT: Assigned barangays (drop zone) */}
+            <div className="bg-white rounded-xl overflow-hidden"
+              style={{ border: "2px dashed " + colors.primary, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const barangayId = e.dataTransfer.getData("barangayId");
+                if (barangayId) handleDragDrop(barangayId);
+              }}>
+              <div className="px-5 py-3 border-b"
+                style={{ background: colors.accentSoft, borderColor: colors.primary }}>
+                <span className="font-semibold uppercase tracking-wide" style={{ fontSize: 11, color: colors.primary }}>
+                  Assigned to {activeCluster.label}
+                </span>
+                <p className="text-text-muted mt-0.5" style={{ fontSize: 11 }}>
+                  {(activeCluster.barangays ?? []).length} barangay{(activeCluster.barangays ?? []).length !== 1 ? "s" : ""} assigned
+                </p>
+              </div>
+              <div className="p-3 flex flex-col gap-2" style={{ minHeight: 300, maxHeight: 500, overflowY: "auto" }}>
+                {(activeCluster.barangays ?? []).length === 0 ? (
+                  <div className="text-center py-20">
+                    <MapPin size={40} color={colors.textMuted} className="mx-auto mb-3" />
+                    <p className="text-text-muted font-medium" style={{ fontSize: 13 }}>No barangays assigned yet</p>
+                    <p className="text-text-muted" style={{ fontSize: 12 }}>Drag barangays from the left</p>
+                  </div>
+                ) : (activeCluster.barangays ?? []).map((b) => (
+                  <div key={b.id}
+                    className="rounded-lg px-4 py-3"
+                    style={{ background: colors.accentSoft, border: "1px solid " + colors.primary }}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MapPin size={14} color={colors.primary} />
+                        <span className="font-semibold text-text-primary" style={{ fontSize: 14 }}>{b.name}</span>
+                      </div>
+                      <button onClick={() => handleUnassign(b.id)}
+                        className="flex items-center justify-center rounded-lg hover:bg-red-100 transition-colors px-2 py-1"
+                        style={{ color: colors.error }}>
+                        <X size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL: Add/Edit Cluster ──────────────────────────────────────── */}
+      <Modal open={clusterModal} onClose={() => setClusterModal(false)}
+        title={editCluster ? "Edit Cluster" : "Add Cluster"}
         footer={<>
-          <button onClick={() => setModalOpen(false)}
+          <button onClick={() => setClusterModal(false)} disabled={saving}
             className="rounded-lg px-4 py-2 font-medium"
             style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
-          <button onClick={handleSave}
+          <button onClick={handleSaveCluster} disabled={saving}
             className="rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ fontSize: 14, background: colors.primary }}>
-            {editTarget ? "Save Changes" : "Create Barangay"}
+            style={{ fontSize: 14, background: colors.primary, opacity: saving ? 0.7 : 1 }}>
+            {saving ? "Saving…" : editCluster ? "Save Changes" : "Create Cluster"}
           </button>
         </>}>
         <div className="flex flex-col gap-4">
-          <FormField label="Barangay Name" value={form.name}
-            onChange={(v) => setForm((p) => ({ ...p, name: v }))}
-            error={formErrors.name} placeholder="e.g. Brgy. Alangilan" />
-          <FormField label="Captain / Contact" value={form.captain}
-            onChange={(v) => setForm((p) => ({ ...p, captain: v }))}
-            error={formErrors.captain} placeholder="e.g. Jose Reyes" />
-          <FormField label="Email" type="email" value={form.email}
-            onChange={(v) => setForm((p) => ({ ...p, email: v }))}
-            error={formErrors.email} placeholder="barangay@besmart.gov.ph" />
+          {apiError && (
+            <div className="rounded-lg px-3 py-2" style={{ background: colors.errorSoft, color: colors.error, fontSize: 13 }}>{apiError}</div>
+          )}
+          
+          <FormField label="Cluster Name" value={clusterForm.label}
+            onChange={(v) => setClusterForm((p) => ({ ...p, label: v }))}
+            error={clusterErrors.label} placeholder="e.g., Solid East" />
+          
+          {!editCluster && (
+            <div className="rounded-xl px-4 py-3"
+              style={{ background: colors.accentSoft, border: "1px solid " + colors.accentBorderLight }}>
+              <p style={{ fontSize: 12, color: colors.primary }}>
+                The cluster ID will be auto-generated from the name. Example: "Solid East" → <strong>SOLID-EAST</strong>
+              </p>
+            </div>
+          )}
         </div>
       </Modal>
 
-      {/* Delete modal */}
-      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Delete Barangay"
+      {/* ── MODAL: Delete Cluster ────────────────────────────────────────── */}
+      <Modal open={!!deleteCluster_} onClose={() => setDeleteCluster_(null)} title="Delete Cluster"
         footer={<>
-          <button onClick={() => setDeleteTarget(null)}
+          <button onClick={() => setDeleteCluster_(null)}
             className="rounded-lg px-4 py-2 font-medium"
             style={{ fontSize: 14, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>Cancel</button>
-          <button onClick={() => handleDelete(deleteTarget.id)}
+          <button onClick={() => handleDeleteCluster(deleteCluster_.id)}
             className="flex items-center gap-2 rounded-lg px-5 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
             style={{ fontSize: 14, background: colors.error }}>
             <Trash2 size={14} /> Delete
           </button>
         </>}>
-        {deleteTarget && (
+        {deleteCluster_ && (
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3 rounded-xl px-4 py-3"
               style={{ background: colors.errorSoft, border: "1px solid " + colors.errorBorder }}>
               <Trash2 size={16} color={colors.error} className="flex-shrink-0 mt-0.5" />
               <p style={{ fontSize: 13, color: colors.errorDark }}>
-                Deleting this barangay will not remove the associated admin account, but it will become unassigned. This action cannot be undone.
+                Deleting <strong>{deleteCluster_.label}</strong> will unassign all {deleteCluster_.barangays?.length ?? 0} barangay(s) from it. The barangays themselves will not be deleted.
               </p>
-            </div>
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
-              {[
-                { label: "Barangay Name", value: deleteTarget.name },
-                { label: "Captain",       value: deleteTarget.captain },
-              ].map(({ label, value }) => (
-                <div key={label} className="flex items-center justify-between px-4 py-2.5 border-b last:border-0"
-                  style={{ borderColor: colors.gray100 }}>
-                  <span className="text-text-muted font-medium" style={{ fontSize: 13 }}>{label}</span>
-                  <span className="text-text-primary font-semibold" style={{ fontSize: 13 }}>{value}</span>
-                </div>
-              ))}
             </div>
           </div>
         )}
       </Modal>
+
     </div>
   );
 }

@@ -25,7 +25,7 @@ export const colors = {
 
   // ── Surfaces ────────────────────────────────────────────────────────────
   surface:          "#FFFFFF",
-  background:       "#F4F6F9",
+  background:       "#F0F7F1",   // Light Green Tint — page background
 
   // ── Borders ─────────────────────────────────────────────────────────────
   cardBorder:       "#DDE3ED",

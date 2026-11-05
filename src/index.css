@@ -9,3 +9,52 @@ body {
   font-family: 'Inter', sans-serif;
   color: #111827;
 }
+
+/* ── Global button hover effects ─────────────────────────────────────────────
+   Applies a subtle lift + shadow to any button that doesn't already have
+   an explicit hover class. Covers all SA, CA, and PB portal buttons.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* Primary green buttons */
+button[style*="background: rgb(46, 125, 50)"],
+button[style*="background: #2E7D32"],
+button[style*="background: #2e7d32"] {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease !important;
+}
+button[style*="background: rgb(46, 125, 50)"]:hover:not(:disabled),
+button[style*="background: #2E7D32"]:hover:not(:disabled),
+button[style*="background: #2e7d32"]:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.35) !important;
+  opacity: 0.92;
+}
+button[style*="background: rgb(46, 125, 50)"]:active:not(:disabled),
+button[style*="background: #2E7D32"]:active:not(:disabled),
+button[style*="background: #2e7d32"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* All buttons — base transition */
+button:not([disabled]) {
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease !important;
+}
+button:not([disabled]):active {
+  transform: scale(0.97) !important;
+}
+
+/* Outline buttons — lift on hover */
+button[style*="border"]:not([style*="background: rgb(46"]):not([style*="background: #2E"]):hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* Red delete buttons */
+button[style*="color: rgb(220, 38, 38)"]:not([style*="background: rgb(220"]):hover:not(:disabled),
+button[style*="color: #DC2626"]:not([style*="background: #DC2626"]):hover:not(:disabled) {
+  background: #FFEBEE !important;
+}
+
+/* Table row hover — consistent across all tables */
+tbody tr {
+  transition: background 0.12s ease;
+}

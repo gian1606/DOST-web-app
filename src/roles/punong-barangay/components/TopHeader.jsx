@@ -53,13 +53,18 @@ export default function TopHeader() {
   return (
     <header
       className="fixed top-0 right-0 z-20 flex items-center justify-between px-6"
-      style={{ left: 240, height: 60, background: colors.white, borderBottom: "1px solid " + colors.gray200 }}
+      style={{
+        left: 240,
+        height: 60,
+        background: colors.primary,
+        borderBottom: "1px solid rgba(255,255,255,0.15)",
+      }}
     >
       {/* Breadcrumb */}
       <div className="flex items-center gap-1.5" style={{ fontSize: 13 }}>
-        <span className="text-text-secondary font-medium">BE-SMART</span>
-        <span className="text-text-muted">/</span>
-        <span className="text-text-primary font-semibold">{pageLabel}</span>
+        <span className="font-medium" style={{ color: "rgba(255,255,255,0.75)" }}>BE-SMART</span>
+        <span style={{ color: "rgba(255,255,255,0.5)" }}>/</span>
+        <span className="font-semibold text-white">{pageLabel}</span>
       </div>
 
       {/* Right controls */}
@@ -69,9 +74,12 @@ export default function TopHeader() {
         <div className="relative" ref={notifRef}>
           <button
             onClick={() => { setNotifOpen((v) => !v); setProfileOpen(false); }}
-            className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="relative p-2 rounded-lg transition-colors"
+            style={{ background: "rgba(255,255,255,0.1)", color: "white" }}
+            onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.2)"}
+            onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
           >
-            <Bell size={18} className="text-text-secondary" />
+            <Bell size={18} />
             {unread > 0 && (
               <span className="absolute top-1 right-1 flex items-center justify-center rounded-full text-white font-bold" style={{ width: 16, height: 16, fontSize: 9, background: colors.error }}>
                 {unread}
@@ -133,16 +141,19 @@ export default function TopHeader() {
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => { setProfileOpen((v) => !v); setNotifOpen(false); }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors"
+            className="flex items-center gap-2 cursor-pointer rounded-lg px-2 py-1.5 transition-colors"
+            style={{ background: "rgba(255,255,255,0.1)", color: "white" }}
+            onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.2)"}
+            onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
           >
-            <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: colors.accentSoft }}>
-              <UserCircle size={20} color={colors.primary} />
+            <div className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: "rgba(255,255,255,0.2)" }}>
+              <UserCircle size={20} color="white" />
             </div>
             <div>
-              <div className="font-semibold text-text-primary leading-tight" style={{ fontSize: 13 }}>{user?.name || "Punong Barangay"}</div>
-              <div className="text-text-muted leading-tight" style={{ fontSize: 11 }}>Punong Barangay</div>
+              <div className="font-semibold leading-tight" style={{ fontSize: 13, color: "white" }}>{user?.name || "Punong Barangay"}</div>
+              <div className="leading-tight" style={{ fontSize: 11, color: "rgba(255,255,255,0.7)" }}>Punong Barangay</div>
             </div>
-            <ChevronDown size={14} className="text-text-muted ml-1 transition-transform" style={{ transform: profileOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
+            <ChevronDown size={14} className="ml-1 transition-transform" style={{ color: "rgba(255,255,255,0.7)", transform: profileOpen ? "rotate(180deg)" : "rotate(0deg)" }} />
           </button>
 
           {profileOpen && (

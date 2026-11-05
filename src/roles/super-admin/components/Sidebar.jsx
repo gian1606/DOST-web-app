@@ -16,9 +16,10 @@ import { colors } from "../../../theme/colors.js";
 const NAV_ITEMS = [
   { to: ROUTES.SA.DASHBOARD,     icon: LayoutGrid, label: "Dashboard" },
   { to: ROUTES.SA.MAP,           icon: Map,        label: "Mapa at Koleksyon" },
-  { to: ROUTES.SA.ROUTE_MGMT,       icon: Route,      label: "Pamamahala ng Ruta" },
+  { to: ROUTES.SA.ROUTE_MGMT,    icon: Route,      label: "Pamamahala ng Ruta" },
   { to: ROUTES.SA.USERS,         icon: Users,      label: "Pamamahala ng Gumagamit" },
-  { to: ROUTES.SA.ORGANIZATIONS,  icon: Building2,  label: "Pamamahala ng Organisasyon" },
+  { to: ROUTES.SA.BARANGAYS,     icon: Building2,  label: "Pamamahala ng Barangay" },
+  { to: ROUTES.SA.ORGANIZATIONS, icon: Building2,  label: "Pamamahala ng Organisasyon" },
   { to: ROUTES.SA.REPORTS,       icon: BarChart2,  label: "Mga Ulat at Pagsusuri" },
   { to: ROUTES.SA.LEADERBOARD,   icon: Trophy,     label: "Ranggo ng mga Barangay" },
   { to: ROUTES.SA.SETTINGS,      icon: Settings,   label: "Mga Setting" },

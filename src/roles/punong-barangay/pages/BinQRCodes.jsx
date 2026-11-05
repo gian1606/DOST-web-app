@@ -23,7 +23,7 @@ import { BINS } from "../../../mock/data";
 import { fetchBins as fetchBinsApi, createBin as createBinApi, deleteBin as deleteBinApi, bulkDeleteBins } from "../../../services/bins.js";
 import { fetchTiers as fetchTiersApi, createTier, updateTier, deleteTier } from "../../../services/tiers.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
-import { PB_BARANGAY, PB_CLUSTER, DEFAULT_LAT, DEFAULT_LNG } from "../../../constants/index.js";
+import { DEFAULT_LAT, DEFAULT_LNG } from "../../../constants/index.js";
 
 // ── LocationPicker — iframe OpenStreetMap with two-way coordinate sync ─────────
 function LocationPicker({ lat, lng, onChange }) {
@@ -240,7 +240,7 @@ function handleDownload(bin) {
 }
 
 // ── Print helper ──────────────────────────────────────────────────────────────
-async function handlePrint(printBins) {
+async function handlePrint(printBins, barangayName) {
   if (!printBins.length) return;
   const QRCode = await import("qrcode").then((m) => m.default ?? m);
   const cards  = await Promise.all(printBins.map(async (bin) => {
@@ -254,7 +254,7 @@ async function handlePrint(printBins) {
       </div>`;
   }));
   const html = `<!DOCTYPE html><html><head>
-    <title>BE-SMART Bin QR Codes — Brgy. ${PB_BARANGAY}</title>
+    <title>BE-SMART Bin QR Codes — Brgy. ${barangayName}</title>
     <style>
       body{font-family:sans-serif;margin:0;padding:16px}
       .grid{display:flex;flex-wrap:wrap;gap:24px}
@@ -269,7 +269,7 @@ async function handlePrint(printBins) {
       h2{font-size:16px;margin-bottom:16px;color:#1C2B1E}
       @media print{@page{margin:12mm}}
     </style></head><body>
-    <h2>BE-SMART · Brgy. ${PB_BARANGAY} · Bin QR Codes</h2>
+    <h2>BE-SMART · Brgy. ${barangayName} · Bin QR Codes</h2>
     <div class="grid">${cards.join("")}</div>
     <script>window.onload=()=>{window.print();window.onafterprint=()=>window.close();}<\/script>
     </body></html>`;
@@ -476,8 +476,11 @@ function ManageTiersModal({ onClose, onTiersChanged }) {
 const EMPTY_FORM = { name: "", street: "", tier_id: "", lat: "", lng: "" };
 
 export default function BinQRCodes() {
+  const { user } = useAuth();
+  const barangayName = user?.barangay || "Unknown";
+  
   // Seed from mock; API bins replace/extend on mount
-  const [bins, setBins]               = useState(() => BINS.filter((b) => b.barangay === PB_BARANGAY));
+  const [bins, setBins]               = useState(() => BINS.filter((b) => b.barangay === barangayName));
   const [tiers, setTiers]             = useState([]);
   const [loadingBins, setLoadingBins] = useState(true);
   const [fetchError, setFetchError]   = useState(null);
@@ -514,7 +517,7 @@ export default function BinQRCodes() {
   async function loadBins() {
     setLoadingBins(true); setFetchError(null);
     try {
-      const apiBins = await fetchBinsApi(PB_BARANGAY);
+      const apiBins = await fetchBinsApi(barangayName);
       if (apiBins.length > 0) {
         setBins((prev) => {
           const apiIds = new Set(apiBins.map((b) => b.id));
@@ -550,6 +553,20 @@ export default function BinQRCodes() {
 
   // ── Delete single bin ────────────────────────────────────────────────────────
   async function deleteBin(id) {
+    const bin = bins.find(b => b.id === id);
+    
+    // Check if this is a mock bin (mock bins might have simple IDs like "bin-1")
+    const isMockBin = !bin || bin.id.toString().startsWith('bin-') || bin.id.toString().length < 20;
+    
+    if (isMockBin) {
+      // Just remove from local state (mock data)
+      setBins((prev) => prev.filter((b) => b.id !== id));
+      setSelected((prev) => prev.filter((x) => x !== id));
+      setConfirmDel(null);
+      return;
+    }
+    
+    // Real bin from database - call API
     try {
       await deleteBinApi(id);
       setBins((prev) => prev.filter((b) => b.id !== id));
@@ -560,11 +577,28 @@ export default function BinQRCodes() {
 
   // ── Bulk delete ──────────────────────────────────────────────────────────────
   async function bulkDelete() {
-    try {
-      await bulkDeleteBins(selected);
-      setBins((prev) => prev.filter((b) => !selected.includes(b.id)));
-      setSelected([]);
-    } catch (err) { alert(err.message); }
+    // Separate mock bins from real bins
+    const mockBinIds = selected.filter(id => {
+      const bin = bins.find(b => b.id === id);
+      return !bin || bin.id.toString().startsWith('bin-') || bin.id.toString().length < 20;
+    });
+    
+    const realBinIds = selected.filter(id => !mockBinIds.includes(id));
+    
+    // Remove mock bins from state immediately
+    if (mockBinIds.length > 0) {
+      setBins((prev) => prev.filter((b) => !mockBinIds.includes(b.id)));
+    }
+    
+    // Delete real bins via API
+    if (realBinIds.length > 0) {
+      try {
+        await bulkDeleteBins(realBinIds);
+        setBins((prev) => prev.filter((b) => !realBinIds.includes(b.id)));
+      } catch (err) { alert(err.message); }
+    }
+    
+    setSelected([]);
     setConfirmBulkDel(false);
   }
 
@@ -594,8 +628,7 @@ export default function BinQRCodes() {
       const newBin = await createBinApi({
         name:       form.name.trim(),
         street:     form.street.trim(),
-        barangay:   PB_BARANGAY,
-        clusterId:  PB_CLUSTER,
+        barangay:   barangayName,
         tierId:     form.tier_id,
         latitude:   form.lat ? parseFloat(form.lat) : undefined,
         longitude:  form.lng ? parseFloat(form.lng) : undefined,
@@ -614,11 +647,18 @@ export default function BinQRCodes() {
     <div className="flex flex-col gap-6">
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div
+        className="flex items-center justify-between flex-wrap gap-3 rounded-xl px-5 py-4"
+        style={{
+          background: colors.white,
+          border: "1px solid " + colors.gray200,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+        }}
+      >
         <div>
           <h1 className="font-bold text-text-primary" style={{ fontSize: 28 }}>Bin QR Codes</h1>
           <p className="text-text-secondary mt-0.5" style={{ fontSize: 14 }}>
-            Generate &amp; print QR codes for Brgy. {PB_BARANGAY} bins
+            Generate &amp; print QR codes for Brgy. {barangayName} bins
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
@@ -633,7 +673,7 @@ export default function BinQRCodes() {
                 style={{ fontSize: 13, border: "1.5px solid " + colors.gray200, color: colors.gray500 }}>
                 Clear
               </button>
-              <button onClick={() => handlePrint(bins.filter((b) => selected.includes(b.id)))}
+              <button onClick={() => handlePrint(bins.filter((b) => selected.includes(b.id)), barangayName)}
                 className="flex items-center gap-2 rounded-lg px-4 py-2 font-semibold text-white hover:opacity-90 transition-opacity"
                 style={{ fontSize: 13, background: colors.recyclable }}>
                 <Printer size={14} /> Print Selected
@@ -847,7 +887,7 @@ export default function BinQRCodes() {
                     style={{ fontSize: 13, background: colors.accentSoft, color: colors.primary, border: "1px solid " + colors.accentBorder }}>
                     <Download size={14} /> Download QR
                   </button>
-                  <button onClick={() => handlePrint([addedBin])}
+                  <button onClick={() => handlePrint([addedBin], barangayName)}
                     className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
                     style={{ fontSize: 13, background: colors.recyclable }}>
                     <Printer size={14} /> Print QR
@@ -865,7 +905,7 @@ export default function BinQRCodes() {
                 <div>
                   <h2 className="font-bold text-text-primary" style={{ fontSize: 18 }}>Add New Bin</h2>
                   <p className="text-text-secondary mt-0.5" style={{ fontSize: 13 }}>
-                    Register a new bin for Brgy. {PB_BARANGAY}. A QR code will be generated automatically.
+                    Register a new bin for Brgy. {barangayName}. A QR code will be generated automatically.
                   </p>
                 </div>
                 <div className="flex flex-col gap-4">
@@ -984,7 +1024,7 @@ export default function BinQRCodes() {
                 style={{ fontSize: 13, background: colors.accentSoft, color: colors.primary, border: "1px solid " + colors.accentBorder }}>
                 <Download size={14} /> Download PNG
               </button>
-              <button onClick={() => { setPreviewBin(null); handlePrint([previewBin]); }}
+              <button onClick={() => { setPreviewBin(null); handlePrint([previewBin], barangayName); }}
                 className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 font-semibold text-white hover:opacity-90 transition-opacity"
                 style={{ fontSize: 13, background: colors.recyclable }}>
                 <Printer size={14} /> Print

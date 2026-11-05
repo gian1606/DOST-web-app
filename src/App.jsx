@@ -25,6 +25,7 @@ const SADashboard              = lazy(() => import("./roles/super-admin/pages/Da
 const SAMapCollection          = lazy(() => import("./roles/super-admin/pages/MapCollection.jsx"));
 const SARouteManagement        = lazy(() => import("./roles/super-admin/pages/RouteManagement.jsx"));
 const SAUserManagement         = lazy(() => import("./roles/super-admin/pages/UserManagement.jsx"));
+const SABarangayManagement     = lazy(() => import("./roles/super-admin/pages/BarangayManagement.jsx"));
 const SAOrganizationManagement = lazy(() => import("./roles/super-admin/pages/OrganizationManagement.jsx"));
 const SAReports               = lazy(() => import("./roles/super-admin/pages/Reports.jsx"));
 const SAMRFManagement          = lazy(() => import("./roles/super-admin/pages/MRFManagement.jsx"));
@@ -84,6 +85,7 @@ export default function App() {
             <Route path="map"           element={<SAMapCollection />} />
             <Route path="routes"        element={<SARouteManagement />} />
             <Route path="users"         element={<SAUserManagement />} />
+            <Route path="barangays"     element={<SABarangayManagement />} />
             <Route path="organizations" element={<SAOrganizationManagement />} />
             <Route path="reports"       element={<SAReports />} />
             <Route path="mrf"           element={<SAMRFManagement />} />

@@ -1,5 +1,5 @@
 import { colors } from "../../../theme/colors.js";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Eye, Send, ChevronLeft, ChevronRight, Route, MapPin, Clock,
   CheckCircle, Truck, Cpu, Ruler, Filter, X,
@@ -7,7 +7,8 @@ import {
 import StatusBadge from "../../../components/ui/StatusBadge";
 import Modal       from "../../../components/ui/Modal";
 import MapView     from "../../../components/ui/MapView";
-import { COLLECTION_ROUTES, BINS, TRUCKS, MRF_LOCATIONS, OPTIMIZED_ROUTE } from "../../../mock/data";
+import { BINS, TRUCKS, MRF_LOCATIONS } from "../../../mock/data";
+import { fetchRoutes, createRoute, updateRoute } from "../../../services/superAdmin.js";
 
 // ── Build optimized route from all full bins ──────────────────────────────────
 function buildRoute(allBins) {
@@ -75,7 +76,12 @@ function FilterSelect({ label, value, onChange, children }) {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function RouteManagement() {
-  const [routes, setRoutes] = useState(COLLECTION_ROUTES);
+  const [routes, setRoutes] = useState([]);
+
+  // ── Load route history from API ───────────────────────────────────────────
+  useEffect(() => {
+    fetchRoutes().then((data) => setRoutes(data.routes ?? [])).catch(() => {});
+  }, []);
 
   // ── Optimize panel state ──────────────────────────────────────────────────
   const [optimized,        setOptimized]        = useState(false);
@@ -90,27 +96,33 @@ export default function RouteManagement() {
 
   function handleSendRoute() {
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
-      setSent(true);
-      setShowRouteDetails(false);
-      setRoutes((prev) => [
-        {
-          id:               `r${Date.now()}`,
-          routeId:          optimizeRoute.routeId,
-          date:             new Date().toISOString().split("T")[0],
-          bins:             optimizeRoute.bins,
-          distanceKm:       optimizeRoute.distanceKm,
-          estimatedMinutes: optimizeRoute.estimatedMinutes,
-          sentTo:           "Collector Admin",
-          truckNo:          "Truck #01",
-          status:           "delivered",
-          optimizedAt:      optimizeRoute.optimizedAt,
-          sentAt:           new Date().toISOString(),
-        },
-        ...prev,
-      ]);
-    }, 800);
+    const newRoute = {
+      routeId:          optimizeRoute.routeId,
+      date:             new Date().toISOString().split("T")[0],
+      bins:             optimizeRoute.bins,
+      distanceKm:       optimizeRoute.distanceKm,
+      estimatedMinutes: optimizeRoute.estimatedMinutes,
+      algorithm:        optimizeRoute.algorithm,
+      truckNo:          "Truck #01",
+      sentTo:           "Collector Admin",
+    };
+    // Persist to backend, fall back to local state if API unavailable
+    createRoute(newRoute)
+      .then((saved) => {
+        setRoutes((prev) => [saved, ...prev]);
+      })
+      .catch(() => {
+        // Optimistic local fallback
+        setRoutes((prev) => [
+          { id: `r${Date.now()}`, ...newRoute, status: "delivered", sentAt: new Date().toISOString() },
+          ...prev,
+        ]);
+      })
+      .finally(() => {
+        setSending(false);
+        setSent(true);
+        setShowRouteDetails(false);
+      });
   }
 
   const optimizedAtLabel = new Date(optimizeRoute.optimizedAt).toLocaleTimeString("en-PH", { hour: "2-digit", minute: "2-digit" });
@@ -185,8 +197,15 @@ export default function RouteManagement() {
 
   function openResend(r) { setResendRoute(r); setResendDone(false); }
   function handleResend() {
-    setRoutes((prev) => prev.map((r) => r.id === resendRoute.id
-      ? { ...r, status: "delivered", sentAt: new Date().toISOString() } : r));
+    updateRoute(resendRoute.id, { status: "delivered" })
+      .then((updated) => {
+        setRoutes((prev) => prev.map((r) => r.id === resendRoute.id ? updated : r));
+      })
+      .catch(() => {
+        // Optimistic local fallback
+        setRoutes((prev) => prev.map((r) => r.id === resendRoute.id
+          ? { ...r, status: "delivered", sentAt: new Date().toISOString() } : r));
+      });
     setResendDone(true);
   }
 
