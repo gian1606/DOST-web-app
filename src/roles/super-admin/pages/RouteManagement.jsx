@@ -292,13 +292,13 @@ export default function RouteManagement() {
           )}
 
           <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 340px" }}>
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
+            <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${colors.gray100}` }}>
               <MapView bins={BINS} trucks={TRUCKS} mrfs={MRF_LOCATIONS}
                 routeOrder={optimized ? optimizeRoute.order : []}
                 showRoute={optimized} height={380} />
             </div>
 
-            <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+            <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
               {!optimized ? (
                 <div className="flex flex-col items-center justify-center h-full gap-3 py-8">
                   <MapPin size={36} color={colors.textMuted} />
@@ -465,7 +465,7 @@ export default function RouteManagement() {
             )}
             {truckFilter !== "all" && (
               <span className="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium"
-                style={{ fontSize: 11, background: colors.lockedSoft, color: colors.lockedText, border: "1px solid #DDD6FE" }}>
+                style={{ fontSize: 11, background: colors.lockedSoft, color: colors.lockedText, border: `1px solid ${colors.lockedBorder}` }}>
                 <Truck size={10} /> {truckFilter}
                 <button onClick={() => { setTruckFilter("all"); setPage(1); }} className="hover:opacity-70"><X size={10} /></button>
               </span>
@@ -511,7 +511,7 @@ export default function RouteManagement() {
                 </tr>
               ) : paginated.map((r, i) => (
                 <tr key={r.id}
-                  style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}
+                  style={{ background: i % 2 === 0 ? colors.white : colors.tableRowAlt, borderBottom: `1px solid ${colors.gray100}` }}
                   className="hover:bg-green-50/30 transition-colors">
 
                   {/* Route ID */}
@@ -591,7 +591,7 @@ export default function RouteManagement() {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button key={p} onClick={() => setPage(p)}
                 className="w-8 h-8 rounded-lg font-medium transition-colors"
-                style={{ fontSize: 13, background: p === page ? colors.primary : "transparent", color: p === page ? "#fff" : colors.gray500 }}>
+                style={{ fontSize: 13, background: p === page ? colors.primary : "transparent", color: p === page ? colors.white : colors.gray500 }}>
                 {p}
               </button>
             ))}
@@ -624,7 +624,7 @@ export default function RouteManagement() {
           <span className="rounded-full px-3 py-0.5 font-semibold"
             style={{ fontSize: 12, background: colors.accentSoft, color: colors.primary }}>Handa nang Ipadala</span>
         </div>
-        <div className="rounded-xl overflow-hidden mb-4" style={{ border: "1px solid #F3F4F6" }}>
+        <div className="rounded-xl overflow-hidden mb-4" style={{ border: `1px solid ${colors.gray100}` }}>
           <InfoRow label="Petsa"              value={new Date().toISOString().split("T")[0]} />
           <InfoRow label="Ipapadala Kay"      value="Collector Admin" />
           <InfoRow label="Distansya"          value={`${optimizeRoute.distanceKm} km`} />
@@ -637,7 +637,7 @@ export default function RouteManagement() {
             const bin = BINS.find((b) => b.id === binId);
             return (
               <div key={binId} className="flex items-center gap-3 rounded-lg px-3 py-2"
-                style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+                style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
                 <span className="flex items-center justify-center rounded-full font-bold text-white flex-shrink-0"
                   style={{ width: 22, height: 22, fontSize: 10, background: colors.primary }}>{idx + 1}</span>
                 <MapPin size={13} color={colors.gray500} className="flex-shrink-0" />
@@ -665,7 +665,7 @@ export default function RouteManagement() {
               </div>
               <StatusBadge status={viewRoute.status} />
             </div>
-            <div className="rounded-xl overflow-hidden" style={{ border: "1px solid #F3F4F6" }}>
+            <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${colors.gray100}` }}>
               <InfoRow label="Petsa"               value={viewRoute.date} />
               <InfoRow label="Truck No."           value={viewRoute.truckNo ?? "—"} />
               <InfoRow label="Ipinadala Kay"       value={viewRoute.sentTo} />
@@ -680,7 +680,7 @@ export default function RouteManagement() {
                   const bin = BINS.find((b) => b.id === binId);
                   return (
                     <div key={binId} className="flex items-center gap-3 rounded-lg px-3 py-2"
-                      style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+                      style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
                       <span className="flex items-center justify-center rounded-full font-bold text-white flex-shrink-0"
                         style={{ width: 22, height: 22, fontSize: 10, background: colors.primary }}>{idx + 1}</span>
                       <MapPin size={13} color={colors.gray500} className="flex-shrink-0" />

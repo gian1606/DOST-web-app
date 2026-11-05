@@ -83,7 +83,7 @@ export default function Notifications() {
             style={{
               fontSize: 14,
               color: tab === t ? colors.primary : colors.gray500,
-              borderBottom: tab === t ? "2px solid #2E7D32" : "2px solid transparent",
+              borderBottom: tab === t ? `2px solid ${colors.primary}` : "2px solid transparent",
               marginBottom: -1,
             }}>
             {t}

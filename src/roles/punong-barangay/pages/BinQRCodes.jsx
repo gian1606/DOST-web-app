@@ -258,15 +258,15 @@ async function handlePrint(printBins, barangayName) {
     <style>
       body{font-family:sans-serif;margin:0;padding:16px}
       .grid{display:flex;flex-wrap:wrap;gap:24px}
-      .card{border:1px solid #E5E7EB;border-radius:12px;padding:16px;
+      .card{border:1px solid ${colors.gray200};border-radius:12px;padding:16px;
             display:flex;flex-direction:column;align-items:center;gap:8px;
             width:200px;page-break-inside:avoid}
       .card img{width:160px;height:160px}
       .name{font-weight:700;font-size:13px;text-align:center}
-      .sub{font-size:11px;color:#6B7280;text-align:center}
-      .badge{background:#E8F5E9;color:#2E7D32;border-radius:99px;
+      .sub{font-size:11px;color:${colors.gray500};text-align:center}
+      .badge{background:${colors.accentSoft};color:${colors.primary};border-radius:99px;
              padding:2px 8px;font-size:10px;font-weight:600}
-      h2{font-size:16px;margin-bottom:16px;color:#1C2B1E}
+      h2{font-size:16px;margin-bottom:16px;color:${colors.sidebarBg}}
       @media print{@page{margin:12mm}}
     </style></head><body>
     <h2>BE-SMART · Brgy. ${barangayName} · Bin QR Codes</h2>
@@ -766,7 +766,7 @@ export default function BinQRCodes() {
               <div key={bin.id}
                 className="bg-white rounded-xl p-4 flex flex-col gap-3 cursor-pointer transition-all"
                 style={{
-                  border:     isSelected ? "2px solid #2E7D32" : "1px solid " + colors.gray200,
+                  border:     isSelected ? `2px solid ${colors.primary}` : `1px solid ${colors.gray200}`,
                   boxShadow:  isSelected ? "0 0 0 3px rgba(46,125,50,0.12)" : "0 2px 8px rgba(0,0,0,0.05)",
                 }}
                 onClick={() => toggleSelect(bin.id)}>
@@ -775,7 +775,7 @@ export default function BinQRCodes() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center justify-center rounded flex-shrink-0"
-                      style={{ width: 18, height: 18, background: isSelected ? colors.primary : colors.white, border: isSelected ? "none" : "1.5px solid #D1D5DB" }}>
+                      style={{ width: 18, height: 18, background: isSelected ? colors.primary : colors.white, border: isSelected ? "none" : `1.5px solid ${colors.gray300}` }}>
                       {isSelected && (
                         <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                           <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -867,7 +867,7 @@ export default function BinQRCodes() {
                   <QRCard bin={addedBin} size={180} />
                 </div>
                 <div className="rounded-xl px-4 py-3 w-full flex flex-col gap-1"
-                  style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+                  style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
                   <div className="flex justify-between">
                     <span className="text-text-muted" style={{ fontSize: 12 }}>Bin ID</span>
                     <span className="font-semibold text-text-primary" style={{ fontSize: 12 }}>{addedBin.id}</span>
@@ -1003,7 +1003,7 @@ export default function BinQRCodes() {
             </div>
 
             <div className="rounded-xl p-3 flex flex-col gap-1.5"
-              style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+              style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
               <p className="font-semibold text-text-primary" style={{ fontSize: 12 }}>Encoded Data</p>
               <code className="text-text-muted break-all" style={{ fontSize: 10, lineHeight: 1.6 }}>
                 {buildPayload(previewBin)}

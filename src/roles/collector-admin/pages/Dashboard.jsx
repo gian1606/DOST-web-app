@@ -21,7 +21,7 @@ export default function CADashboard() {
       {hasPendingRoute && (
         <div className="flex items-center justify-between rounded-xl px-5 py-3.5" style={{ background: colors.accentSoft, border: "1px solid " + colors.accentBorderLight }}>
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center rounded-lg" style={{ width: 34, height: 34, background: colors.primary }}><Truck size={17} color="#fff" /></div>
+            <div className="flex items-center justify-center rounded-lg" style={{ width: 34, height: 34, background: colors.primary }}><Truck size={17} color={colors.white} /></div>
             <div>
               <div className="font-semibold text-primary" style={{ fontSize: 14 }}>New Optimized Route Received</div>
               <div className="text-text-secondary" style={{ fontSize: 13 }}>Route {CA_INCOMING_ROUTE.routeId} sent by Super Admin · {CA_INCOMING_ROUTE.bins.length} bins · {CA_INCOMING_ROUTE.distanceKm} km</div>

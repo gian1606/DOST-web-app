@@ -249,11 +249,11 @@ export default function OrganizationManagement() {
 
               {/* Coloured top strip */}
               <div className="px-5 pt-5 pb-4 flex items-center justify-between"
-                style={{ background: "linear-gradient(135deg, #1C3A20 0%, #2E7D32 100%)" }}>
+                style={{ background: colors.orgHeaderGradient }}>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center rounded-xl flex-shrink-0"
                     style={{ width: 44, height: 44, background: "rgba(255,255,255,0.15)" }}>
-                    <MapPin size={20} color="#fff" />
+                    <MapPin size={20} color={colors.white} />
                   </div>
                   <div>
                     <div className="font-bold text-white leading-tight" style={{ fontSize: 18 }}>{c.label}</div>

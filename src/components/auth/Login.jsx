@@ -8,7 +8,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock } from "lucide-react";
-import { loginColors } from "../../theme/colors.js";
+import { colors, loginColors } from "../../theme/colors.js";
 import { loginUser } from "../../services/auth.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { ROLE_ROUTES, ROUTES } from "../../constants/index.js";
@@ -54,9 +54,9 @@ function FloatingField({ id, label, type = "text", value, onChange, error, right
             paddingLeft: 14,
             paddingRight: rightSlot ? 44 : 14,
             fontSize: 14,
-            color: "#fff",
+            color: colors.white,
             background: "rgba(255,255,255,0.10)",
-            border: `1.5px solid ${error ? "rgba(220,38,38,0.8)" : focused ? "#2E7D32" : "rgba(255,255,255,0.20)"}`,
+            border: `1.5px solid ${error ? "rgba(220,38,38,0.8)" : focused ? colors.primary : "rgba(255,255,255,0.20)"}`,
             borderRadius: 10,
             outline: "none",
             boxSizing: "border-box",
@@ -153,7 +153,7 @@ export default function Login() {
 
         <div
           className="font-bold text-center"
-          style={{ fontSize: 28, color: "#fff", textShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
+          style={{ fontSize: 28, color: colors.white, textShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
         >
           BE-SMART
         </div>
@@ -208,7 +208,7 @@ export default function Login() {
             disabled={loading}
             className="w-full rounded-xl py-3 font-semibold text-white mt-1"
             style={{
-              background: loading ? "rgba(46,125,50,0.6)" : "linear-gradient(135deg, #2E7D32 0%, #388E3C 100%)",
+              background: loading ? "rgba(46,125,50,0.6)" : loginColors.buttonGradient,
               fontSize: 15,
               border: "1px solid rgba(46,125,50,0.5)",
               cursor: loading ? "not-allowed" : "pointer",
@@ -232,8 +232,8 @@ export default function Login() {
         input:-webkit-autofill,
         input:-webkit-autofill:focus {
           -webkit-box-shadow: 0 0 0 1000px rgba(10,30,15,0.92) inset !important;
-          -webkit-text-fill-color: #fff !important;
-          caret-color: #fff;
+          -webkit-text-fill-color: ${colors.white} !important;
+          caret-color: ${colors.white};
         }
         input::-ms-reveal,
         input::-ms-clear,

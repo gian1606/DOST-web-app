@@ -5,6 +5,8 @@
 import { useState, useEffect } from "react";
 import { Building2, Plus, Edit2, Trash2, Mail, User, Search, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import DateFilter from "../../../components/ui/DateFilter.jsx";
+import FormField from "../../../components/ui/FormField.jsx";
+import { colors } from "../../../theme/colors.js";
 import {
   fetchBarangays,
   createBarangay,
@@ -156,14 +158,14 @@ export default function BarangayManagement() {
         }}
       >
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: "#1a1a1a", marginBottom: "0.5rem" }}>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: colors.textHeading, marginBottom: "0.5rem" }}>
             Barangay Management
           </h1>
-          <p style={{ fontSize: 14, color: "#666" }}>
+          <p style={{ fontSize: 14, color: colors.textSecondary }}>
             Create and manage barangays across Batangas City
           </p>
-          <div style={{ marginTop: "0.75rem", padding: "0.65rem 1rem", background: "#E3F2FD", border: "1px solid #90CAF9", borderRadius: 8 }}>
-            <p style={{ fontSize: 12, color: "#1565C0", margin: 0 }}>
+          <div style={{ marginTop: "0.75rem", padding: "0.65rem 1rem", background: colors.infoSoft, border: `1px solid ${colors.infoBorder}`, borderRadius: 8 }}>
+            <p style={{ fontSize: 12, color: colors.blueDark, margin: 0 }}>
               ℹ️ <strong>Note:</strong> This page is for managing barangay records only. To create user accounts for Punong Barangay, go to <strong>User Management</strong>.
             </p>
           </div>
@@ -179,7 +181,7 @@ export default function BarangayManagement() {
             alignItems: "center",
             gap: "0.5rem",
             padding: "0.65rem 1.25rem",
-            background: "#2E7D32",
+            background: colors.primary,
             color: "white",
             border: "none",
             borderRadius: 8,
@@ -210,7 +212,7 @@ export default function BarangayManagement() {
               left: 12,
               top: "50%",
               transform: "translateY(-50%)",
-              color: "#999",
+              color: colors.textMuted,
             }}
           />
           <input
@@ -221,7 +223,7 @@ export default function BarangayManagement() {
             style={{
               width: "100%",
               padding: "0.65rem 1rem 0.65rem 2.75rem",
-              border: "1px solid #E0E0E0",
+              border: `1px solid ${colors.gray200}`,
               borderRadius: 8,
               fontSize: 14,
               outline: "none",
@@ -236,16 +238,16 @@ export default function BarangayManagement() {
           style={{
             textAlign: "center",
             padding: "4rem 2rem",
-            background: "#F9F9F9",
+            background: colors.gray50,
             borderRadius: 12,
-            border: "2px dashed #E0E0E0",
+            border: `2px dashed ${colors.gray200}`,
           }}
         >
-          <Building2 size={56} style={{ color: "#BDBDBD", margin: "0 auto 1.5rem" }} />
-          <h3 style={{ fontSize: 20, fontWeight: 600, color: "#424242", marginBottom: "0.75rem" }}>
+          <Building2 size={56} style={{ color: colors.gray400, margin: "0 auto 1.5rem" }} />
+          <h3 style={{ fontSize: 20, fontWeight: 600, color: colors.textSecondary, marginBottom: "0.75rem" }}>
             No Barangays Yet
           </h3>
-          <p style={{ fontSize: 14, color: "#757575", marginBottom: "1.5rem", maxWidth: 420, margin: "0 auto 1.5rem" }}>
+          <p style={{ fontSize: 14, color: colors.gray500, marginBottom: "1.5rem", maxWidth: 420, margin: "0 auto 1.5rem" }}>
             Get started by creating your first barangay. Barangays are used to organize bins, residents, and admins across the city.
           </p>
           <button
@@ -259,7 +261,7 @@ export default function BarangayManagement() {
               alignItems: "center",
               gap: "0.5rem",
               padding: "0.75rem 1.5rem",
-              background: "#2E7D32",
+              background: colors.primary,
               color: "white",
               border: "none",
               borderRadius: 8,
@@ -276,33 +278,33 @@ export default function BarangayManagement() {
 
       {/* Table */}
       {!loading && filteredBarangays.length > 0 && (
-        <div style={{ background: "white", borderRadius: 12, overflow: "hidden", border: "1px solid #E0E0E0" }}>
+        <div style={{ background: "white", borderRadius: 12, overflow: "hidden", border: `1px solid ${colors.gray200}` }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ background: "#F5F5F5", borderBottom: "1px solid #E0E0E0" }}>
-                <th style={{ padding: "1rem", textAlign: "left", fontSize: 13, fontWeight: 600, color: "#616161" }}>
+              <tr style={{ background: colors.gray100, borderBottom: `1px solid ${colors.gray200}` }}>
+                <th style={{ padding: "1rem", textAlign: "left", fontSize: 13, fontWeight: 600, color: colors.gray500 }}>
                   Barangay
                 </th>
-                <th style={{ padding: "1rem", textAlign: "left", fontSize: 13, fontWeight: 600, color: "#616161" }}>
+                <th style={{ padding: "1rem", textAlign: "left", fontSize: 13, fontWeight: 600, color: colors.gray500 }}>
                   Captain
                 </th>
-                <th style={{ padding: "1rem", textAlign: "left", fontSize: 13, fontWeight: 600, color: "#616161" }}>
+                <th style={{ padding: "1rem", textAlign: "left", fontSize: 13, fontWeight: 600, color: colors.gray500 }}>
                   Contact Email
                 </th>
-                <th style={{ padding: "1rem", textAlign: "center", fontSize: 13, fontWeight: 600, color: "#616161" }}>
+                <th style={{ padding: "1rem", textAlign: "center", fontSize: 13, fontWeight: 600, color: colors.gray500 }}>
                   Bins
                 </th>
-                <th style={{ padding: "1rem", textAlign: "center", fontSize: 13, fontWeight: 600, color: "#616161" }}>
+                <th style={{ padding: "1rem", textAlign: "center", fontSize: 13, fontWeight: 600, color: colors.gray500 }}>
                   Residents
                 </th>
-                <th style={{ padding: "1rem", textAlign: "center", fontSize: 13, fontWeight: 600, color: "#616161" }}>
+                <th style={{ padding: "1rem", textAlign: "center", fontSize: 13, fontWeight: 600, color: colors.gray500 }}>
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody>
               {filteredBarangays.map((barangay) => (
-                <tr key={barangay.id} style={{ borderBottom: "1px solid #F0F0F0" }}>
+                <tr key={barangay.id} style={{ borderBottom: `1px solid ${colors.gray100}` }}>
                   <td style={{ padding: "1rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                       <div
@@ -310,7 +312,7 @@ export default function BarangayManagement() {
                           width: 36,
                           height: 36,
                           borderRadius: 8,
-                          background: "linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%)",
+                          background: colors.barangayAvatarGradient,
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -318,21 +320,21 @@ export default function BarangayManagement() {
                       >
                         <MapPin size={18} style={{ color: "white" }} />
                       </div>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: "#212121" }}>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: colors.textPrimary }}>
                         {barangay.name}
                       </span>
                     </div>
                   </td>
-                  <td style={{ padding: "1rem", fontSize: 14, color: "#616161" }}>
-                    {barangay.captain || <span style={{ color: "#BDBDBD", fontStyle: "italic" }}>Not set</span>}
+                  <td style={{ padding: "1rem", fontSize: 14, color: colors.gray500 }}>
+                    {barangay.captain || <span style={{ color: colors.gray400, fontStyle: "italic" }}>Not set</span>}
                   </td>
-                  <td style={{ padding: "1rem", fontSize: 14, color: "#616161" }}>
-                    {barangay.email || <span style={{ color: "#BDBDBD", fontStyle: "italic" }}>Not set</span>}
+                  <td style={{ padding: "1rem", fontSize: 14, color: colors.gray500 }}>
+                    {barangay.email || <span style={{ color: colors.gray400, fontStyle: "italic" }}>Not set</span>}
                   </td>
-                  <td style={{ padding: "1rem", textAlign: "center", fontSize: 14, color: "#424242", fontWeight: 600 }}>
+                  <td style={{ padding: "1rem", textAlign: "center", fontSize: 14, color: colors.textSecondary, fontWeight: 600 }}>
                     {barangay.totalBins}
                   </td>
-                  <td style={{ padding: "1rem", textAlign: "center", fontSize: 14, color: "#424242", fontWeight: 600 }}>
+                  <td style={{ padding: "1rem", textAlign: "center", fontSize: 14, color: colors.textSecondary, fontWeight: 600 }}>
                     {barangay.activeResidents}
                   </td>
                   <td style={{ padding: "1rem" }}>
@@ -341,7 +343,7 @@ export default function BarangayManagement() {
                         onClick={() => openEditModal(barangay)}
                         style={{
                           padding: "0.5rem",
-                          border: "1px solid #E0E0E0",
+                          border: `1px solid ${colors.gray200}`,
                           borderRadius: 6,
                           background: "white",
                           cursor: "pointer",
@@ -351,13 +353,13 @@ export default function BarangayManagement() {
                         }}
                         title="Edit"
                       >
-                        <Edit2 size={16} style={{ color: "#616161" }} />
+                        <Edit2 size={16} style={{ color: colors.gray500 }} />
                       </button>
                       <button
                         onClick={() => handleDelete(barangay)}
                         style={{
                           padding: "0.5rem",
-                          border: "1px solid #FFCDD2",
+                          border: `1px solid ${colors.errorBorder}`,
                           borderRadius: 6,
                           background: "white",
                           cursor: "pointer",
@@ -367,7 +369,7 @@ export default function BarangayManagement() {
                         }}
                         title="Delete"
                       >
-                        <Trash2 size={16} style={{ color: "#D32F2F" }} />
+                        <Trash2 size={16} style={{ color: colors.error }} />
                       </button>
                     </div>
                   </td>
@@ -380,24 +382,24 @@ export default function BarangayManagement() {
 
       {/* Loading */}
       {loading && (
-        <div style={{ textAlign: "center", padding: "3rem", color: "#999" }}>
+        <div style={{ textAlign: "center", padding: "3rem", color: colors.textMuted }}>
           Loading barangays...
         </div>
       )}
 
       {/* No Results */}
       {!loading && barangays.length > 0 && filteredBarangays.length === 0 && (
-        <div style={{ textAlign: "center", padding: "3rem", color: "#999" }}>
+        <div style={{ textAlign: "center", padding: "3rem", color: colors.textMuted }}>
           No barangays match "{searchQuery}"
         </div>
       )}
 
       {/* Deleted Barangays History - Collapsible */}
       <div style={{
-        background: "#fff",
+        background: colors.white,
         borderRadius: 12,
         overflow: "hidden",
-        border: "1px solid #E5E7EB",
+        border: `1px solid ${colors.gray200}`,
         boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
       }}>
         <button
@@ -408,16 +410,16 @@ export default function BarangayManagement() {
             alignItems: "center",
             justifyContent: "space-between",
             padding: "1rem 1.5rem",
-            background: "#F9FAFB",
+            background: colors.gray50,
             border: "none",
             cursor: "pointer",
             transition: "background 0.2s"
           }}
-          onMouseEnter={(e) => e.currentTarget.style.background = "#F3F4F6"}
-          onMouseLeave={(e) => e.currentTarget.style.background = "#F9FAFB"}
+          onMouseEnter={(e) => e.currentTarget.style.background = colors.gray100}
+          onMouseLeave={(e) => e.currentTarget.style.background = colors.gray50}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#1F2937", margin: 0 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: colors.textPrimary, margin: 0 }}>
               Deleted Barangays History
             </h3>
             <span style={{
@@ -425,19 +427,19 @@ export default function BarangayManagement() {
               padding: "0.125rem 0.5rem",
               fontSize: 11,
               fontWeight: 600,
-              background: "#FEE2E2",
-              color: "#DC2626"
+              background: colors.errorSoft,
+              color: colors.error
             }}>
               {deletedBarangays.length}
             </span>
           </div>
-          {showDeleted ? <ChevronUp size={20} color="#6B7280" /> : <ChevronDown size={20} color="#6B7280" />}
+          {showDeleted ? <ChevronUp size={20} color={colors.gray500} /> : <ChevronDown size={20} color={colors.gray500} />}
         </button>
 
         {showDeleted && (
           <>
-            <div style={{ padding: "1rem 1.5rem", borderBottom: "1px solid #E5E7EB" }}>
-              <p style={{ fontSize: 13, color: "#6B7280", marginBottom: "1rem" }}>
+            <div style={{ padding: "1rem 1.5rem", borderBottom: `1px solid ${colors.gray200}` }}>
+              <p style={{ fontSize: 13, color: colors.gray500, marginBottom: "1rem" }}>
                 Barangays that have been deleted. Data is preserved for audit purposes.
               </p>
               <DateFilter
@@ -452,7 +454,7 @@ export default function BarangayManagement() {
             </div>
 
             {deletedBarangays.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "2.5rem", color: "#9CA3AF", fontSize: 14 }}>
+              <div style={{ textAlign: "center", padding: "2.5rem", color: colors.gray400, fontSize: 14 }}>
                 {deleteFilters.year || deleteFilters.month || deleteFilters.day
                   ? "No deleted barangays found for the selected date range."
                   : "No deleted barangays found."}
@@ -461,7 +463,7 @@ export default function BarangayManagement() {
               <div style={{ maxHeight: "400px", overflowY: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
-                    <tr style={{ background: "#F9FAFB", borderBottom: "1px solid #E5E7EB" }}>
+                    <tr style={{ background: colors.gray50, borderBottom: `1px solid ${colors.gray200}` }}>
                       {["Barangay Name", "Captain", "Email", "Created", "Deleted", "Deleted By"].map((h) => (
                         <th key={h} style={{
                           textAlign: "left",
@@ -469,7 +471,7 @@ export default function BarangayManagement() {
                           fontWeight: 600,
                           textTransform: "uppercase",
                           letterSpacing: "0.05em",
-                          color: "#6B7280",
+                          color: colors.gray500,
                           padding: "0.75rem 1rem"
                         }}>
                           {h}
@@ -480,25 +482,25 @@ export default function BarangayManagement() {
                   <tbody>
                     {deletedBarangays.map((b, i) => (
                       <tr key={b.id} style={{
-                        background: i % 2 === 0 ? "#fff" : "#F9FAFB",
-                        borderBottom: "1px solid #F3F4F6"
+                        background: i % 2 === 0 ? colors.white : colors.gray50,
+                        borderBottom: `1px solid ${colors.gray100}`
                       }}>
-                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, fontWeight: 600, color: "#1F2937" }}>
+                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, fontWeight: 600, color: colors.textPrimary }}>
                           {b.name}
                         </td>
-                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: "#6B7280" }}>
+                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: colors.gray500 }}>
                           {b.captain || "—"}
                         </td>
-                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: "#6B7280" }}>
+                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: colors.gray500 }}>
                           {b.email || "—"}
                         </td>
-                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: "#6B7280" }}>
+                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: colors.gray500 }}>
                           {b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                         </td>
-                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: "#6B7280" }}>
+                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: colors.gray500 }}>
                           {b.deletedAt ? new Date(b.deletedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                         </td>
-                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: "#6B7280" }}>
+                        <td style={{ padding: "0.75rem 1rem", fontSize: 13, color: colors.gray500 }}>
                           {b.deletedBy}
                         </td>
                       </tr>
@@ -522,19 +524,18 @@ export default function BarangayManagement() {
         >
           <FormField
             label="Barangay Name"
-            icon={<Building2 size={18} />}
             required
             value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            onChange={(v) => setForm({ ...form, name: v })}
             placeholder="e.g., Alangilan"
           />
           {error && (
-            <div style={{ padding: "0.75rem", background: "#FFEBEE", borderRadius: 8, marginTop: "1rem" }}>
-              <p style={{ fontSize: 13, color: "#C62828", margin: 0 }}>{error}</p>
+            <div style={{ padding: "0.75rem", background: colors.errorSoft, borderRadius: 8, marginTop: "1rem" }}>
+              <p style={{ fontSize: 13, color: colors.errorDark, margin: 0 }}>{error}</p>
             </div>
           )}
-          <div style={{ padding: "0.75rem", background: "#E3F2FD", borderRadius: 8, marginTop: "1rem" }}>
-            <p style={{ fontSize: 12, color: "#1565C0", margin: 0 }}>
+          <div style={{ padding: "0.75rem", background: colors.infoSoft, borderRadius: 8, marginTop: "1rem" }}>
+            <p style={{ fontSize: 12, color: colors.blueDark, margin: 0 }}>
               ℹ️ Captain name and contact email will be added when you create a Punong Barangay account in <strong>User Management</strong>.
             </p>
           </div>
@@ -556,19 +557,18 @@ export default function BarangayManagement() {
         >
           <FormField
             label="Barangay Name"
-            icon={<Building2 size={18} />}
             required
             value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            onChange={(v) => setForm({ ...form, name: v })}
             placeholder="e.g., Alangilan"
           />
           {error && (
-            <div style={{ padding: "0.75rem", background: "#FFEBEE", borderRadius: 8, marginTop: "1rem" }}>
-              <p style={{ fontSize: 13, color: "#C62828", margin: 0 }}>{error}</p>
+            <div style={{ padding: "0.75rem", background: colors.errorSoft, borderRadius: 8, marginTop: "1rem" }}>
+              <p style={{ fontSize: 13, color: colors.errorDark, margin: 0 }}>{error}</p>
             </div>
           )}
-          <div style={{ padding: "0.75rem", background: "#E3F2FD", borderRadius: 8, marginTop: "1rem" }}>
-            <p style={{ fontSize: 12, color: "#1565C0", margin: 0 }}>
+          <div style={{ padding: "0.75rem", background: colors.infoSoft, borderRadius: 8, marginTop: "1rem" }}>
+            <p style={{ fontSize: 12, color: colors.blueDark, margin: 0 }}>
               ℹ️ Captain and contact information is managed through the Punong Barangay user account in <strong>User Management</strong>.
             </p>
           </div>
@@ -603,7 +603,7 @@ function Modal({ title, children, onClose, onSubmit, submitting, submitLabel = "
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: "1.5rem", color: "#212121" }}>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: "1.5rem", color: colors.textPrimary }}>
           {title}
         </h2>
         {children}
@@ -614,12 +614,12 @@ function Modal({ title, children, onClose, onSubmit, submitting, submitLabel = "
             style={{
               flex: 1,
               padding: "0.75rem",
-              border: "1px solid #E0E0E0",
+              border: `1px solid ${colors.gray200}`,
               borderRadius: 8,
               background: "white",
               fontSize: 14,
               fontWeight: 600,
-              color: "#616161",
+              color: colors.gray500,
               cursor: submitting ? "not-allowed" : "pointer",
               opacity: submitting ? 0.5 : 1,
             }}
@@ -634,7 +634,7 @@ function Modal({ title, children, onClose, onSubmit, submitting, submitLabel = "
               padding: "0.75rem",
               border: "none",
               borderRadius: 8,
-              background: "#2E7D32",
+              background: colors.primary,
               fontSize: 14,
               fontWeight: 600,
               color: "white",
@@ -645,35 +645,6 @@ function Modal({ title, children, onClose, onSubmit, submitting, submitLabel = "
             {submitting ? "Saving..." : submitLabel}
           </button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Form Field ────────────────────────────────────────────────────────────────
-function FormField({ label, icon, required, ...props }) {
-  return (
-    <div style={{ marginBottom: "1.25rem" }}>
-      <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#424242", marginBottom: "0.5rem" }}>
-        {label} {required && <span style={{ color: "#D32F2F" }}>*</span>}
-      </label>
-      <div style={{ position: "relative" }}>
-        {icon && (
-          <div style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#999" }}>
-            {icon}
-          </div>
-        )}
-        <input
-          {...props}
-          style={{
-            width: "100%",
-            padding: icon ? "0.75rem 1rem 0.75rem 2.75rem" : "0.75rem 1rem",
-            border: "1px solid #E0E0E0",
-            borderRadius: 8,
-            fontSize: 14,
-            outline: "none",
-          }}
-        />
       </div>
     </div>
   );

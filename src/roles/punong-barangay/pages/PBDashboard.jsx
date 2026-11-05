@@ -74,7 +74,6 @@ export default function PBDashboard() {
     async function loadClusterInfo() {
       try {
         const clusterLabel = await fetchMyClusterInfo();
-        console.log('Cluster label from API:', clusterLabel);
         setClusterInfo(clusterLabel);
       } catch (error) {
         console.error("Failed to load cluster info:", error);
@@ -441,7 +440,7 @@ export default function PBDashboard() {
                 <div
                   key={r.residentId}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5"
-                  style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}
+                  style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}
                 >
                   {/* Rank badge */}
                   <div

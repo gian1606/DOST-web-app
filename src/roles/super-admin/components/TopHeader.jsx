@@ -61,7 +61,7 @@ export default function TopHeader() {
       style={{
         left: 240,
         height: 60,
-        background: "#2E7D32",
+        background: colors.primary,
         borderBottom: "1px solid rgba(255,255,255,0.15)",
       }}
     >
@@ -217,7 +217,7 @@ export default function TopHeader() {
               <UserCircle size={20} color="rgba(255,255,255,0.85)" />
             </div>
             <div>
-              <div className="font-semibold leading-tight" style={{ fontSize: 13, color: "#fff" }}>
+              <div className="font-semibold leading-tight" style={{ fontSize: 13, color: colors.white }}>
                 {user?.name || "Super Admin"}
               </div>
               <div className="leading-tight" style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>

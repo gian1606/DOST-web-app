@@ -39,9 +39,9 @@ const BAR_ANIM_DELAY = { 1: 60, 2: 160, 3: 260 }; // stagger ms
 const MAX_BAR_H = 220; // px — full height for #1
 
 const BAR_COLORS = {
-  1: { fill: "linear-gradient(180deg,#FBBF24 0%,#D97706 100%)", text: "#92400E", bg: "#FFFBEB", border: "#FDE68A" },
-  2: { fill: "linear-gradient(180deg,#9CA3AF 0%,#6B7280 100%)", text: "#374151", bg: "#F9FAFB", border: "#E5E7EB" },
-  3: { fill: "linear-gradient(180deg,#CD9E6B 0%,#92400E 100%)", text: "#78350F", bg: "#FFF7ED", border: "#FED7AA" },
+  1: { fill: colors.podiumBarGoldGradient, text: colors.podiumGoldText, bg: colors.amberHighlight, border: colors.rankGoldBorder },
+  2: { fill: colors.podiumBarSilverGradient, text: colors.gray700, bg: colors.gray50, border: colors.gray200 },
+  3: { fill: colors.podiumBarBronzeGradient, text: colors.podiumBronzeText, bg: colors.warningSoft, border: colors.warningBorder },
 };
 
 // ── Single animated bar ───────────────────────────────────────────────────────
@@ -69,8 +69,8 @@ function PodiumBar({ rank, entry, maxPoints, animate, onHover, hovered }) {
             bottom: h + 70,
             left: "50%",
             transform: "translateX(-50%)",
-            background: "#1C2B1E",
-            color: "#fff",
+            background: colors.sidebarBg,
+            color: colors.white,
             minWidth: 160,
             pointerEvents: "none",
           }}>
@@ -83,7 +83,7 @@ function PodiumBar({ rank, entry, maxPoints, animate, onHover, hovered }) {
           {/* Arrow */}
           <div style={{ position: "absolute", bottom: -6, left: "50%", transform: "translateX(-50%)",
             width: 0, height: 0, borderLeft: "6px solid transparent",
-            borderRight: "6px solid transparent", borderTop: "6px solid #1C2B1E" }} />
+            borderRight: "6px solid transparent", borderTop: `6px solid ${colors.sidebarBg}` }} />
         </div>
       )}
 
@@ -123,9 +123,9 @@ function PodiumBar({ rank, entry, maxPoints, animate, onHover, hovered }) {
 
 // ── Badge pill ────────────────────────────────────────────────────────────────
 const BADGE_S = {
-  gold:   { bg: "#FEF3C7", color: "#B45309", label: "Gold"   },
-  silver: { bg: "#F3F4F6", color: "#4B5563", label: "Silver" },
-  bronze: { bg: "#FEF0E6", color: "#92400E", label: "Bronze" },
+  gold:   { bg: colors.rankGoldBg, color: colors.medalGoldText, label: "Gold"   },
+  silver: { bg: colors.gray100, color: colors.textSecondary, label: "Silver" },
+  bronze: { bg: colors.rankBronzeBg, color: colors.podiumGoldText, label: "Bronze" },
 };
 
 function BadgePill({ badge }) {
@@ -141,9 +141,9 @@ function BadgePill({ badge }) {
 
 // ── Rank chip for table ───────────────────────────────────────────────────────
 function RankChip({ rank }) {
-  const s = rank === 1 ? { bg: "#FEF3C7", color: "#B45309" }
-          : rank === 2 ? { bg: "#F3F4F6", color: "#4B5563" }
-          : rank === 3 ? { bg: "#FEF0E6", color: "#92400E" }
+  const s = rank === 1 ? { bg: colors.rankGoldBg, color: colors.medalGoldText }
+          : rank === 2 ? { bg: colors.gray100, color: colors.textSecondary }
+          : rank === 3 ? { bg: colors.rankBronzeBg, color: colors.podiumGoldText }
           : null;
   return (
     <div className="flex items-center justify-center rounded-full font-bold"
@@ -271,8 +271,8 @@ export default function Leaderboard() {
             className="rounded-full px-4 py-1.5 font-semibold transition-colors"
             style={{
               fontSize: 13,
-              background: clusterFilter === "all" ? colors.primary : "#fff",
-              color:      clusterFilter === "all" ? "#fff" : colors.gray600,
+              background: clusterFilter === "all" ? colors.primary : colors.white,
+              color:      clusterFilter === "all" ? colors.white : colors.gray600,
               border:     clusterFilter === "all" ? `1px solid ${colors.primary}` : "1px solid " + colors.gray200,
             }}>
             City-wide
@@ -284,8 +284,8 @@ export default function Leaderboard() {
               className="rounded-full px-4 py-1.5 font-semibold transition-colors"
               style={{
                 fontSize: 13,
-                background: clusterFilter === c.label ? colors.primary : "#fff",
-                color:      clusterFilter === c.label ? "#fff" : colors.gray600,
+                background: clusterFilter === c.label ? colors.primary : colors.white,
+                color:      clusterFilter === c.label ? colors.white : colors.gray600,
                 border:     clusterFilter === c.label ? `1px solid ${colors.primary}` : "1px solid " + colors.gray200,
               }}>
               {c.label}
@@ -305,7 +305,7 @@ export default function Leaderboard() {
         {search && (
           <button onClick={() => setSearch("")}
             className="rounded-lg px-3 py-2 font-medium hover:bg-red-50 transition-colors"
-            style={{ fontSize: 12, border: "1.5px solid #FECACA", color: colors.error, background: colors.errorSoft }}>
+            style={{ fontSize: 12, border: `1.5px solid ${colors.inputErrorBorder}`, color: colors.error, background: colors.errorSoft }}>
             ✕ Clear
           </button>
         )}
@@ -372,7 +372,7 @@ export default function Leaderboard() {
               </div>
 
               {/* Stage base */}
-              <div style={{ height: 12, background: "#E5E7EB" }} />
+              <div style={{ height: 12, background: colors.gray200 }} />
             </div>
           )}
 
@@ -408,7 +408,7 @@ export default function Leaderboard() {
                       style={{
                         borderBottom: "1px solid " + colors.gray100,
                         background: r.scopeRank === 1
-                          ? "#FFFBF0"
+                          ? colors.amberHighlight
                           : i % 2 === 0 ? colors.white : colors.tableRowAlt,
                       }}>
                       <td className="px-6 py-4"><RankChip rank={r.scopeRank} /></td>

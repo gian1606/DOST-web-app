@@ -158,7 +158,7 @@ function FuelSavingsGauge({ totalCollections, collectionRate }) {
             ))}
           </div>
           <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-            style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+            style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
             <Fuel size={12} color={colors.textMuted} />
             <p style={{ fontSize: 11, color: colors.gray500 }}>
               {totalCollections} collections · ₱65/L · {collectionRate}% route efficiency
@@ -257,7 +257,7 @@ function IncidentReports() {
           {["all", "pending", "resolved"].map((s) => (
             <button key={s} onClick={() => setFilterStatus(s)}
               className="px-4 py-2 capitalize font-medium transition-colors"
-              style={{ fontSize: 13, background: filterStatus === s ? colors.primary : colors.white, color: filterStatus === s ? "#fff" : colors.gray500 }}>
+              style={{ fontSize: 13, background: filterStatus === s ? colors.primary : colors.white, color: filterStatus === s ? colors.white : colors.gray500 }}>
               {s}
             </button>
           ))}
@@ -290,7 +290,7 @@ function IncidentReports() {
             const isPending  = r.status === "pending";
             return (
               <div key={r.id} className="bg-white rounded-xl overflow-hidden"
-                style={{ border: `1.5px solid ${isPending ? "#FFE0B2" : colors.gray200}`, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+                style={{ border: `1.5px solid ${isPending ? colors.warningBorder : colors.gray200}`, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                 <div className="flex items-center gap-4 px-5 py-4 cursor-pointer"
                   onClick={() => setExpandedId(isExpanded ? null : r.id)}>
                   <div className="flex flex-col gap-1 flex-1 min-w-0">
@@ -348,7 +348,7 @@ function IncidentReports() {
                       )}
                     </div>
                     {r.notes && (
-                      <div className="rounded-lg px-4 py-3" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+                      <div className="rounded-lg px-4 py-3" style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
                         <p className="text-text-muted uppercase tracking-wide mb-1" style={{ fontSize: 10, fontWeight: 600 }}>Notes</p>
                         <p className="text-text-primary" style={{ fontSize: 13, lineHeight: 1.6 }}>{r.notes}</p>
                       </div>
@@ -408,7 +408,7 @@ export default function CAReports() {
         ].map((tab) => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className="flex items-center gap-2 px-5 py-2.5 font-semibold transition-colors"
-            style={{ fontSize: 13, background: activeTab === tab.id ? colors.primary : colors.white, color: activeTab === tab.id ? "#fff" : colors.gray500 }}>
+            style={{ fontSize: 13, background: activeTab === tab.id ? colors.primary : colors.white, color: activeTab === tab.id ? colors.white : colors.gray500 }}>
             {tab.icon}{tab.label}
           </button>
         ))}
@@ -475,7 +475,7 @@ export default function CAReports() {
                 {["monthly", "daily"].map((p) => (
                   <button key={p} onClick={() => setPeriod(p)}
                     className="px-3 py-1.5 capitalize font-medium transition-colors"
-                    style={{ fontSize: 12, background: period === p ? colors.primary : colors.white, color: period === p ? "#fff" : colors.gray500 }}>
+                    style={{ fontSize: 12, background: period === p ? colors.primary : colors.white, color: period === p ? colors.white : colors.gray500 }}>
                     {p}
                   </button>
                 ))}
@@ -534,7 +534,7 @@ export default function CAReports() {
                 </div>
               ))}
             </div>
-            <div className="rounded-lg px-3 py-2 mt-1" style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+            <div className="rounded-lg px-3 py-2 mt-1" style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
               <p className="text-text-muted" style={{ fontSize: 11 }}>
                 Total missed: <strong style={{ color: colors.error }}>{totalMissed}</strong> this period
               </p>
@@ -547,7 +547,7 @@ export default function CAReports() {
 
         {/* Unit performance table */}
         <Section title="Collector Unit Performance">
-          <div className="overflow-hidden rounded-lg" style={{ border: "1px solid #F3F4F6" }}>
+          <div className="overflow-hidden rounded-lg" style={{ border: `1px solid ${colors.gray100}` }}>
             <table className="w-full border-collapse">
               <thead>
                 <tr style={{ background: colors.gray50, borderBottom: "1px solid " + colors.gray200 }}>
@@ -559,7 +559,7 @@ export default function CAReports() {
               </thead>
               <tbody>
                 {CA_UNIT_PERFORMANCE.map((u, i) => (
-                  <tr key={u.unit} style={{ background: i % 2 === 0 ? "#fff" : colors.tableRowAlt, borderBottom: "1px solid #F3F4F6" }}>
+                  <tr key={u.unit} style={{ background: i % 2 === 0 ? colors.white : colors.tableRowAlt, borderBottom: `1px solid ${colors.gray100}` }}>
                     <td className="px-4 py-3 font-semibold text-text-primary" style={{ fontSize: 13 }}>{u.unit}</td>
                     <td className="px-4 py-3 text-text-secondary font-mono" style={{ fontSize: 12 }}>{u.plate}</td>
                     <td className="px-4 py-3 text-text-primary" style={{ fontSize: 13 }}>{u.trips}</td>
@@ -586,7 +586,7 @@ export default function CAReports() {
             </table>
           </div>
           <div className="rounded-lg px-4 py-3 flex items-center justify-between"
-            style={{ background: colors.gray50, border: "1px solid #F3F4F6" }}>
+            style={{ background: colors.gray50, border: `1px solid ${colors.gray100}` }}>
             <span className="text-text-muted" style={{ fontSize: 12 }}>
               Overall rate: <strong style={{ color: colors.primary }}>{avgRate}%</strong>
             </span>
