@@ -15,6 +15,9 @@ dist-ssr
 # local env files
 .env
 .env*.local
+
+# Expo (auto-generated, machine-specific)
+.expo/
 .vscode/*
 !.vscode/extensions.json
 .idea
